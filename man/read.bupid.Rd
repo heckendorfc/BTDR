@@ -7,7 +7,7 @@ Read BUPID results.
 Read BUPID results and create and object from them.
 }
 \usage{
-write.mzid(data,file,inputfile=NULL)
+read.bupid(file=NULL,url=NULL)
 }
 \details{
 The data can be passed either as the name of a file on the local computer or a URL on the BUPID server containing the results.
@@ -22,7 +22,7 @@ Returns the results as an R object.
 %% ...
 }
 \examples{
-infile <- "http://bumc-florida.bumc.bu.edu/BUPID_TD/results.html?key=a1edb86d8f2d4cfcfd065755c5c725f8&ID=136&date=20140801"
-data <- read.bupid(infile)
+infile <- "http://bumc-florida.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi?key=a1edb86d8f2d4cfcfd065755c5c725f8&ID=136&date=20140801"
+data <- read.bupid(url=infile)
 }
 
