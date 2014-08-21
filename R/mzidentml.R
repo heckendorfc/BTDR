@@ -132,10 +132,11 @@
 }
 
 write.mzid <- function(data,file,inputfile=NULL){
+	options(suppressXMLNamespaceWarning=T)
 	datetime <- format(Sys.time(),"%Y-%m-%dT%H:%M:%S")
 
 	# data independent header information
-	xml <- xmlTree("MzIdentML",attrs=c(id="", version="1.1.0", creationDate=datetime, "xsi:schemaLocation"="http://psidev.info/psi/pi/mzIdentML/1.1 mzIdentML1.1.0.xsd"), namespace=c("http://psidev.info/psi/pi/mzIdentML/1.1",xsi="http://www.w3.org/2001/XMLSchema-instance"))
+	xml <- xmlTree("MzIdentML",attrs=c(id="", version="1.1.0", creationDate=datetime, "xsi:schemaLocation"="http://psidev.info/psi/pi/mzIdentML/1.1 mzIdentML1.1.0.xsd"), namespace=c("http://psidev.info/psi/pi/mzIdentML/1.1",xsi="http://www.w3.org/2001/XMLSchema-instance"), dtd="mzidentml")
 
 	xml$addNode("cvList",close=F)
 		xml$addNode("cv", attrs=c(id="UNIMOD",fullName="UNIMOD",uri="http://www.unimod.org/obo/unimod.obo"))
