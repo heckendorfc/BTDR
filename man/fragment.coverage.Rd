@@ -7,10 +7,10 @@ Plot fragment coverage
 Plot fragment coverage based on BUPID results.
 }
 \usage{
-fragment.coverage(data,file="cov.svg",columns=25,peaklistid=1)
+fragment.coverage(data,file="cov.svg",columns=25,scale=2,peaklistid=1)
 }
 \details{
-The data is the output from read.bupid. File is the name of the output file for the document. Columns is the number of columns to use for the sequence. Peaklistid is the peak list ID used for fragmentation.
+The data is the output from read.bupid. File is the name of the output file for the document. Columns is the number of columns to use for the sequence. Scale determines how large the image will be. Peaklistid is the peak list ID used for fragmentation.
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{

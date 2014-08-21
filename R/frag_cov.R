@@ -13,11 +13,22 @@
 	termpair$color[which(termpair$term==frag)]
 }
 
-.get.path <- function(startx,starty,ldown1,ldown2,lover){
+.get.path2 <- function(startx,starty,ldown1,ldown2,lover){
 	paste0(list("M",startx,",",starty,
 	"L",startx,",",ldown1,
 	"M",startx,",",ldown1,
 	"L",lover,",",ldown2,
+	"Z"),collapse="")
+}
+
+.get.path <- function(startx,starty,ldown1,ldown2,lover,scale){
+	width=scale/2;
+	paste0(list("M",startx,",",starty,
+	"L",startx,",",ldown1,
+	"L",lover,",",ldown2,
+	"L",lover,",",ldown2-width,
+	"L",startx+width,",",ldown1-width,
+	"L",startx+width,",",starty,
 	"Z"),collapse="")
 }
 
@@ -41,11 +52,11 @@
 		lover <- sx+params$width
 	}
 
-	.get.path(sx,sy,ldown1,ldown2,lover)
+	.get.path(sx,sy,ldown1,ldown2,lover,params$scale)
 }
 
-fragment.coverage <- function(data,file="cov.svg",columns=25,peaklistid=1){
-	params <- data.frame(scale=2,starty=20,startx=10,numperline=columns)
+fragment.coverage <- function(data,file="cov.svg",columns=25,scale=2,peaklistid=1){
+	params <- data.frame(scale=scale,starty=20,startx=10,numperline=columns)
 	params$xsp <- 15*params$scale
 	params$ysp <- 15*params$scale
 	params$width <- params$xsp/6
@@ -67,7 +78,7 @@ fragment.coverage <- function(data,file="cov.svg",columns=25,peaklistid=1){
 		term <- .get.frag.term(res$frag)
 		if(!is.null(term)){
 			color <- .get.frag.color(term)
-			xml$addNode("path",attrs=c(d=.get.frag.path(res,term,params),stroke=color))
+			xml$addNode("path",attrs=c(d=.get.frag.path(res,term,params),stroke=color,fill=color))
 		}
 	}
 
