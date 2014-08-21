@@ -6,6 +6,6 @@ Date: 2014-08-18
 Author: Christian Heckendorf (heckend@bu.edu)
 Maintainer: Christian Heckendorf <heckend@bu.edu>
 Description: This package provides functions to analyze BUPID Top-Down results. This includes conversion to standard formats and creation of figures and tables ready for publication.
-Depends: yaml, XML
+Depends: yaml, XML, RCurl
 License: What license?
 LazyData: true
