@@ -1,5 +1,5 @@
-.get.frag.term <- function(frag){
-	small <- substr(frag,1,1)
+fragment.term <- function(fragname){
+	small <- substr(fragname,1,1)
 	if(length(which(c("a","b","c")==small))>0)
 		"N"
 	else if(length(which(c("x","y","z")==small))>0)
@@ -55,7 +55,7 @@
 	.get.path(sx,sy,ldown1,ldown2,lover,params$scale)
 }
 
-fragment.coverage <- function(data,file="cov.svg",columns=25,scale=2,peaklistid=1){
+fragment.coverage <- function(data,file="cov.svg",columns=25L,scale=2,peaklistid=1L){
 	params <- data.frame(scale=scale,starty=20,startx=10,numperline=columns)
 	params$xsp <- 15*params$scale
 	params$ysp <- 15*params$scale
@@ -75,7 +75,7 @@ fragment.coverage <- function(data,file="cov.svg",columns=25,scale=2,peaklistid=
 	xml$addNode("text",dfi$prot$seq,attrs=c(x=paste0(cx,collapse=" "),y=paste0(cy,collapse=" "),"text-anchor"="middle","font-family"="Arial","font-size"=10*params$scale,fill="#000","dominant-baseline"="middle"))
 
 	for(res in dfi$results){
-		term <- .get.frag.term(res$frag)
+		term <- fragment.term(res$frag)
 		if(!is.null(term)){
 			color <- .get.frag.color(term)
 			xml$addNode("path",attrs=c(d=.get.frag.path(res,term,params),stroke=color,fill=color))
