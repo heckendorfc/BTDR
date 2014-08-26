@@ -9,7 +9,7 @@ fragment.term <- function(fragname){
 }
 
 .get.frag.color <- function(frag){
-	termpair <- data.frame(term=c("C","N"),color=c("#00f","#f00"),stringsAsFactors=F)
+	termpair <- data.frame(term=c("C","N",NULL),color=c("#00f","#f00","#000"),stringsAsFactors=F)
 	termpair$color[which(termpair$term==frag)]
 }
 
