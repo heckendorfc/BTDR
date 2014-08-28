@@ -9,7 +9,7 @@
 
 .get.frag.name <- function(res){
 	term <- fragment.term(res$frag)
-	if(term=="N" || term=="C")
+	if(!is.null(term) && (term=="N" || term=="C"))
 		name <- res$ion$len
 	else
 		name <- paste(res$ion$start+1,res$ion$len,sep=",")
@@ -25,12 +25,18 @@
 	err <- res$err/pkmass*1e6
 	err <- round(err,digits=4)
 
-	list(name,mod,res$ion$start+1,res$ion$start+res$ion$len,pkmass,res$ion$mass,pkint,err)
+	data.frame(name=name,mods=mod,start=res$ion$start+1,end=res$ion$start+res$ion$len,massE=pkmass,massT=res$ion$mass,intensity=pkint,ppmMassError=err,stringsAsFactors=F)
+}
+
+.fix.df <- function(df){
+	cbind(df[!sapply(df, is.list)],(t(apply(df[sapply(df, is.list)], 1, unlist))))
 }
 
 matched.ions <- function(data,peaklistid=1L){
 	res <- do.call("rbind",lapply(data$fit[[peaklistid]]$results,.matched.row,data$peaks[[peaklistid]]))
-	colnames(res) <- c("name","mods","start","end","massE","massT","intensity","ppmMassError")
+	#colnames(res) <- c("name","mods","start","end","massE","massT","intensity","ppmMassError")
+
+	#resdf <- .fix.df(as.data.frame(res))
 
 	res
 }
