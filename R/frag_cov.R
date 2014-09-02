@@ -76,7 +76,7 @@ fragment.coverage <- function(data,file="cov.svg",columns=25L,scale=2,peaklistid
 
 	for(res in dfi$results){
 		term <- fragment.term(res$frag)
-		if(!is.null(term)){
+		if(!is.null(term) && term!=""){
 			color <- .get.frag.color(term)
 			xml$addNode("path",attrs=c(d=.get.frag.path(res,term,params),stroke=color,fill=color))
 		}
