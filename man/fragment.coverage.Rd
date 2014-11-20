@@ -7,10 +7,12 @@ Plot fragment coverage
 Plot fragment coverage based on BUPID results.
 }
 \usage{
-fragment.coverage(data,file="cov.svg",columns=25,scale=2,peaklistid=1)
+fragment.coverage(data,file="cov.svg",columns=25,scale=2,peaklistid=1,color=T)
+fragment.coverage.generic(data,sequence,file="cov.svg",columns=25,scale=2,color=T)
 }
 \details{
-The data is the output from read.bupid. File is the name of the output file for the document. Columns is the number of columns to use for the sequence. Scale determines how large the image will be. Peaklistid is the peak list ID used for fragmentation.
+The data is the output from read.bupid. File is the name of the output file for the document. Columns is the number of columns to use for the sequence. Scale determines how large the image will be. Peaklistid is the peak list ID used for fragmentation. Color determines whether to use red/blue colors for fragments or all black.
+The fragment coverage image can also be called using a generic non-bupid format. Data in the generic function takes the form data.frame(term=c("C","N"),num=c(1,50)), where term is the protein terminus the fragment is generated from, and num is the fragment number or length in amino acids.
 %%  ~~ If necessary, more details than the description above ~~
 }
 \value{
