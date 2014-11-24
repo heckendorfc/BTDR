@@ -24,8 +24,11 @@ Returns the name of the file created.
 %% ...
 }
 \examples{
+#bupid version
 infile <- "http://bumc-florida.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi?key=a1edb86d8f2d4cfcfd065755c5c725f8&ID=136&date=20140801"
 data <- read.bupid(url=infile)
 fragment.coverage(data,file="136_coverage.svg",columns=50)
+#generic version
+data <- data.frame(term=c("N","N","C","C"),num=c(1,2,1,2))
+fragment.coverage.generic(data,"ACDEF",file="generic_coverage.svg",scale=3,color=F)
 }
-

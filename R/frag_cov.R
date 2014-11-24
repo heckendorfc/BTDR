@@ -35,8 +35,11 @@ fragment.term <- function(fragname){
 	"Z"),collapse="")
 }
 
-.get.frag.path <- function(res,params){
+.get.frag.path <- function(res,params,seqlen){
 	si <- as.integer(res["num"])
+	ns <- which(res["term"] == "N")
+	cs <- which(res["term"] == "C")
+	si <- c(si[ns]-1,seqlen-si[cs]-1)
 
 	sx <- params$startx+0.5*params$xsp+((si%%params$numperline)*params$xsp);
 	sy <- params$starty+(floor(si/params$numperline)*params$ysp);
@@ -55,12 +58,14 @@ fragment.term <- function(fragname){
 	.get.path(sx,sy,ldown1,ldown2,lover,params$scale)
 }
 
-fragment.coverage.generic <- function(data,sequence,file="cov.svg",columns=25L,scale=2,peaklistid=1L,color=T){
-	params <- data.frame(scale=scale,starty=20,startx=10,numperline=columns)
+fragment.coverage.generic <- function(data,sequence,file="cov.svg",columns=25L,scale=2,color=T){
+	params <- data.frame(scale=scale,numperline=columns)
 	params$xsp <- 15*params$scale
 	params$ysp <- 15*params$scale
 	params$width <- params$xsp/6
 	params$height <- params$ysp/3
+	params$starty <- 5+params$height*1.5
+	params$startx <- 5*scale
 
 	cx <- sapply(0:(nchar(sequence)-1),FUN=function(i)(i%%params$numperline)*params$xsp+params$startx)
 	cy <- sapply(0:(nchar(sequence)-1),FUN=function(i)floor(i/params$numperline)*params$ysp+params$starty)
@@ -73,7 +78,7 @@ fragment.coverage.generic <- function(data,sequence,file="cov.svg",columns=25L,s
 
 	for(i in 1:(nrow(data))){
 			fcolor <- .get.frag.color(data[i,"term"],color=color)
-			xml$addNode("path",attrs=c(d=.get.frag.path(data[i,],params),stroke=fcolor,fill=fcolor))
+			xml$addNode("path",attrs=c(d=.get.frag.path(data[i,],params,nchar(sequence)),stroke=fcolor,fill=fcolor))
 	}
 
 	saveXML(xml,file,indent=T)
@@ -87,7 +92,8 @@ fragment.coverage.convert.input <- function (data,peaklistid=1L){
 		if(is.null(term) || term==""){
 			return(c(term=NULL,num=-1L))
 		}
-		num <- if(term=="N") res$ion$len-1 else res$ion$start-1
+		num <- res$ion$len
+		#num <- if(term=="N") res$ion$len else res$ion$start-1
 		c(term=term,num=num);
 	})
 	ret <- t(ret)
@@ -98,6 +104,6 @@ fragment.coverage.convert.input <- function (data,peaklistid=1L){
 }
 
 fragment.coverage <- function(data,file="cov.svg",columns=25L,scale=2,peaklistid=1L,color=T){
-	gdata <- fragment.coverage.convert.input(data)
-	fragment.coverage.generic(gdata,data$prot[[1]]$seq,file,columns,scale,peaklistid,color)
+	gdata <- fragment.coverage.convert.input(data,peaklistid)
+	fragment.coverage.generic(gdata,data$prot[[1]]$seq,file,columns,scale,color)
 }
