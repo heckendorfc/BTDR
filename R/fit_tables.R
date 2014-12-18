@@ -69,3 +69,21 @@ matched.peaks <- function(data,peaklistid=1L,format="list"){
 		mres
 	}
 }
+
+.matched.cluster.row <- function(res,peaks){
+	name <- .get.frag.name(res)
+	pkmass <- peaks$mass[res$peak+1]
+	pkz <- peaks$z[res$peak+1]
+	pkint <- peaks$intensity[res$peak+1]/max(peaks$intensity)
+	err <- res$err/pkmass*1e6
+	err <- round(err,digits=4)
+	mz <- (pkmass+pkz*(1.007825035-0.000549))/pkz
+
+	data.frame(name=name,intensity=pkint,ppmMassError=err,monoisotopicMZ=mz,z=pkz,stringsAsFactors=F)
+}
+
+matched.clusters <- function(data,peaklistid=1L){
+	res <- do.call("rbind",lapply(data$fit[[peaklistid]]$results,.matched.cluster.row,data$peaks[[peaklistid]]))
+
+	res
+}
