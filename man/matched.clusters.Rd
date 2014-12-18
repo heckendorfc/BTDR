@@ -1,5 +1,5 @@
-\name{matched.peaks}
-\alias{matched.peaks}
+\name{matched.clusters}
+\alias{matched.clusters}
 \title{
 Create a matrix of fragment-cluster assignments.
 }
