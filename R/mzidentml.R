@@ -131,12 +131,34 @@
 	xml
 }
 
+
+
+#' Write results as mzIdentML.
+#' 
+#' Convert an object created with read.bupid to mzIdentML.
+#' 
+#' @param data
+#' output from read.bupid
+#' @param file
+#' the name of the file you want to save the mzIdentML results as.
+#' @param inputfile
+#' the name of file passed to read.bupid.
+#' 
+#' @return Returns the name of the file generated.
+#' @seealso \code{\link{read.bupid}}
+#' @examples
+#' server <- "http://bumc-florida.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
+#' infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
+#' data <- read.bupid(url=paste(server,infile,sep="?"))
+#' write.mzid(data,"data.mzid",infile)
+#' 
+#' @export write.mzid
 write.mzid <- function(data,file,inputfile=NULL){
 	options(suppressXMLNamespaceWarning=T)
 	datetime <- format(Sys.time(),"%Y-%m-%dT%H:%M:%S")
 
 	# data independent header information
-	xml <- xmlTree("MzIdentML",attrs=c(id="", version="1.1.0", creationDate=datetime, "xsi:schemaLocation"="http://psidev.info/psi/pi/mzIdentML/1.1 mzIdentML1.1.0.xsd"), namespace=c("http://psidev.info/psi/pi/mzIdentML/1.1",xsi="http://www.w3.org/2001/XMLSchema-instance"), dtd="mzidentml")
+	xml <- xmlTree("MzIdentML",attrs=c(id="", version="1.1.0", creationDate=datetime, "xsi:schemaLocation"="http://psidev.info/psi/pi/mzIdentML/1.1 mzIdentML1.1.0.xsd"), namespaces=c("http://psidev.info/psi/pi/mzIdentML/1.1",xsi="http://www.w3.org/2001/XMLSchema-instance"), dtd="mzidentml")
 
 	xml$addNode("cvList",close=F)
 		xml$addNode("cv", attrs=c(id="UNIMOD",fullName="UNIMOD",uri="http://www.unimod.org/obo/unimod.obo"))

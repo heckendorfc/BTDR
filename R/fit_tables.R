@@ -1,3 +1,32 @@
+#' Peak fit tables
+#'
+#' These functions generate tables using information from the peak fit module.
+#'
+#' @param data
+#' output from read.bupid
+#' @param fitid
+#' peak fit result index to process
+#' @param format
+#' decides the return type: list or matrix
+#' 
+#' @return Returns the assignment information table.
+#'
+#' @examples
+#' server <- "http://bumc-florida.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
+#' infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
+#' data <- read.bupid(url=paste(server,infile,sep="?"))
+#' fit.matched.ions(data)
+#' fit.matched.peaks(data)
+#' fit.matched.clusters(data)
+#' 
+#' @name fit.matched
+NULL
+
+.fitid.by.peaklistid <- function(data,peaklistid){
+	fi <- which(sapply(1:length(data$fit),FUN=function(df)if(data$fit[[df]]$prot$param$peaks$id==peaklistid)df else 0)>0)
+	fi
+}
+
 .modstr <- function(mods){
 	if(length(mods)<1)
 		""
@@ -32,8 +61,16 @@
 	cbind(df[!sapply(df, is.list)],(t(apply(df[sapply(df, is.list)], 1, unlist))))
 }
 
-matched.ions <- function(data,peaklistid=1L){
-	res <- do.call("rbind",lapply(data$fit[[peaklistid]]$results,.matched.row,data$peaks[[peaklistid]]))
+
+
+#' fit.matched.ions generates a matrix containing detailed information about the assigned fragments.
+#' 
+#' @return Returns the matrix of assignments.
+#' 
+#' @rdname fit.matched
+#' @export fit.matched.ions
+fit.matched.ions <- function(data,fitid=1L){
+	res <- do.call("rbind",lapply(data$fit[[fitid]]$results,.matched.row,data$peaks[[fitid]]))
 	#colnames(res) <- c("name","mods","start","end","massE","massT","intensity","ppmMassError")
 
 	#resdf <- .fix.df(as.data.frame(res))
@@ -51,12 +88,18 @@ matched.ions <- function(data,peaklistid=1L){
 	sapply(ro,FUN=function(x).get.frag.name(res[[rlist[x]]]))
 }
 
-matched.peaks <- function(data,peaklistid=1L,format="list"){
-	peaks <- unique(sapply(data$fit[[peaklistid]]$results,FUN=function(res)res$peak))
+#' fit.matched.peaks generates the assigned fragments with matches grouped by matched peak.
+#' 
+#' @return Returns the list or matrix of assignments.
+#' 
+#' @rdname fit.matched
+#' @export fit.matched.peaks
+fit.matched.peaks <- function(data,fitid=1L,format="list"){
+	peaks <- unique(sapply(data$fit[[fitid]]$results,FUN=function(res)res$peak))
 	peaks <- sort(peaks)
-	res <- lapply(peaks,FUN=.matched.peak.row,data$fit[[peaklistid]]$results,data$peaks[[peaklistid]])
+	res <- lapply(peaks,FUN=.matched.peak.row,data$fit[[fitid]]$results,data$peaks[[fitid]])
 	peaks <- peaks+1
-	names(res) <- sapply(peaks,FUN=.get.peak.name,data$peaks[[peaklistid]])
+	names(res) <- sapply(peaks,FUN=.get.peak.name,data$peaks[[fitid]])
 	if(format=="list")
 		res
 	else{ #matrix
@@ -82,8 +125,15 @@ matched.peaks <- function(data,peaklistid=1L,format="list"){
 	data.frame(name=name,intensity=pkint,ppmMassError=err,monoisotopicMZ=mz,z=pkz,stringsAsFactors=F)
 }
 
-matched.clusters <- function(data,peaklistid=1L){
-	res <- do.call("rbind",lapply(data$fit[[peaklistid]]$results,.matched.cluster.row,data$peaks[[peaklistid]]))
+
+
+#' fit.matched.clusters generates a matrix of assignments along with their
+#' original m/z and charge state values as seen in the raw spectra.
+#' 
+#' @rdname fit.matched
+#' @export fit.matched.clusters
+fit.matched.clusters <- function(data,fitid=1L){
+	res <- do.call("rbind",lapply(data$fit[[fitid]]$results,.matched.cluster.row,data$peaks[[fitid]]))
 
 	res
 }

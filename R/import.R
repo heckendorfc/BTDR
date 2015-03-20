@@ -11,6 +11,28 @@
 	yaml.load(rawdata)
 }
 
+
+
+#' Read BUPID results.
+#' 
+#' Read BUPID results and create and object from them.
+#' 
+#' The data can be passed either as the name of a file on the local machine or
+#' a URL on the BUPID server containing the results.
+#' 
+#' @param file
+#' a file on the local machine to use as input
+#' @param url
+#' a url where the data can be retreived
+#'
+#' @return Returns the results as an R object.
+#'
+#' @examples
+#' server <- "http://bumc-florida.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
+#' infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
+#' data <- read.bupid(url=paste(server,infile,sep="?"))
+#' 
+#' @export read.bupid
 read.bupid <- function(file=NULL,url=NULL){
 	if(is.null(file) && is.null(url))
 		stop("Either file or url must be provided.")

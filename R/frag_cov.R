@@ -1,3 +1,38 @@
+#' Plot fragment coverage
+#' 
+#' These functions generate a map of fragmentation sites within a given
+#' protein sequence.
+#' 
+#' @param data
+#' output from read.bupid
+#' @param fitid
+#' peak fit result index to process
+#' @param file
+#' the output file name
+#' @param columns
+#' the number of columns (residues per line) to use for the sequence
+#' @param scale
+#' magnification factor for the image
+#' @param color
+#' boolean value with true indicating the fragments should be coloured red/blue
+#' and false making them all black.
+#'
+#' 
+#' @return Returns the name of the file created.
+#' @examples
+#' #bupid version
+#' server <- "http://bumc-florida.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
+#' infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
+#' data <- read.bupid(url=paste(server,infile,sep="?"))
+#' fragment.coverage(data,file="136_coverage.svg",columns=50)
+#'
+#' #generic version
+#' data <- data.frame(term=c("N","N","C","C"),num=c(1,2,1,2))
+#' fragment.coverage.generic(data,"ACDEF",file="generic_coverage.svg",scale=3,color=F)
+#' 
+#' @name fragment.coverage
+NULL
+
 fragment.term <- function(fragname){
 	small <- substr(fragname,1,1)
 	if(length(which(c("a","b","c")==small))>0)
@@ -58,6 +93,46 @@ fragment.term <- function(fragname){
 	.get.path(sx,sy,ldown1,ldown2,lover,params$scale)
 }
 
+fragment.coverage.convert.input <- function (data,fitid=1L){
+	fi <- which(sapply(1:length(data$fit),FUN=function(df)if(data$fit[[df]]$prot$param$peaks$id==fitid)df else 0)>0)
+	dfi <- data$fit[[fi]]
+	#ret <- do.call("rbind",lapply(dfi$results,FUN=function(res){
+	ret <- ldply(dfi$results,.fun=function(res){
+		term <- fragment.term(res$frag)
+		if(is.null(term) || term==""){
+			return(data.frame(term="",num=-1L))
+		}
+		num <- res$ion$len
+		#num <- if(term=="N") res$ion$len else res$ion$start-1
+		data.frame(term=term,num=num);
+	})
+	#ret <- t(ret)
+	bad <- which(ret[,"term"]=="")
+	if(length(bad)>0)
+		ret <- ret[-bad,]
+	ret
+}
+
+#' fragment.coverage plots fragment coverage based on BUPID results.
+#'
+#' @rdname fragment.coverage
+#' @export fragment.coverage
+fragment.coverage <- function(data,file="cov.svg",columns=25L,scale=2,fitid=1L,color=T){
+	gdata <- fragment.coverage.convert.input(data,fitid)
+	fragment.coverage.generic(gdata,data$prot[[1]]$seq,file,columns,scale,color)
+}
+
+#' The fragment coverage image can also be called using a generic
+#' non-bupid format. Data in the generic function takes the form
+#' data.frame(term=c("C","N"),num=c(1,50)), where term is the protein
+#' terminus the fragment is generated from, and num is the fragment
+#' number or length in amino acids.
+#' 
+#' @param sequence
+#' protein sequence used in assignments
+#'
+#' @rdname fragment.coverage
+#' @export fragment.coverage.generic
 fragment.coverage.generic <- function(data,sequence,file="cov.svg",columns=25L,scale=2,color=T){
 	params <- data.frame(scale=scale,numperline=columns)
 	params$xsp <- 15*params$scale
@@ -73,7 +148,7 @@ fragment.coverage.generic <- function(data,sequence,file="cov.svg",columns=25L,s
 	tx <- max(cx)+params$startx+params$xsp
 	ty <- max(cy)+params$starty+params$ysp
 
-	xml <- xmlTree("svg",attrs=c(viewbox=paste0(c(0,0,tx,ty),collapse=" ")), namespace=c("http://www.w3.org/2000/svg",xsi="http://www.w3.org/2001/XMLSchema-instance"), dtd=c("svg","-//W3C//DTD SVG 1.1//EN","http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"))
+	xml <- xmlTree("svg",attrs=c(viewbox=paste0(c(0,0,tx,ty),collapse=" ")), namespaces=c("http://www.w3.org/2000/svg",xsi="http://www.w3.org/2001/XMLSchema-instance"), dtd=c("svg","-//W3C//DTD SVG 1.1//EN","http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"))
 	xml$addNode("text",sequence,attrs=c(x=paste0(cx,collapse=" "),y=paste0(cy,collapse=" "),"text-anchor"="middle","font-family"="sans-serif","font-size"=10*params$scale,fill="#000","dominant-baseline"="middle"))
 
 	for(i in 1:(nrow(data))){
@@ -82,28 +157,4 @@ fragment.coverage.generic <- function(data,sequence,file="cov.svg",columns=25L,s
 	}
 
 	saveXML(xml,file,indent=T)
-}
-
-fragment.coverage.convert.input <- function (data,peaklistid=1L){
-	fi <- which(sapply(1:length(data$fit),FUN=function(df)if(data$fit[[df]]$prot$param$peaks$id==peaklistid)df else 0)>0)
-	dfi <- data$fit[[fi]]
-	ret <- sapply(dfi$results,FUN=function(res){
-		term <- fragment.term(res$frag)
-		if(is.null(term) || term==""){
-			return(c(term=NULL,num=-1L))
-		}
-		num <- res$ion$len
-		#num <- if(term=="N") res$ion$len else res$ion$start-1
-		c(term=term,num=num);
-	})
-	ret <- t(ret)
-	bad <- which(ret[,"term"] == NULL)
-	if(length(bad)>0)
-		ret <- ret[-bad,]
-	ret
-}
-
-fragment.coverage <- function(data,file="cov.svg",columns=25L,scale=2,peaklistid=1L,color=T){
-	gdata <- fragment.coverage.convert.input(data,peaklistid)
-	fragment.coverage.generic(gdata,data$prot[[1]]$seq,file,columns,scale,color)
 }
