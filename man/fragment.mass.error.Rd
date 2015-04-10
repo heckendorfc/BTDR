@@ -18,8 +18,9 @@ Returns the ggplot object representing the plot.
 Generates a plot showing mass error vs. ion mass.
 }
 \examples{
-infile <- "http://bumc-florida.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi?key=a1edb86d8f2d4cfcfd065755c5c725f8&ID=136&date=20140801"
-data <- read.bupid(url=infile)
+server <- "http://bumc-florida.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
+infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
+data <- read.bupid(url=paste(server,infile,sep="?"))
 png(filename="errors.png",width=300,height=100) #Configure a graphics device
 fragment.mass.error(data)
 dev.off()

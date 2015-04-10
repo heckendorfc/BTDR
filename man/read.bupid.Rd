@@ -12,7 +12,7 @@ read.bupid(file = NULL, url = NULL)
 \item{url}{a url where the data can be retreived}
 }
 \value{
-Returns the results as an R object.
+Returns the results as a bupid object.
 }
 \description{
 Read BUPID results and create and object from them.
@@ -23,7 +23,7 @@ a URL on the BUPID server containing the results.
 }
 \examples{
 server <- "http://bumc-florida.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
-infile <- "key=a1edb86d8f2d4cfcfd065755c5c725f8&ID=136&date=20140801"
+infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
 data <- read.bupid(url=paste(server,infile,sep="?"))
 }
 

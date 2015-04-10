@@ -21,7 +21,7 @@ Convert an object created with read.bupid to mzIdentML.
 }
 \examples{
 server <- "http://bumc-florida.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
-infile <- "key=a1edb86d8f2d4cfcfd065755c5c725f8&ID=136&date=20140801"
+infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
 data <- read.bupid(url=paste(server,infile,sep="?"))
 write.mzid(data,"data.mzid",infile)
 }

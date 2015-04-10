@@ -11,8 +11,6 @@
 	yaml.load(rawdata)
 }
 
-
-
 #' Read BUPID results.
 #' 
 #' Read BUPID results and create and object from them.
@@ -25,7 +23,7 @@
 #' @param url
 #' a url where the data can be retreived
 #'
-#' @return Returns the results as an R object.
+#' @return Returns the results as a bupid object.
 #'
 #' @examples
 #' server <- "http://bumc-florida.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
@@ -42,5 +40,8 @@ read.bupid <- function(file=NULL,url=NULL){
 	else
 		res <- yaml.load_file(file)
 
-	res
+	cres <- new("bupid")
+	cres <- populate(cres,res)
+
+	cres
 }
