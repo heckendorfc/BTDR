@@ -35,9 +35,21 @@ setMethod("subset",signature="bupid", definition=function(x,subset,select,drop=F
 		if(select=="overview")
 			pidsb <- whichvec(x@internal@prot$name,tmp$protein.name)
 		else if(select=="protein")
-			pidsb <- whichvec(x@internal@prot$name,row.names(tmp$protein))
+			pidsb <- whichvec(x@internal@prot$name,row.names(tmp))
 
 		x@internal@prot <- x@internal@prot[pidsb,]
+		for(n in l)
+			eval(parse(text=paste("x@internal@",n,"<-",paste("filter",n,sep="."),"(x@internal)",sep="")))
+		return(x)
+	}
+	else if(select=="fragment"){
+		l <- c("prot", "search","tag","param","decon","scan")
+
+		#fidsb <- rep(FALSE,nrow(x@internal@fit))
+		#fidsb[as.integer(row.names(tmp))] <- TRUE
+		fidsb <- as.integer(row.names(tmp))
+
+		x@internal@fit <- x@internal@fit[fidsb,]
 		for(n in l)
 			eval(parse(text=paste("x@internal@",n,"<-",paste("filter",n,sep="."),"(x@internal)",sep="")))
 		return(x)
@@ -45,7 +57,8 @@ setMethod("subset",signature="bupid", definition=function(x,subset,select,drop=F
 })
 
 whichvec <- function(tx,te){
-	sapply(tx,FUN=function(x)length(which(x==te))>0)
+	#sapply(tx,FUN=function(x)length(which(x==te))>0)
+	tx %in% te
 }
 
 filter.scan <- function(ib){
@@ -73,12 +86,20 @@ filter.tag <- function(ib){
 filter.search <- function(ib){
 	#peakidb <- whichvec(ib@search$peakid,ib@prot$peakid)
 	#rankidb <- whichvec(ib@search$rank,ib@prot$protid)
-	protidb <- whichvec(ib@search$searchid,paste(ib@prot$peakid,ib@prot$protid,sep="-"))
+	protidb <- whichvec(ib@search$searchid,get_unique_prot_id(ib@prot$peakid,ib@prot$protid))
 	#ib@search[rankidb&peakidb,]
 	ib@search[protidb,]
 }
 
 filter.fit <- function(ib){
-	protidb <- whichvec(ib@fit$peak.id,ib@prot$peakid)
+	#protidb <- whichvec(ib@fit$peak.id,ib@prot$peakid)
+	protidb <- whichvec(get_unique_prot_id(ib@fit$peak.id,ib@fit$protid),get_unique_prot_id(ib@prot$peakid,ib@prot$protid))
 	ib@fit[protidb,]
+}
+
+filter.prot <- function(ib){
+	# is this only called after fit filter?
+	#sid <- whichvec(get_unique_protid(ib@prot$peakid,ib@prot$protid),ib@search$searchid)
+	fid <- whichvec(get_unique_prot_id(ib@prot$peakid,ib@prot$protid),get_unique_prot_id(ib@fit$peak.id,ib@fit$protid))
+	ib@prot[fid,]
 }

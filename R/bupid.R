@@ -58,10 +58,33 @@ setMethod("getview",signature="bupid", definition=function(object,type){
 		}))
 		td
 	}
+	else if(type=="fragment"){
+		td <- do.call("rbind",lapply(unique(get_unique_prot_id(object@internal@fit$peak.id,object@internal@fit$protid)),FUN=function(id){
+			fid <- which(get_unique_prot_id(object@internal@fit$peak.id,object@internal@fit$protid)==id)
+			fdf <- object@internal@fit[fid,c("peak.index","peak.mass","peak.intensity","peak.z","ion.start","ion.len","ion.mass","frag","error")]
+			row.names(fdf) <- fid
+			#data.frame(peak.index=fdf$peak.index,
+					   #peak.mass=fdf$peak.mass,
+					   #peak.intensity=fdf$peak.intensity,
+					   #peak.z=fdf$peak.z,
+					   #ion.start=fdf$ion.start,
+					   #ion.len=fdf$ion.len,
+					   #ion.mass=fdf$ion.mass,
+					   #frag=fdf$frag,
+					   #error=fdf$error,
+					   #row.names=fid)
+			fdf
+		}))
+		#row.names(td) <- NULL
+		td
+	}
 })
 
-get_unique_protid <- function(prot){
-	paste(prot$param$peaks$id,prot$id,sep="-")
+get_unique_prot_id <- function(peakid,protid){
+	paste(peakid,protid,sep="-")
+}
+get_unique_protid_list <- function(prot){
+	get_unique_prot_id(prot$param$peaks$id,prot$id)
 }
 
 setGeneric("populate",def=function(object,data){})
@@ -73,9 +96,9 @@ setMethod("populate",signature="bupid", definition=function(object,data){
 	tagres <- do.call("rbind",lapply(data$search,FUN=function(sl)
 		do.call("rbind",lapply(sl$tags,FUN=function(ttl,id)
 			data.frame(searchid=id,start=ttl$start,length=ttl$len)
-		,get_unique_protid(sl$prot)))
+		,get_unique_protid_list(sl$prot)))
 	))
-	searchres <- do.call("rbind",lapply(data$search,FUN=function(sl)data.frame(searchid=get_unique_protid(sl$prot),peakid=sl$prot$param$peak$id,rank=sl$id,score=sl$score,cov=sl$cov)))
+	searchres <- do.call("rbind",lapply(data$search,FUN=function(sl)data.frame(searchid=get_unique_protid_list(sl$prot),peakid=sl$prot$param$peak$id,rank=sl$id,score=sl$score,cov=sl$cov)))
 	fitres <- do.call("rbind",lapply(data$fit,FUN=function(fl){
 		do.call("rbind",lapply(fl$results,FUN=function(fr,id,flp){
 			data.frame(protid=id,
