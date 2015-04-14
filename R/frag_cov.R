@@ -5,8 +5,6 @@
 #' 
 #' @param data
 #' output from read.bupid
-#' @param fitid
-#' peak fit result index to process
 #' @param file
 #' the output file name
 #' @param columns
@@ -91,23 +89,10 @@ fragment.term <- function(fragname){
 	.get.path(sx,sy,ldown1,ldown2,lover,params$scale)
 }
 
-fragment.coverage.convert.input <- function (data,fitid=1L){
-	fi <- which(sapply(1:length(data$fit),FUN=function(df)if(data$fit[[df]]$prot$param$peaks$id==fitid)df else 0)>0)
-	dfi <- data$fit[[fi]]
-	#ret <- do.call("rbind",lapply(dfi$results,FUN=function(res){
-	ret <- ldply(dfi$results,.fun=function(res){
-		term <- fragment.term(res$frag)
-		if(is.null(term) || term==""){
-			return(data.frame(term="",num=-1L))
-		}
-		num <- res$ion$len
-		#num <- if(term=="N") res$ion$len else res$ion$start-1
-		data.frame(term=term,num=num);
-	})
-	#ret <- t(ret)
-	bad <- which(ret[,"term"]=="")
-	if(length(bad)>0)
-		ret <- ret[-bad,]
+.fragment.coverage.convert.input <- function (data){
+	term <- fragment.term(data$frag)
+	t1 <- which(term %in% c("N","C"))
+	ret <- data.frame(term=term[t1],num=data$ion.len[t1])
 	ret
 }
 
@@ -115,9 +100,21 @@ fragment.coverage.convert.input <- function (data,fitid=1L){
 #'
 #' @rdname fragment.coverage
 #' @export fragment.coverage
-fragment.coverage <- function(data,file="cov.svg",columns=25L,scale=2,fitid=1L,color=T){
-	gdata <- fragment.coverage.convert.input(data,fitid)
-	fragment.coverage.generic(gdata,data$prot[[1]]$seq,file,columns,scale,color)
+fragment.coverage <- function(data,file="cov.svg",columns=25L,scale=2,color=T){
+	pn <- unique(data@internal@prot$name)
+	if(length(pn)>1){
+		sapply(pn,FUN=function(n){
+			pids <- which(data@internal@prot$name==n)
+			fids <- get_unique_prot_id(data@internal@fit$peak.id,data@internal@fit$protid) %in%
+										  get_unique_prot_id(data@internal@prot$peakid[pids],data@internal@prot$protid[pids])
+
+			gdata <- .fragment.coverage.convert.input(data@internal@fit[fids,])
+			fragment.coverage.generic(gdata,as.character(data@internal@prot$seq[1]),paste(strsplit(as.character(n),"[|]")[[1]][1],file,sep="."),columns,scale,color)
+		})
+	} else{
+		gdata <- .fragment.coverage.convert.input(data@internal@fit)
+		fragment.coverage.generic(gdata,as.character(data@internal@prot$seq[1]),file,columns,scale,color)
+	}
 }
 
 #' The fragment coverage image can also be called using a generic
