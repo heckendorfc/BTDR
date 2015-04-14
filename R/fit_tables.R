@@ -4,8 +4,6 @@
 #'
 #' @param data
 #' output from read.bupid
-#' @param fitid
-#' peak fit result index to process
 #' @param format
 #' decides the return type: list or matrix
 #' 
@@ -27,41 +25,37 @@ NULL
 	fi
 }
 
-.modstr <- function(mods){
-	if(length(mods)<1)
-		""
-	else{
-		str <- sapply(mods,FUN=function(mod) paste(mod$mod$name,mod$num,sep="x"))
-		paste(str,collapse=" ")
-	}
-}
-
 .get.frag.name <- function(res){
 	term <- fragment.term(res$frag)
-	if(!is.null(term) && (term=="N" || term=="C"))
-		name <- res$ion$len
-	else
-		name <- paste(res$ion$start+1,res$ion$len,sep=",")
+
+	name <- character(nrow(res))
+	t1 <- which(term %in% c("N","C"))
+	name[t1] <- res$ion.len[t1]
+	t2 <- which(term=="")
+	name[t2] <- paste(res$ion.start[t2]+1,res$ion.len[t2],sep=",")
 
 	paste0(res$frag,"[",name,"]")
 }
 
+.ppm.error <- function(res){
+	err <- res$error/res$peak.mass*1e6
+	err <- round(err,digits=4)
+	err
+}
+
 .matched.row <- function(res,peaks){
 	name <- .get.frag.name(res)
-	mod <- .modstr(res$mods)
-	pkmass <- peaks$mass[res$peak+1]
-	pkint <- peaks$intensity[res$peak+1]/max(peaks$intensity)
-	err <- res$err/pkmass*1e6
-	err <- round(err,digits=4)
+	mod <- res$mods
+	pkmass <- res$peak.mass
+	pkint <- res$peak.intensity/max(res$peak.intensity)
+	err <- .ppm.error(res)
 
-	data.frame(name=name,mods=mod,start=res$ion$start+1,end=res$ion$start+res$ion$len,massE=pkmass,massT=res$ion$mass,intensity=pkint,ppmMassError=err,stringsAsFactors=F)
+	data.frame(name=name,mods=mod,start=res$ion.start+1,end=res$ion.start+res$ion.len,massE=pkmass,massT=res$ion.mass,intensity=pkint,ppmMassError=err,stringsAsFactors=F)
 }
 
 .fix.df <- function(df){
 	cbind(df[!sapply(df, is.list)],(t(apply(df[sapply(df, is.list)], 1, unlist))))
 }
-
-
 
 #' fit.matched.ions generates a matrix containing detailed information about the assigned fragments.
 #' 
@@ -70,22 +64,26 @@ NULL
 #' @rdname fit.matched
 #' @export fit.matched.ions
 fit.matched.ions <- function(data,fitid=1L){
-	res <- do.call("rbind",lapply(data$fit[[fitid]]$results,.matched.row,data$peaks[[fitid]]))
+	.matched.row(data@internal@fit)
+	#res <- do.call("rbind",lapply(data$fit[[fitid]]$results,.matched.row,data$peaks[[fitid]]))
 	#colnames(res) <- c("name","mods","start","end","massE","massT","intensity","ppmMassError")
 
 	#resdf <- .fix.df(as.data.frame(res))
 
-	res
+	#res
 }
 
-.get.peak.name <- function(pid,peaks){
-	paste(peaks$mass[pid],paste0("(",(peaks$intensity[pid]/max(peaks$intensity))*100,"%)"),sep=" ")
+.get.peak.name <- function(pid,data,peaks){
+	paste(data$peak.mass[pid],paste0("(",(data$peak.intensity[pid]/max(data$peak.intensity))*100,"%)"),sep=" ")
 }
 
 .matched.peak.row <- function(pid,res,peaks){
-	rlist <- which(lapply(res,FUN=function(ri)if(ri$peak==pid)T else F)==T)
-	ro <- order(sapply(rlist,FUN=function(x)res[[x]]$err))
-	sapply(ro,FUN=function(x).get.frag.name(res[[rlist[x]]]))
+	ri <- which(peaks==pid)
+	ro <- order(res[ri,"error"])
+	.get.frag.name(res[ri[ro],])
+	#rlist <- which(lapply(res,FUN=function(ri)if(ri$peak==pid)T else F)==T)
+	#ro <- order(sapply(rlist,FUN=function(x)res[[x]]$err))
+	#sapply(ro,FUN=function(x).get.frag.name(res[[rlist[x]]]))
 }
 
 #' fit.matched.peaks generates the assigned fragments with matches grouped by matched peak.
@@ -94,12 +92,15 @@ fit.matched.ions <- function(data,fitid=1L){
 #' 
 #' @rdname fit.matched
 #' @export fit.matched.peaks
-fit.matched.peaks <- function(data,fitid=1L,format="list"){
-	peaks <- unique(sapply(data$fit[[fitid]]$results,FUN=function(res)res$peak))
-	peaks <- sort(peaks)
-	res <- lapply(peaks,FUN=.matched.peak.row,data$fit[[fitid]]$results,data$peaks[[fitid]])
-	peaks <- peaks+1
-	names(res) <- sapply(peaks,FUN=.get.peak.name,data$peaks[[fitid]])
+fit.matched.peaks <- function(data,format="list"){
+	vd <- data@internal@fit
+	peaks <- unique(get_unique_prot_id(vd$protid,vd$peak.index))
+	#unique(sapply(data$fit[[fitid]]$results,FUN=function(res)res$peak))
+	#peaks <- sort(peaks)
+	res <- lapply(peaks,FUN=.matched.peak.row,vd,peaks)
+	#peaks <- peaks+1
+	#names(res) <- sapply(peaks,FUN=.get.peak.name,vd,peaks)
+	names(res) <- paste(vd$peak.mass,paste0("(",(vd$peak.intensity/max(vd$peak.intensity))*100,"%)"),sep=" ")
 	if(format=="list")
 		res
 	else{ #matrix
@@ -113,13 +114,12 @@ fit.matched.peaks <- function(data,fitid=1L,format="list"){
 	}
 }
 
-.matched.cluster.row <- function(res,peaks){
+.matched.cluster.row <- function(res){
 	name <- .get.frag.name(res)
-	pkmass <- peaks$mass[res$peak+1]
-	pkz <- peaks$z[res$peak+1]
-	pkint <- peaks$intensity[res$peak+1]/max(peaks$intensity)
-	err <- res$err/pkmass*1e6
-	err <- round(err,digits=4)
+	pkmass <- res$peak.mass
+	pkz <- res$peak.z
+	pkint <- res$peak.intensity#[res$peak+1]/max(peaks$intensity)
+	err <- .ppm.error(res)
 	mz <- (pkmass+pkz*(1.007825035-0.000549))/pkz
 
 	data.frame(name=name,intensity=pkint,ppmMassError=err,monoisotopicMZ=mz,z=pkz,stringsAsFactors=F)
@@ -133,7 +133,6 @@ fit.matched.peaks <- function(data,fitid=1L,format="list"){
 #' @rdname fit.matched
 #' @export fit.matched.clusters
 fit.matched.clusters <- function(data,fitid=1L){
-	res <- do.call("rbind",lapply(data$fit[[fitid]]$results,.matched.cluster.row,data$peaks[[fitid]]))
-
-	res
+	vd <- getview(data,"fragment")
+	.matched.cluster.row(vd)
 }

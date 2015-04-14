@@ -61,7 +61,7 @@ setMethod("getview",signature="bupid", definition=function(object,type){
 	else if(type=="fragment"){
 		td <- do.call("rbind",lapply(unique(get_unique_prot_id(object@internal@fit$peak.id,object@internal@fit$protid)),FUN=function(id){
 			fid <- which(get_unique_prot_id(object@internal@fit$peak.id,object@internal@fit$protid)==id)
-			fdf <- object@internal@fit[fid,c("peak.index","peak.mass","peak.intensity","peak.z","ion.start","ion.len","ion.mass","frag","error")]
+			fdf <- object@internal@fit[fid,c("peak.index","peak.mass","peak.intensity","peak.z","ion.start","ion.len","ion.mass","frag","mods","error")]
 			row.names(fdf) <- fid
 			#data.frame(peak.index=fdf$peak.index,
 					   #peak.mass=fdf$peak.mass,
@@ -85,6 +85,15 @@ get_unique_prot_id <- function(peakid,protid){
 }
 get_unique_protid_list <- function(prot){
 	get_unique_prot_id(prot$param$peaks$id,prot$id)
+}
+
+.modstr <- function(mods){
+	if(length(mods)<1)
+		""
+	else{
+		str <- sapply(mods,FUN=function(mod) paste(mod$mod$name,mod$num,sep="x"))
+		paste(str,collapse=" ")
+	}
 }
 
 setGeneric("populate",def=function(object,data){})
@@ -111,6 +120,7 @@ setMethod("populate",signature="bupid", definition=function(object,data){
 				ion.len=fr$ion$len,
 				ion.mass=fr$ion$mass,
 				frag=fr$frag,
+				mods=.modstr(fr$mods),
 				error=fr$err
 				)}
 		,fl$prot$id,fl$prot$param$peaks))

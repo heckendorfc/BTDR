@@ -34,13 +34,11 @@
 NULL
 
 fragment.term <- function(fragname){
+	ret <- rep("",length(fragname))
 	small <- substr(fragname,1,1)
-	if(length(which(c("a","b","c")==small))>0)
-		"N"
-	else if(length(which(c("x","y","z")==small))>0)
-		"C"
-	else
-		""
+	ret[small %in% c("a","b","c")] <- "N"
+	ret[small %in% c("x","y","z")] <- "C"
+	ret
 }
 
 .get.frag.color <- function(frag,color=T){
