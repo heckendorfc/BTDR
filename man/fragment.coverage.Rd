@@ -6,21 +6,19 @@
 \title{Plot fragment coverage}
 \usage{
 fragment.coverage(data, file = "cov.svg", columns = 25L, scale = 2,
-  fitid = 1L, color = T)
+  color = T)
 
 fragment.coverage.generic(data, sequence, file = "cov.svg", columns = 25L,
   scale = 2, color = T)
 }
 \arguments{
-\item{data}{output from read.bupid}
+\item{data}{a bupid object; output from read.bupid}
 
 \item{file}{the output file name}
 
 \item{columns}{the number of columns (residues per line) to use for the sequence}
 
 \item{scale}{magnification factor for the image}
-
-\item{fitid}{peak fit result index to process}
 
 \item{color}{boolean value with true indicating the fragments should be coloured red/blue
 and false making them all black.}

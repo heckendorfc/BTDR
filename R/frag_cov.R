@@ -4,7 +4,7 @@
 #' protein sequence.
 #' 
 #' @param data
-#' output from read.bupid
+#' a bupid object; output from read.bupid
 #' @param file
 #' the output file name
 #' @param columns
@@ -101,19 +101,19 @@ fragment.term <- function(fragname){
 #' @rdname fragment.coverage
 #' @export fragment.coverage
 fragment.coverage <- function(data,file="cov.svg",columns=25L,scale=2,color=T){
-	pn <- unique(data@internal@prot$name)
+	pn <- unique(data@prot$name)
 	if(length(pn)>1){
 		sapply(pn,FUN=function(n){
-			pids <- which(data@internal@prot$name==n)
-			fids <- get_unique_prot_id(data@internal@fit$peak.id,data@internal@fit$protid) %in%
-										  get_unique_prot_id(data@internal@prot$peakid[pids],data@internal@prot$protid[pids])
+			pids <- which(data@prot$name==n)
+			fids <- get_unique_prot_id(data@fit$peak.id,data@fit$protid) %in%
+										  get_unique_prot_id(data@prot$peakid[pids],data@prot$protid[pids])
 
-			gdata <- .fragment.coverage.convert.input(data@internal@fit[fids,])
-			fragment.coverage.generic(gdata,as.character(data@internal@prot$seq[1]),paste(strsplit(as.character(n),"[|]")[[1]][1],file,sep="."),columns,scale,color)
+			gdata <- .fragment.coverage.convert.input(data@fit[fids,])
+			fragment.coverage.generic(gdata,as.character(data@prot$seq[1]),paste(strsplit(as.character(n),"[|]")[[1]][1],file,sep="."),columns,scale,color)
 		})
 	} else{
-		gdata <- .fragment.coverage.convert.input(data@internal@fit)
-		fragment.coverage.generic(gdata,as.character(data@internal@prot$seq[1]),file,columns,scale,color)
+		gdata <- .fragment.coverage.convert.input(data@fit)
+		fragment.coverage.generic(gdata,as.character(data@prot$seq[1]),file,columns,scale,color)
 	}
 }
 

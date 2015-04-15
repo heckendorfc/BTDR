@@ -15,13 +15,19 @@ of a BUPID Top-Down run and post-processing utilities.
 \section{Slots}{
 
 \describe{
-\item{\code{internal}}{The internal structure used to populate views}
+\item{\code{scan}}{Scan header information}
 
-\item{\code{raw}}{Raw results from yaml.load used to populate internal}
+\item{\code{decon}}{Peak lists}
 
-\item{\code{view}}{The user-level structure containing a subset of the results}
+\item{\code{param}}{Parameters used for each peak list}
 
-\item{\code{type}}{The type of view currently active}
+\item{\code{prot}}{Protein candidates selected}
+
+\item{\code{search}}{Database search results}
+
+\item{\code{tag}}{Sequence tags identified}
+
+\item{\code{fit}}{Fragment ions identified}
 }}
 \keyword{Class}
 

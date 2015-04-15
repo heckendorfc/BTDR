@@ -4,12 +4,10 @@
 \alias{fragment.mass.error}
 \title{Plot mass errors for fragment assignments.}
 \usage{
-fragment.mass.error(data, fitid = 1L)
+fragment.mass.error(data)
 }
 \arguments{
 \item{data}{output from read.bupid}
-
-\item{fitid}{peak fit result index to process}
 }
 \value{
 Returns the ggplot object representing the plot.

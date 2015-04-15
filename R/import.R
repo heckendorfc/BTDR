@@ -40,8 +40,7 @@ read.bupid <- function(file=NULL,url=NULL){
 	else
 		res <- yaml.load_file(file)
 
-	cres <- new("bupid")
-	cres <- populate(cres,res)
+	cres <- bupidpopulate(res)
 
 	cres
 }

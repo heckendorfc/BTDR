@@ -33,25 +33,25 @@ setMethod("subset",signature="bupid", definition=function(x,subset,select,drop=F
 		l <- c("fit","search","tag","param","decon","scan")
 
 		if(select=="overview")
-			pidsb <- whichvec(x@internal@prot$name,tmp$protein.name)
+			pidsb <- whichvec(x@prot$name,tmp$protein.name)
 		else if(select=="protein")
-			pidsb <- whichvec(x@internal@prot$name,row.names(tmp))
+			pidsb <- whichvec(x@prot$name,row.names(tmp))
 
-		x@internal@prot <- x@internal@prot[pidsb,]
+		x@prot <- x@prot[pidsb,]
 		for(n in l)
-			eval(parse(text=paste("x@internal@",n,"<-",paste("filter",n,sep="."),"(x@internal)",sep="")))
+			eval(parse(text=paste("x@",n,"<-",paste("filter",n,sep="."),"(x)",sep="")))
 		return(x)
 	}
 	else if(select=="fragment"){
 		l <- c("prot", "search","tag","param","decon","scan")
 
-		#fidsb <- rep(FALSE,nrow(x@internal@fit))
+		#fidsb <- rep(FALSE,nrow(x@fit))
 		#fidsb[as.integer(row.names(tmp))] <- TRUE
 		fidsb <- as.integer(row.names(tmp))
 
-		x@internal@fit <- x@internal@fit[fidsb,]
+		x@fit <- x@fit[fidsb,]
 		for(n in l)
-			eval(parse(text=paste("x@internal@",n,"<-",paste("filter",n,sep="."),"(x@internal)",sep="")))
+			eval(parse(text=paste("x@",n,"<-",paste("filter",n,sep="."),"(x)",sep="")))
 		return(x)
 	}
 })

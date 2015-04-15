@@ -25,3 +25,15 @@ NULL
 setMethod("print",signature="bupid", definition=function(x,type="overview"){
 	getview(x,type)
 })
+
+#' @rdname bupid-print
+#' @export 
+setMethod("head",signature="bupid", definition=function(x,type="overview"){
+	head(print(x,type))
+})
+
+#' @rdname bupid-print
+#' @export 
+setMethod("tail",signature="bupid", definition=function(x,type="overview"){
+	tail(print(x,type))
+})

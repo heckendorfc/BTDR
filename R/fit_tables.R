@@ -20,11 +20,6 @@
 #' @name fit.matched
 NULL
 
-.fitid.by.peaklistid <- function(data,peaklistid){
-	fi <- which(sapply(1:length(data$fit),FUN=function(df)if(data$fit[[df]]$prot$param$peaks$id==peaklistid)df else 0)>0)
-	fi
-}
-
 .get.frag.name <- function(res){
 	term <- fragment.term(res$frag)
 
@@ -63,8 +58,8 @@ NULL
 #' 
 #' @rdname fit.matched
 #' @export fit.matched.ions
-fit.matched.ions <- function(data,fitid=1L){
-	.matched.row(data@internal@fit)
+fit.matched.ions <- function(data){
+	.matched.row(data@fit)
 	#res <- do.call("rbind",lapply(data$fit[[fitid]]$results,.matched.row,data$peaks[[fitid]]))
 	#colnames(res) <- c("name","mods","start","end","massE","massT","intensity","ppmMassError")
 
@@ -93,7 +88,7 @@ fit.matched.ions <- function(data,fitid=1L){
 #' @rdname fit.matched
 #' @export fit.matched.peaks
 fit.matched.peaks <- function(data,format="list"){
-	vd <- data@internal@fit
+	vd <- data@fit
 	peaks <- unique(get_unique_prot_id(vd$protid,vd$peak.index))
 	#unique(sapply(data$fit[[fitid]]$results,FUN=function(res)res$peak))
 	#peaks <- sort(peaks)
@@ -132,7 +127,7 @@ fit.matched.peaks <- function(data,format="list"){
 #' 
 #' @rdname fit.matched
 #' @export fit.matched.clusters
-fit.matched.clusters <- function(data,fitid=1L){
+fit.matched.clusters <- function(data){
 	vd <- getview(data,"fragment")
 	.matched.cluster.row(vd)
 }
