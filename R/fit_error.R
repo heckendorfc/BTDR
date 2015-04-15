@@ -4,8 +4,6 @@
 #'
 #' @param data
 #' output from read.bupid
-#' @param fitid
-#' peak fit result index to process
 #'
 #' @return Returns the ggplot object representing the plot.
 #'
@@ -18,13 +16,16 @@
 #' dev.off()
 #'
 #' @export fragment.mass.error
-fragment.mass.error <- function(data,fitid=1L){
-	resterm <- sapply(data$fit[[fitid]]$results,FUN=function(r)fragment.term(r$frag))
-	resi <- c(which(resterm=="C"),which(resterm=="N"))
-	res <- lapply(1:length(resi),FUN=function(i)data$fit[[fitid]]$results[[i]])
-	err <- sapply(res,FUN=function(r)r$err/r$ion$mass*1e6)
-	vmass <- sapply(res,FUN=function(r)r$ion$mass)
-	vcolor <- sapply(1:length(resi),FUN=function(i)if(resterm[i]=="N") "red" else "blue")
+fragment.mass.error <- function(data){
+	resterm <- fragment.term(data@fit$frag)
+	err <- .ppm.error(data@fit)
+	vmass <- data@fit$ion.mass
+
+	nt <- which(resterm=="N")
+	ct <- which(resterm=="C")
+	vcolor <- rep("black",length(resterm))
+	vcolor[nt] <- "red"
+	vcolor[ct] <- "blue"
 	df <- data.frame(ppmError=err,mass=vmass,color=vcolor)
 	ggplot(df,aes(x=mass,y=ppmError)) + geom_point(colour=df$color) + geom_hline(aes(colour=black),yintercept=0)
 }
