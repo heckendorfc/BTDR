@@ -72,7 +72,7 @@ fragment.term <- function(fragname){
 	cs <- which(res["term"] == "C")
 	si <- c(si[ns]-1,seqlen-si[cs]-1)
 
-	sx <- params$startx+0.5*params$xsp+((si%%params$numperline)*params$xsp);
+	sx <- params$scale*3+params$startx+0.5*params$xsp+((si%%params$numperline)*params$xsp);
 	sy <- params$starty+(floor(si/params$numperline)*params$ysp);
 
 	if(res["term"]=="N"){
@@ -141,15 +141,21 @@ fragment.coverage.generic <- function(data,sequence,file="cov.svg",columns=25L,s
 	cy <- sapply(0:(nchar(sequence)-1),FUN=function(i)floor(i/params$numperline)*params$ysp+params$starty)
 
 	tx <- max(cx)+params$startx+params$xsp
-	ty <- max(cy)+params$starty+params$ysp
+	ty <- max(cy)+params$starty
 
-	xml <- xmlTree("svg",attrs=c(viewbox=paste0(c(0,0,tx,ty),collapse=" ")), namespaces=c("http://www.w3.org/2000/svg",xsi="http://www.w3.org/2001/XMLSchema-instance"), dtd=c("svg","-//W3C//DTD SVG 1.1//EN","http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"))
-	xml$addNode("text",sequence,attrs=c(x=paste0(cx,collapse=" "),y=paste0(cy,collapse=" "),"text-anchor"="middle","font-family"="sans-serif","font-size"=10*params$scale,fill="#000","dominant-baseline"="middle"))
+	xml <- xmlTree("svg",attrs=c(viewbox=paste0(c(0,0,tx,ty),collapse=" "),width=tx,height=ty), namespaces=c("http://www.w3.org/2000/svg",xsi="http://www.w3.org/2001/XMLSchema-instance"), dtd=c("svg","-//W3C//DTD SVG 1.1//EN","http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"))
+	xml$addNode("text","",attrs=c(),close=F)
+	#xml$addNode("text","",attrs=c(x=paste0(cx,collapse=" "),y=paste0(cy,collapse=" "),"font-family"="sans-serif","font-size"=paste(10*params$scale,"px",sep=""),fill="#000"),close=F)
+		xml$addNode("tspan",sequence,attrs=c(x=paste0(cx,collapse=" "),y=paste0(cy,collapse=" "),"font-family"="sans-serif","font-size"=paste(10*params$scale,"px",sep=""),fill="#000",dy=paste(rep(params$scale*3,nchar(sequence)),collapse=" ")))
+	xml$closeTag() #text
+	#xml$addNode("text",sequence,attrs=c(x=paste0(cx,collapse=" "),y=paste0(cy,collapse=" "),"text-anchor"="middle","font-family"="sans-serif","font-size"=paste(10*params$scale,"px",sep=""),fill="#000","dominant-baseline"="middle"))
 
 	for(i in 1:(nrow(data))){
-			fcolor <- .get.frag.color(data[i,"term"],color=color)
-			xml$addNode("path",attrs=c(d=.get.frag.path(data[i,],params,nchar(sequence)),stroke=fcolor,fill=fcolor))
+		fcolor <- .get.frag.color(data[i,"term"],color=color)
+		xml$addNode("path",attrs=c(d=.get.frag.path(data[i,],params,nchar(sequence)),stroke=fcolor,fill=fcolor))
 	}
+	fcolor <- .get.frag.color("C",color=color)
+	xml$addNode("path",attrs=c(d=.get.frag.path(data.frame(term="C",num=nchar(sequence)-11-1),params,nchar(sequence)),stroke=fcolor,fill=fcolor))
 
 	saveXML(xml,file,indent=T)
 }
