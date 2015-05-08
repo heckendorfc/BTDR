@@ -35,7 +35,7 @@ setMethod("subset",signature="bupid", definition=function(x,subset,select,drop=F
 		if(select=="overview")
 			pidsb <- whichvec(x@prot$name,tmp$protein.name)
 		else if(select=="protein")
-			pidsb <- whichvec(x@prot$name,row.names(tmp))
+			pidsb <- whichvec(get_unique_prot_id(x@prot$peakid,x@prot$protid),row.names(tmp))
 
 		x@prot <- x@prot[pidsb,]
 		for(n in l)

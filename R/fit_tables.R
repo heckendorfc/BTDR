@@ -110,14 +110,17 @@ fit.matched.peaks <- function(data,format="list"){
 }
 
 .matched.cluster.row <- function(res){
-	name <- .get.frag.name(res)
-	pkmass <- res$peak.mass
-	pkz <- res$peak.z
-	pkint <- res$peak.intensity#[res$peak+1]/max(peaks$intensity)
-	err <- .ppm.error(res)
+	scans <- sapply(res@fit$peak.id,FUN=function(x){
+		paste(res@scan$scanid[which(res@scan$plid==x)],collapse=" ")
+	})
+	name <- .get.frag.name(res@fit)
+	pkmass <- res@fit$peak.mass
+	pkz <- res@fit$peak.z
+	pkint <- res@fit$peak.intensity#[res$peak+1]/max(peaks$intensity)
+	err <- .ppm.error(res@fit)
 	mz <- (pkmass+pkz*(1.007825035-0.000549))/pkz
 
-	data.frame(name=name,intensity=pkint,ppmMassError=err,monoisotopicMZ=mz,z=pkz,stringsAsFactors=F)
+	data.frame(scanIDs=scans,name=name,intensity=pkint,ppmMassError=err,monoisotopicMZ=mz,z=pkz,stringsAsFactors=F)
 }
 
 
@@ -128,6 +131,6 @@ fit.matched.peaks <- function(data,format="list"){
 #' @rdname fit.matched
 #' @export fit.matched.clusters
 fit.matched.clusters <- function(data){
-	vd <- getview(data,"fragment")
-	.matched.cluster.row(vd)
+	#vd <- getview(data,"fragment")
+	.matched.cluster.row(data)
 }

@@ -60,7 +60,8 @@ setMethod("getview",signature="bupid", definition=function(object,type){
 					   tag.coverage=sdf$cov,
 					   tag.score=sdf$score,
 					   tag.rank=sdf$rank,
-					   row.names=id)
+					   scan.num=paste(object@scan$scanid[which(object@scan$plid==id)],collapse=" "),
+					   row.names=get_unique_prot_id(id,sdf$rank))
 		}))
 		td
 	}
@@ -114,6 +115,25 @@ bupidpopulate <- function(data){
 	))
 	searchres <- do.call("rbind",lapply(data$search,FUN=function(sl)data.frame(searchid=get_unique_protid_list(sl$prot),peakid=sl$prot$param$peak$id,rank=sl$id,score=sl$score,cov=sl$cov)))
 	fitres <- do.call("rbind",lapply(data$fit,FUN=function(fl){
+		#rdf <- fl$results
+		#peakid <- rdf$peak+1
+		#flp <- fl$prot$param$peaks
+		#n <- length(peakid)
+		#df <- data.frame(protid=rep(fl$prot$id,n),
+						 #peak.id=rep(flp$id,n),
+						 #peak.index=peakid,
+						 #peak.mass=flp$mass[peakid],
+						 #peak.intensity=flp$intensity[peakid],
+						 #peak.z=flp$z[peakid],
+						 #ion.start=rdf$ion.start,
+						 #ion.len=rdf$ion.len,
+						 #ion.mass=rdf$ion.mass,
+						 #frag=rdf$frag,
+						 #mods=rdf$mods,
+						 #error=rdf$err
+				   #)
+		#return(df)
+
 		do.call("rbind",lapply(fl$results,FUN=function(fr,id,flp){
 			data.frame(protid=id,
 				peak.id=flp$id,
