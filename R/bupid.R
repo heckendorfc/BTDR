@@ -25,7 +25,7 @@
 #'
 #' @keywords Class
 #' @name bupid-class
-setClass("bupid",representation(scan="data.frame",decon="data.frame",param="data.frame",prot="data.frame",search="data.frame",tag="data.frame",fit="data.frame"))
+setClass("bupid",representation(scan="data.frame",decon="data.frame",param="data.frame",mod="data.frame",prot="data.frame",search="data.frame",tag="data.frame",fit="data.frame"))
 
 setGeneric("getview",def=function(object,type){})
 setMethod("getview",signature="bupid", definition=function(object,type){
@@ -103,10 +103,29 @@ get_unique_protid_list <- function(prot){
 	}
 }
 
+.get.mod.field <- function(param,field){
+	c(unlist(sapply(param[["fmod"]],FUN=function(fm)fm[field])),
+	  unlist(sapply(param[["vmod"]],FUN=function(vm)vm[field])))
+}
+
 bupidpopulate <- function(data){
 	scanres <- do.call("rbind",lapply(data$peaks,FUN=function(pl)data.frame(plid=rep(pl$id,length(pl$scans)),scanid=sapply(pl$scans,FUN=function(ps)ps$id),mz=sapply(pl$scans,FUN=function(ps)ps$mz),z=sapply(pl$scans,FUN=function(ps)ps$z))))
 	deconres <- do.call("rbind",lapply(data$peaks,FUN=function(pl)data.frame(id=rep(pl$id,pl$num),mass=pl$mass,intensity=pl$intensity,z=pl$z)))
 	paramres <- do.call("rbind",lapply(data$param,FUN=function(pl)data.frame(peakid=pl$peaks$id,frag=pl$frag,mstol=pl$mstol,msmstol=pl$msmstol,msmass=pl$msmass,tax=pl$tax)))
+	modres <- do.call("rbind",lapply(data$param,FUN=function(pl){
+										fixed <- c(rep(1,length(pl$fmod)),rep(0,length(pl$vmod)))
+										#print(class(.get.mod.field(pl,"mass")))
+										#print(pl["vmod"][[1]])
+										if(length(fixed)==0){
+											NULL
+										} else{
+											data.frame(paramid=rep(pl$peaks$id,length(fixed)),
+													   fixed=fixed,
+													   name=.get.mod.field(pl,"name"),
+													   mass=.get.mod.field(pl,"mass"),
+													   pos=.get.mod.field(pl,"pos"),
+													   site=.get.mod.field(pl,"site"))
+										}}))
 	protres <- do.call("rbind",lapply(data$prot,FUN=function(pl)data.frame(protid=pl$id,peakid=pl$param$peaks$id,seq=pl$seq,name=pl$name)))
 	tagres <- do.call("rbind",lapply(data$search,FUN=function(sl)
 		do.call("rbind",lapply(sl$tags,FUN=function(ttl,id)
@@ -161,8 +180,10 @@ bupidpopulate <- function(data){
 		searchres <- data.frame()
 	if(is.null(fitres))
 		fitres <- data.frame()
+	if(is.null(modres))
+		modres <- data.frame()
 
-	object <- new("bupid",scan=scanres,decon=deconres,param=paramres,prot=protres,search=searchres,tag=tagres,fit=fitres)
+	object <- new("bupid",scan=scanres,decon=deconres,param=paramres,mod=modres,prot=protres,search=searchres,tag=tagres,fit=fitres)
 
 	object
 }
