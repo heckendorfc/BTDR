@@ -17,15 +17,10 @@
 #'
 #' @export fragment.mass.error
 fragment.mass.error <- function(data){
-	resterm <- fragment.term(data@fit$frag)
 	err <- .ppm.error(data@fit)
 	vmass <- data@fit$ion.mass
+	vcolor <- .fragment.color(data@fit)
 
-	nt <- which(resterm=="N")
-	ct <- which(resterm=="C")
-	vcolor <- rep("black",length(resterm))
-	vcolor[nt] <- "red"
-	vcolor[ct] <- "blue"
 	df <- data.frame(ppmError=err,mass=vmass,color=vcolor)
 	ggplot(df,aes(x=mass,y=ppmError)) + geom_point(colour=df$color) + geom_hline(aes(colour=black),yintercept=0)
 }
