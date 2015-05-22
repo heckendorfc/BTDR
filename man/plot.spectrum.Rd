@@ -6,9 +6,9 @@
 \alias{plot.theme.simple}
 \title{Plot spectra}
 \usage{
-\method{plot}{spectrum}(data, massrange = c(0, Inf))
+\method{plot}{spectrum}(data, massrange = c(0, Inf), color = "#000000")
 
-\method{plot}{label.spectrum}(data, massrange = c(0, Inf))
+\method{plot}{label.spectrum}(data, massrange = c(0, Inf), unicode = TRUE)
 
 \method{plot}{theme.simple}(base_size = 12)
 }
@@ -16,6 +16,10 @@
 \item{data}{output from read.bupid}
 
 \item{massrange}{a vector describing the lower and upper bounds of the mass range to plot}
+
+\item{color}{the color to use for unlabeled peaks}
+
+\item{unicode}{allow unicode characters in labels}
 }
 \value{
 Returns the ggplot object
