@@ -6,6 +6,10 @@
 #' output from read.bupid
 #' @param massrange
 #' a vector describing the lower and upper bounds of the mass range to plot
+#' @param color
+#' the color to use for unlabeled peaks
+#' @param unicode
+#' allow unicode characters in labels
 #' 
 #' @return Returns the ggplot object
 #'
@@ -25,11 +29,6 @@
 #' 
 #' @name plot.spectrum
 NULL
-
-.peak.name <- function(data,plid){
-	fid <- which(sapply(data$fit,FUN=function(x)if(x$prot$param$peaks$id==plid)T else F)==T)
-	ret <- sapply(data$fit[[fid]]$results,FUN=.get.frag.name)
-}
 
 #' plot.spectrum plots the deconvoluted peak list as a mass spectrum
 #' 
@@ -67,7 +66,7 @@ plot.spectrum <- function(data,massrange=c(0,Inf),color="#000000"){
 #' 
 #' @rdname plot.spectrum
 #' @export plot.label.spectrum
-plot.label.spectrum <- function(data,massrange=c(0,Inf)){
+plot.label.spectrum <- function(data,massrange=c(0,Inf),unicode=TRUE){
 	#labels <- sapply(data$peaks[[peaklistid]],FUN=function(i)c()
 	inds <- which(data@decon$mass>=massrange[1] & data@decon$mass<=massrange[2])
 	dp <- data@decon[inds,]
@@ -76,6 +75,11 @@ plot.label.spectrum <- function(data,massrange=c(0,Inf)){
 	#labels <- data.frame(mass=c(dp$mass[1],dp$mass[50]),intensity=c(dp$intensity[1],dp$intensity[50]),label=c("as","df"),color=c("red","blue"))
 	vcolor <- .fragment.color(fp)
 	labels <- data.frame(mass=fp$peak.mass,intensity=fp$peak.intensity,label=.get.frag.name(fp),color=vcolor)
+	if(unicode){
+		labels$label <- sub("[+]1","'",labels$label)
+		labels$label <- sub("-1","•",labels$label)
+		labels$label <- gsub("\\[|]","",labels$label)
+	}
 	#unique / diff ?
 	isl <- order(labels$intensity,decreasing=T)
 	unl <- !duplicated(cbind(round(labels$mass[isl]),labels$label[isl]))
@@ -86,7 +90,8 @@ plot.label.spectrum <- function(data,massrange=c(0,Inf)){
 	plot.spectrum(data,massrange,color="#888888")+
 	geom_segment(data=labels,aes(x=mass,xend=mass,y=intensity,yend=-Inf,colour=color))+
 	geom_text(data=labels,aes(x=mass,y=intensity,label=label,colour=color,hjust=0,vjust=0))+
-	scale_colour_manual(values=c("#0000FF", "#FF0000"),labels=c("C-term","N-term"),name="fragment")
+	scale_colour_manual(values=c("#0000FF", "#FF0000"),labels=c("C-term","N-term"),name="Fragment")+
+	theme(legend.justification=c(1,1), legend.position=c(1,1))
 }
 
 #' plot.theme.simple modifies the spectrum plot to use black axis labels and no background

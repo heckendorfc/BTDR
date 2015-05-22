@@ -9,3 +9,4 @@ Description: This package provides functions to analyze BUPID Top-Down results. 
 Depends: yaml, XML, RCurl, ggplot2, plyr
 License: What license?
 LazyData: true
+KeepSource: true
