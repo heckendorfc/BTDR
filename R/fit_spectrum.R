@@ -79,6 +79,7 @@ plot.label.spectrum <- function(data,massrange=c(0,Inf),unicode=TRUE){
 		labels$label <- sub("[+]1","'",labels$label)
 		labels$label <- sub("-1","•",labels$label)
 		labels$label <- gsub("\\[|]","",labels$label)
+		Encoding(labels$label) <- "UTF-8"
 	}
 	#unique / diff ?
 	isl <- order(labels$intensity,decreasing=T)
