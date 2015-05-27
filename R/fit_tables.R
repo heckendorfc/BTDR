@@ -1,6 +1,6 @@
-#' Peak fit tables
+#' Fragment assignment tables
 #'
-#' These functions generate tables using information from the peak fit module.
+#' These functions generate tables using information from the fragment assignment module.
 #'
 #' @param data
 #' output from read.bupid
@@ -13,11 +13,11 @@
 #' server <- "http://bumc-florida.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
 #' infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
 #' data <- read.bupid(url=paste(server,infile,sep="?"))
-#' fit.matched.ions(data)
-#' fit.matched.peaks(data)
-#' fit.matched.clusters(data)
+#' fragment.matched.ions(data)
+#' fragment.matched.peaks(data)
+#' fragment.matched.clusters(data)
 #' 
-#' @name fit.matched
+#' @name fragment.matched
 NULL
 
 .get.frag.name <- function(res){
@@ -52,13 +52,13 @@ NULL
 	cbind(df[!sapply(df, is.list)],(t(apply(df[sapply(df, is.list)], 1, unlist))))
 }
 
-#' fit.matched.ions generates a matrix containing detailed information about the assigned fragments.
+#' fragment.matched.ions generates a matrix containing detailed information about the assigned fragments.
 #' 
 #' @return Returns the matrix of assignments.
 #' 
-#' @rdname fit.matched
-#' @export fit.matched.ions
-fit.matched.ions <- function(data){
+#' @rdname fragment.matched
+#' @export fragment.matched.ions
+fragment.matched.ions <- function(data){
 	.matched.row(data@fit)
 	#res <- do.call("rbind",lapply(data$fit[[fitid]]$results,.matched.row,data$peaks[[fitid]]))
 	#colnames(res) <- c("name","mods","start","end","massE","massT","intensity","ppmMassError")
@@ -81,13 +81,13 @@ fit.matched.ions <- function(data){
 	#sapply(ro,FUN=function(x).get.frag.name(res[[rlist[x]]]))
 }
 
-#' fit.matched.peaks generates the assigned fragments with matches grouped by matched peak.
+#' fragment.matched.peaks generates the assigned fragments with matches grouped by matched peak.
 #' 
 #' @return Returns the list or matrix of assignments.
 #' 
-#' @rdname fit.matched
-#' @export fit.matched.peaks
-fit.matched.peaks <- function(data,format="list"){
+#' @rdname fragment.matched
+#' @export fragment.matched.peaks
+fragment.matched.peaks <- function(data,format="list"){
 	vd <- data@fit
 	peaks <- unique(get_unique_prot_id(vd$protid,vd$peak.index))
 	#unique(sapply(data$fit[[fitid]]$results,FUN=function(res)res$peak))
@@ -125,12 +125,12 @@ fit.matched.peaks <- function(data,format="list"){
 
 
 
-#' fit.matched.clusters generates a matrix of assignments along with their
+#' fragment.matched.clusters generates a matrix of assignments along with their
 #' original m/z and charge state values as seen in the raw spectra.
 #' 
-#' @rdname fit.matched
-#' @export fit.matched.clusters
-fit.matched.clusters <- function(data){
+#' @rdname fragment.matched
+#' @export fragment.matched.clusters
+fragment.matched.clusters <- function(data){
 	#vd <- getview(data,"fragment")
 	.matched.cluster.row(data)
 }

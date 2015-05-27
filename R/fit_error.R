@@ -22,5 +22,10 @@ fragment.mass.error <- function(data){
 	vcolor <- .fragment.color(data@fit)
 
 	df <- data.frame(ppmError=err,mass=vmass,color=vcolor)
-	ggplot(df,aes(x=mass,y=ppmError)) + geom_point(colour=df$color) + geom_hline(aes(colour=black),yintercept=0)
+
+	ggplot(df,aes(x=mass,y=ppmError))+
+	geom_point(aes(colour=color))+
+	geom_hline(aes(colour=black),yintercept=0)+ 
+	scale_colour_manual(values=c("#0000FF", "#FF0000","#444444"),labels=c("C-term","N-term","Other"),name="Fragment")+
+	theme(legend.justification=c(1,1), legend.position=c(1,1))
 }
