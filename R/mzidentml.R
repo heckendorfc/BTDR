@@ -146,7 +146,7 @@
 #' @return Returns the name of the file generated.
 #' @seealso \code{\link{read.bupid}}
 #' @examples
-#' server <- "http://bumc-florida.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
+#' server <- "http://bupid.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
 #' infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
 #' data <- read.bupid(url=paste(server,infile,sep="?"))
 #' write.mzid(data,"data.mzid",infile)
@@ -167,7 +167,7 @@ write.mzid <- function(data,file,inputfile=NULL){
 
 	# TODO: list each module ?
 	xml$addNode("AnalysisSoftwareList",close=F)
-		xml$addNode("AnalysisSoftware",attrs=c(id="AS_bupid_topdown",name="BUPID Top-Down",version="1.0.0",uri="http://bumc-florida.bumc.bu.edu/BUPID_TD/"),close=F)
+		xml$addNode("AnalysisSoftware",attrs=c(id="AS_bupid_topdown",name="BUPID Top-Down",version="1.0.0",uri="http://bupid.bumc.bu.edu/BUPID_TD/"),close=F)
 			xml$addNode("SoftwareName",close=F)
 				xml$addNode("userParam",attrs=c(name="BUPID Top-Down"))
 			xml$closeTag() #SoftwareName

@@ -19,7 +19,7 @@
 #' @return Returns the name of the file created.
 #' @examples
 #' #bupid version
-#' server <- "http://bumc-florida.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
+#' server <- "http://bupid.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
 #' infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
 #' data <- read.bupid(url=paste(server,infile,sep="?"))
 #' fragment.coverage(data,file="136_coverage.svg",columns=50)
