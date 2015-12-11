@@ -162,7 +162,7 @@ bupidpopulate <- function(data){
 				peak.z=flp$z[fr$peak+1],
 				ion.start=fr$ion$start,
 				ion.len=fr$ion$len,
-				ion.mass=fr$ion$mass,
+				ion.mass=flp$mass[fr$peak+1]-fr$err,
 				frag=fr$frag,
 				mods=.modstr(fr$mods),
 				error=fr$err

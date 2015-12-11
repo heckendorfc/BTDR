@@ -89,12 +89,14 @@ fragment.matched.ions <- function(data){
 #' @export fragment.matched.peaks
 fragment.matched.peaks <- function(data,format="list"){
 	vd <- data@fit
-	peaks <- unique(get_unique_prot_id(vd$protid,vd$peak.index))
+	uids <- get_unique_prot_id(vd$protid,vd$peak.index)
+	peaks <- unique(uids)
 	#unique(sapply(data$fit[[fitid]]$results,FUN=function(res)res$peak))
 	#peaks <- sort(peaks)
-	res <- lapply(peaks,FUN=.matched.peak.row,vd,peaks)
+	res <- lapply(peaks,FUN=.matched.peak.row,vd,uids)
 	#peaks <- peaks+1
 	#names(res) <- sapply(peaks,FUN=.get.peak.name,vd,peaks)
+	vd <- vd[!duplicated(uids),]
 	names(res) <- paste(vd$peak.mass,paste0("(",(vd$peak.intensity/max(vd$peak.intensity))*100,"%)"),sep=" ")
 	if(format=="list")
 		res
