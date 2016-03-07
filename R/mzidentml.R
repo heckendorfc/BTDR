@@ -11,11 +11,11 @@
 }
 
 .get_pep_evidenceid <- function(prot){
-	paste("PE",paste("PEP",get_unique_prot_id(prot$peakid,prot$id),sep="_"),sep="_")
+	paste("PE",paste("PEP",get_unique_prot_id(prot$peakid,prot$protid),sep="_"),sep="_")
 }
 
 .get_protid <- function(prot){
-	paste("PROT",paste("PEP",get_unique_prot_id(prot$peakid,prot$id),sep="_"),sep="_")
+	paste("PROT",paste("PEP",get_unique_prot_id(prot$peakid,prot$protid),sep="_"),sep="_")
 }
 
 .get_param_ms_max <- function(par){
@@ -95,13 +95,15 @@
 			paramind <- which(data@param$peakid==data@search[dsi,"peakid"])
 			xml$addNode("SpectrumIdentificationItem",attrs=c(peptide_ref=.get_protid(data@prot[protind,]),chargeState=0,experimentalMassToCharge=data@param$msmass[paramind],id=paste("SII",paste(plid,dsi,sep="_"),sep="_"),passThreshold=1,rank=dsi),close=F)
 				xml$addNode("PeptideEvidenceRef",attrs=c(peptideEvidence_ref=.get_pep_evidenceid(data@prot[protind,])))
-				dsfi <- subset(data@fit,peak.id==plid & protid==data@prot[protind,"protid"])
-				#dsfi <- which(sapply(1:length(data$fit),FUN=function(i){ if(data$fit[[i]]$prot$param$peaks$id==plid && data$fit[[i]]$prot$param$msmass==ds[[dsi]]$prot$param$msmass) i else 0})>0)
-				if(nrow(dsfi)>0){
-					xml$addNode("Fragmentation",close=F)
-					xml <- .gen_frags(xml,dsfi)
-					#xml <- .gen_frags(xml,data@fit[dsfi,])
-					xml$closeTag() #Fragmentation
+				if(length(data@fit) > 0){
+					dsfi <- subset(data@fit,peak.id==plid & protid==data@prot[protind,"protid"])
+					#dsfi <- which(sapply(1:length(data$fit),FUN=function(i){ if(data$fit[[i]]$prot$param$peaks$id==plid && data$fit[[i]]$prot$param$msmass==ds[[dsi]]$prot$param$msmass) i else 0})>0)
+					if(nrow(dsfi)>0){
+						xml$addNode("Fragmentation",close=F)
+						xml <- .gen_frags(xml,dsfi)
+						#xml <- .gen_frags(xml,data@fit[dsfi,])
+						xml$closeTag() #Fragmentation
+					}
 				}
 			xml$closeTag() #SpectrumIdentificationItem
 		}
@@ -119,7 +121,7 @@
 	for(i in 1:nrow(data@prot)){
 		#TOOD: Check sequence uniqueness
 		xml$addNode("Peptide",attrs=c(id=.get_protid(data@prot[i,])),close=F)
-			xml$addNode("PeptideSequence",data@prot[i,"seq"])
+			xml$addNode("PeptideSequence",gsub("[^A-Z]","X",data@prot[i,"seq"]))
 		xml$closeTag() #Peptide
 	}
 
@@ -156,8 +158,10 @@ write.mzid <- function(data,file,inputfile=NULL){
 	options(suppressXMLNamespaceWarning=T)
 	datetime <- format(Sys.time(),"%Y-%m-%dT%H:%M:%S")
 
+	if(is.null(inputfile)) inputfile <- "yaml.results"
+
 	# data independent header information
-	xml <- xmlTree("MzIdentML",attrs=c(id="", version="1.1.0", creationDate=datetime, "xsi:schemaLocation"="http://psidev.info/psi/pi/mzIdentML/1.1 mzIdentML1.1.0.xsd"), namespaces=c("http://psidev.info/psi/pi/mzIdentML/1.1",xsi="http://www.w3.org/2001/XMLSchema-instance"), dtd="mzidentml")
+	xml <- xmlTree("MzIdentML",attrs=c(id="", version="1.1.0", creationDate=datetime, "xsi:schemaLocation"="http://psidev.info/psi/pi/mzIdentML/1.1 mzIdentML1.1.0.xsd"), namespaces=c("http://psidev.info/psi/pi/mzIdentML/1.1",xsi="http://www.w3.org/2001/XMLSchema-instance"), dtd=NULL)
 
 	xml$addNode("cvList",close=F)
 		xml$addNode("cv", attrs=c(id="UNIMOD",fullName="UNIMOD",uri="http://www.unimod.org/obo/unimod.obo"))

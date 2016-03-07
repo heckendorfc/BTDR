@@ -47,7 +47,7 @@ summary.overview <- function(data, ...){
 #' @export 
 summary.protein <- function(data, ...){
 	class(data) <- "data.frame"
-	list(num.prot=nrow(data),tag.coverage=summary(data$tag.coverage),tag.score=summary(data$tag.score))
+	list(num.prot=nrow(data),protein.score=summary(data$protein.score),tag.coverage=summary(data$tag.coverage),tag.score=summary(data$tag.score))
 }
 
 #' @rdname bupid-summary

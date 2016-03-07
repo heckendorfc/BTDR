@@ -11,7 +11,8 @@
 \arguments{
 \item{x}{object to be subsetted}
 
-\item{subset}{logical expression indicating elements or rows to keep}
+\item{subset}{logical expression indicating elements or rows to keep. Valid elements are
+found with names(head(x,select))}
 
 \item{select}{expression, indicating the return type}
 }

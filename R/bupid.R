@@ -57,8 +57,9 @@ setMethod("getview",signature="bupid", definition=function(object,type){
 			pdf <- subset(object@prot,peakid==id)
 			sdf <- subset(object@search,peakid==id)
 			data.frame(protein.name=pdf$name,
+					   protein.score=sdf$score,
 					   tag.coverage=sdf$cov,
-					   tag.score=sdf$score,
+					   tag.score=sdf$tagscore,
 					   tag.rank=sdf$rank,
 					   scan.num=paste(object@scan$scanid[which(object@scan$plid==id)],collapse=" "),
 					   row.names=get_unique_prot_id(id,sdf$rank))
@@ -132,7 +133,7 @@ bupidpopulate <- function(data){
 			data.frame(searchid=id,start=ttl$start,length=ttl$len)
 		,get_unique_protid_list(sl$prot)))
 	))
-	searchres <- do.call("rbind",lapply(data$search,FUN=function(sl)data.frame(searchid=get_unique_protid_list(sl$prot),peakid=sl$prot$param$peak$id,rank=sl$id,score=sl$score,cov=sl$cov)))
+	searchres <- do.call("rbind",lapply(data$search,FUN=function(sl)data.frame(searchid=get_unique_protid_list(sl$prot),peakid=sl$prot$param$peak$id,rank=sl$id,score=sl$score,tagscore=sl$tagscore,cov=sl$cov)))
 	fitres <- do.call("rbind",lapply(data$fit,FUN=function(fl){
 		#rdf <- fl$results
 		#peakid <- rdf$peak+1

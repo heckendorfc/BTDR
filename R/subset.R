@@ -7,7 +7,8 @@
 #' @param x
 #' object to be subsetted
 #' @param subset
-#' logical expression indicating elements or rows to keep
+#' logical expression indicating elements or rows to keep. Valid elements are
+#' found with names(head(x,select))
 #' @param select
 #' expression, indicating the return type
 #'

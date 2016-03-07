@@ -154,8 +154,6 @@ fragment.coverage.generic <- function(data,sequence,file="cov.svg",columns=25L,s
 		fcolor <- .get.frag.color(data[i,"term"],color=color)
 		xml$addNode("path",attrs=c(d=.get.frag.path(data[i,],params,nchar(sequence)),stroke=fcolor,fill=fcolor))
 	}
-	fcolor <- .get.frag.color("C",color=color)
-	xml$addNode("path",attrs=c(d=.get.frag.path(data.frame(term="C",num=nchar(sequence)-11-1),params,nchar(sequence)),stroke=fcolor,fill=fcolor))
 
 	saveXML(xml,file,indent=T)
 }

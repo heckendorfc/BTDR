@@ -10,9 +10,9 @@
 \usage{
 \S4method{print}{bupid}(x, type = "overview")
 
-\S4method{head}{bupid}(x, type = "overview")
+\S4method{head}{bupid}(x, type = "overview", n = 6)
 
-\S4method{tail}{bupid}(x, type = "overview")
+\S4method{tail}{bupid}(x, type = "overview", n = 6)
 }
 \arguments{
 \item{type}{The type of output to display}
