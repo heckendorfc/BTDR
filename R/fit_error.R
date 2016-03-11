@@ -4,6 +4,8 @@
 #'
 #' @param data
 #' output from read.bupid
+#' @param recalibrate
+#' adjust mass errors so they are centered around zero
 #'
 #' @return Returns the ggplot object representing the plot.
 #'
@@ -16,10 +18,15 @@
 #' dev.off()
 #'
 #' @export fragment.mass.error
-fragment.mass.error <- function(data){
+fragment.mass.error <- function(data,recalibrate=F){
 	err <- .ppm.error(data@fit)
 	vmass <- data@fit$ion.mass
 	vcolor <- .fragment.color(data@fit)
+
+	if(recalibrate){
+		model <- lm("err~mass",data.frame(err=err,mass=vmass))
+		err <- err - (vmass*model$coefficients[2]+model$coefficients[1])
+	}
 
 	df <- data.frame(ppmError=err,mass=vmass,color=vcolor)
 

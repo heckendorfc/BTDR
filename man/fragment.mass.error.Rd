@@ -4,10 +4,12 @@
 \alias{fragment.mass.error}
 \title{Plot mass errors for fragment assignments.}
 \usage{
-fragment.mass.error(data)
+fragment.mass.error(data, recalibrate = F)
 }
 \arguments{
 \item{data}{output from read.bupid}
+
+\item{recalibrate}{adjust mass errors so they are centered around zero}
 }
 \value{
 Returns the ggplot object representing the plot.
