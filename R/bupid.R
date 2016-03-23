@@ -110,7 +110,7 @@ get_unique_protid_list <- function(prot){
 }
 
 bupidpopulate <- function(data){
-	scanres <- do.call("rbind",lapply(data$peaks,FUN=function(pl)data.frame(plid=rep(pl$id,length(pl$scans)),scanid=sapply(pl$scans,FUN=function(ps)ps$id),mz=sapply(pl$scans,FUN=function(ps)ps$mz),z=sapply(pl$scans,FUN=function(ps)ps$z))))
+	scanres <- do.call("rbind",lapply(data$peaks,FUN=function(pl)data.frame(plid=rep(pl$id,length(pl$scans)),scanid=sapply(pl$scans,FUN=function(ps)ps$id),mz=sapply(pl$scans,FUN=function(ps)ps$mz),z=sapply(pl$scans,FUN=function(ps)ps$z),rt=sapply(pl$scans,FUN=function(ps)if(length(ps$rt)>0)ps$rt else 0))))
 	deconres <- do.call("rbind",lapply(data$peaks,FUN=function(pl)data.frame(id=rep(pl$id,pl$num),mass=pl$mass,intensity=pl$intensity,z=pl$z)))
 	paramres <- do.call("rbind",lapply(data$param,FUN=function(pl)data.frame(peakid=pl$peaks$id,frag=pl$frag,mstol=pl$mstol,msmstol=pl$msmstol,msmass=pl$msmass,tax=pl$tax)))
 	modres <- do.call("rbind",lapply(data$param,FUN=function(pl){
