@@ -33,7 +33,7 @@ NULL
 }
 
 .ppm.error <- function(res){
-	err <- res$error/res$peak.mass*1e6
+	err <- res$error/res$ion.mass*1e6
 	err <- round(err,digits=4)
 	err
 }
