@@ -30,10 +30,11 @@ setClass("bupid",representation(scan="data.frame",decon="data.frame",param="data
 setGeneric("getview",def=function(object,type){})
 setMethod("getview",signature="bupid", definition=function(object,type){
 	if(type=="overview"){
-		pids <- sapply(as.character(unique(object@prot$name)),FUN=function(x)which(object@prot$name==x))
+		pnames <- as.character(unique(object@prot$name))
+		pids <- lapply(pnames,FUN=function(x)which(object@prot$name==x))
 		#sids <- lapply(1:length(pids),FUN=function(x) object@search$peakid %in% object@prot$peakid[pids[[x]]])
 		td <- data.frame(
-				protein.name=names(pids),
+				protein.name=pnames,
 				top.rank=sapply(1:length(pids),FUN=function(x)length(which(object@prot$protid[pids[[x]]]==0))),
 				scan.count=sapply(1:length(pids),FUN=function(x)length(pids[[x]])),
 				row.names=NULL)
