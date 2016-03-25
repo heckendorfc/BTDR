@@ -41,6 +41,7 @@ terminus the fragment is generated from, and num is the fragment
 number or length in amino acids.
 }
 \examples{
+\dontrun{
 #bupid version
 server <- "http://bupid.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
 infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
@@ -50,6 +51,7 @@ fragment.coverage(data,file="136_coverage.svg",columns=50)
 #generic version
 data <- data.frame(term=c("N","N","C","C"),num=c(1,2,1,2))
 fragment.coverage.generic(data,"ACDEF",file="generic_coverage.svg",scale=3,color=F)
+}
 
 }
 

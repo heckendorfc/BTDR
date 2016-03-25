@@ -40,6 +40,7 @@ plot.label.spectrum adds fragment assignment labels to plot.spectrum
 plot.theme.simple modifies the spectrum plot to use black axis labels and no background
 }
 \examples{
+\dontrun{
 server <- "http://bupid.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
 infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
 data <- read.bupid(url=paste(server,infile,sep="?"))
@@ -52,6 +53,7 @@ plot.label.spectrum(data,c(500,600))
 
 # again with a simple theme
 plot.label.spectrum(data,c(500,600)) + plot.theme.simple()
+}
 
 }
 

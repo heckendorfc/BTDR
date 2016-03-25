@@ -148,10 +148,12 @@
 #' @return Returns the name of the file generated.
 #' @seealso \code{\link{read.bupid}}
 #' @examples
+#' \dontrun{
 #' server <- "http://bupid.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
 #' infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
 #' data <- read.bupid(url=paste(server,infile,sep="?"))
 #' write.mzid(data,"data.mzid",infile)
+#' }
 #' 
 #' @export write.mzid
 write.mzid <- function(data,file,inputfile=NULL){

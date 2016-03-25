@@ -12,10 +12,12 @@
 #' @return Returns the summary
 #'
 #' @examples
+#' \dontrun{
 #' server <- "http://bupid.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
 #' infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
 #' data <- read.bupid(url=paste(server,infile,sep="?"))
 #' summary(data)
+#' }
 #' 
 #' @name bupid-summary
 NULL
@@ -55,4 +57,3 @@ summary.protein <- function(data, ...){
 summary.fragment <- function(data, ...){
 	length(data)
 }
-
