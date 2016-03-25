@@ -18,12 +18,14 @@ Returns the ggplot object representing the plot.
 Generates a plot showing mass error vs. ion mass.
 }
 \examples{
+\dontrun{
 server <- "http://bupid.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
 infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
 data <- read.bupid(url=paste(server,infile,sep="?"))
 png(filename="errors.png",width=300,height=100) #Configure a graphics device
 fragment.mass.error(data)
 dev.off()
+}
 
 }
 

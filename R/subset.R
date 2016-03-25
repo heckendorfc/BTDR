@@ -15,10 +15,12 @@
 #' @return Returns the subset
 #'
 #' @examples
+#' \dontrun{
 #' server <- "http://bumc-florida.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
 #' infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
 #' data <- read.bupid(url=paste(server,infile,sep="?"))
 #' subset(data,name=="HBB","fragment")
+#' }
 #' 
 #' @name bupid-subset
 NULL

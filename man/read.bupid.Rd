@@ -22,9 +22,11 @@ The data can be passed either as the name of a file on the local machine or
 a URL on the BUPID server containing the results.
 }
 \examples{
+\dontrun{
 server <- "http://bupid.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
 infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
 data <- read.bupid(url=paste(server,infile,sep="?"))
+}
 
 }
 

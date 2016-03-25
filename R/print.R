@@ -12,10 +12,12 @@
 #' @return Returns the information
 #'
 #' @examples
+#' \dontrun{
 #' server <- "http://bupid.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
 #' infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
 #' data <- read.bupid(url=paste(server,infile,sep="?"))
 #' print(data,"overview")
+#' }
 #' 
 #' @name bupid-print
 NULL

@@ -18,6 +18,7 @@
 #' 
 #' @return Returns the name of the file created.
 #' @examples
+#' \dontrun{
 #' #bupid version
 #' server <- "http://bupid.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
 #' infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
@@ -27,6 +28,7 @@
 #' #generic version
 #' data <- data.frame(term=c("N","N","C","C"),num=c(1,2,1,2))
 #' fragment.coverage.generic(data,"ACDEF",file="generic_coverage.svg",scale=3,color=F)
+#' }
 #' 
 #' @name fragment.coverage
 NULL
