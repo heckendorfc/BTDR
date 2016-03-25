@@ -29,7 +29,7 @@ NULL
 #' @export 
 setMethod("subset",signature="bupid", definition=function(x,subset,select,drop=FALSE){
 	tmp <- getview(x,select) # returns a dataframe representation of the object
-	rows <- eval(expr=substitute(subset), envir=tmp, enclos=parent.frame())
+	rows <- eval(expr=substitute(subset), envir=tmp, enclos=sys.frame(which=-3))
 	tmp <- tmp[rows,,drop=drop]
 
 	if(select=="overview" || select=="protein"){
