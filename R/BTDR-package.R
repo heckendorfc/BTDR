@@ -20,6 +20,7 @@
 #' @import plyr
 #' @import yaml
 #' @import methods
+#' @importFrom stats lm
 #' 
 #' @docType package
 #' @author Christian Heckendorf
