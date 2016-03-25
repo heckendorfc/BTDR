@@ -13,6 +13,14 @@
 #' }
 #' 
 #' @aliases BTDR-package BTDR
+#' 
+#' @import XML
+#' @import RCurl
+#' @import ggplot2
+#' @import plyr
+#' @import yaml
+#' @import methods
+#' 
 #' @docType package
 #' @author Christian Heckendorf
 #' 
@@ -22,6 +30,3 @@
 #' 
 #' @name BTDR-package
 NULL
-
-
-

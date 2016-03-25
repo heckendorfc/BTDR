@@ -9,6 +9,8 @@ Description: This package provides functions to analyze BUPID Top-Down results.
     This includes conversion to standard formats and creation of figures and tables
     ready for publication.
 Depends:
+    methods
+Imports:
     yaml,
     XML,
     RCurl,
