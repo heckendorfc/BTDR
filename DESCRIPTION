@@ -1,11 +1,10 @@
 Package: BTDR
 Type: Package
-Title: BUPID Top-Down result conversion, analysis, visualization
+Title: 'BUPID' Top-Down Result Conversion, Analysis, and Visualization
 Version: 1.0
-Date: 2014-08-18
 Author: Christian Heckendorf (heckend@bu.edu)
 Maintainer: Christian Heckendorf <heckend@bu.edu>
-Description: This package provides functions to analyze BUPID Top-Down results.
+Description: A collection of functions to analyze 'BUPID' Top-Down results.
     This includes conversion to standard formats and creation of figures and tables
     ready for publication.
 Depends:
@@ -20,5 +19,7 @@ Imports:
     ggplot2,
     plyr
 License: BSD 2-clause License + file LICENSE
+NeedsCompilation: no
+ByteCompile: yes
 LazyData: true
 RoxygenNote: 5.0.1
