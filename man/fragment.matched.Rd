@@ -37,7 +37,7 @@ original m/z and charge state values as seen in the raw spectra.
 }
 \examples{
 \dontrun{
-server <- "http://bupid.bumc.bu.edu/BUPID_TD/cgi-bin/get_results.cgi"
+server <- "http://bupid.bumc.bu.edu/cgi-bin/get_results.cgi"
 infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
 data <- read.bupid(url=paste(server,infile,sep="?"))
 fragment.matched.ions(data)
