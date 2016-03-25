@@ -79,7 +79,7 @@ plot.label.spectrum <- function(data,massrange=c(0,Inf),unicode=TRUE){
 	labels <- data.frame(mass=fp$peak.mass,intensity=fp$peak.intensity,label=.get.frag.name(fp),color=vcolor)
 	if(unicode){
 		labels$label <- sub("[+]1","'",labels$label)
-		labels$label <- sub("-1","•",labels$label)
+		labels$label <- sub("-1","\\u2022",labels$label)
 		labels$label <- gsub("\\[|]","",labels$label)
 		Encoding(labels$label) <- "UTF-8"
 	}
