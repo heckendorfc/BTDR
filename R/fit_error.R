@@ -35,6 +35,6 @@ fragment.mass.error <- function(data,recalibrate=F){
 	ggplot(df,aes(x=mass,y=ppmError))+
 	geom_point(aes(colour=color))+
 	geom_hline(aes(colour=black),yintercept=0)+ 
-	scale_colour_manual(values=c("#0000FF", "#FF0000","#444444"),labels=c("C-term","N-term","Other"),name="Fragment")+
+	scale_colour_manual(values=c("blue"="#0000FF", "red"="#FF0000", "black"="#444444"),labels=c("blue"="C-term","red"="N-term","black"="Other"),name="Fragment")+
 	theme(legend.justification=c(1,1), legend.position=c(1,1))
 }

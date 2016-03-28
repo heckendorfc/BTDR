@@ -93,7 +93,7 @@ plot.label.spectrum <- function(data,massrange=c(0,Inf),unicode=TRUE){
 	plot.spectrum(data,massrange,color="#888888")+
 	geom_segment(data=labels,aes(x=mass,xend=mass,y=intensity,yend=-Inf,colour=color))+
 	geom_text(data=labels,aes(x=mass,y=intensity,label=label,colour=color,hjust=0,vjust=0))+
-	scale_colour_manual(values=c("#0000FF", "#FF0000","#444444"),labels=c("C-term","N-term","Other"),name="Fragment")+
+	scale_colour_manual(values=c("blue"="#0000FF", "red"="#FF0000", "black"="#444444"),labels=c("blue"="C-term","red"="N-term","black"="Other"),name="Fragment")+
 	theme(legend.justification=c(1,1), legend.position=c(1,1))
 }
 
