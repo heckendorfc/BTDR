@@ -15,7 +15,9 @@
 \S4method{tail}{bupid}(x, type = "overview", n = 6)
 }
 \arguments{
-\item{type}{The type of output to display}
+\item{type}{The type of output to display. One of the strings returned by
+c("overview","protein","fragment") or
+paste("raw",slotNames(data),sep="-")}
 
 \item{data}{A bupid object}
 }

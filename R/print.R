@@ -7,7 +7,9 @@
 #' @param data
 #' A bupid object
 #' @param type
-#' The type of output to display
+#' The type of output to display. One of the strings returned by
+#' c("overview","protein","fragment") or
+#' paste("raw",slotNames(data),sep="-")
 #'
 #' @return Returns the information
 #'

@@ -52,8 +52,7 @@ setMethod("getview",signature="bupid", definition=function(object,type){
 		if(nrow(td)>0)
 			td <- td[order(td$top.rank,decreasing=T),]
 		td
-	}
-	else if(type=="protein"){
+	} else if(type=="protein"){
 		td <- do.call("rbind",lapply(object@prot$peakid,FUN=function(id){
 			pdf <- subset(object@prot,peakid==id)
 			sdf <- subset(object@search,peakid==id)
@@ -66,8 +65,7 @@ setMethod("getview",signature="bupid", definition=function(object,type){
 					   row.names=get_unique_prot_id(id,sdf$rank))
 		}))
 		td
-	}
-	else if(type=="fragment"){
+	} else if(type=="fragment"){
 		td <- do.call("rbind",lapply(unique(get_unique_prot_id(object@fit$peak.id,object@fit$protid)),FUN=function(id){
 			fid <- which(get_unique_prot_id(object@fit$peak.id,object@fit$protid)==id)
 			fdf <- object@fit[fid,c("peak.index","peak.mass","peak.intensity","peak.z","ion.start","ion.len","ion.mass","frag","mods","error")]
@@ -86,6 +84,9 @@ setMethod("getview",signature="bupid", definition=function(object,type){
 		}))
 		#row.names(td) <- NULL
 		td
+	} else if(grepl("raw-",type)){
+		type <- sub("raw-","",type)
+		slot(object,type)
 	}
 })
 

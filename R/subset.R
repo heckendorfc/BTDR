@@ -44,8 +44,7 @@ setMethod("subset",signature="bupid", definition=function(x,subset,select,drop=F
 		for(n in l)
 			eval(parse(text=paste("x@",n,"<-",paste("filter",n,sep="."),"(x)",sep="")))
 		return(x)
-	}
-	else if(select=="fragment"){
+	} else if(select=="fragment"){
 		l <- c("prot", "search","tag","param","decon","scan")
 
 		#fidsb <- rep(FALSE,nrow(x@fit))
@@ -53,6 +52,15 @@ setMethod("subset",signature="bupid", definition=function(x,subset,select,drop=F
 		fidsb <- as.integer(row.names(tmp))
 
 		x@fit <- x@fit[fidsb,]
+		for(n in l)
+			eval(parse(text=paste("x@",n,"<-",paste("filter",n,sep="."),"(x)",sep="")))
+		return(x)
+	} else if(grepl("raw-",select)){
+		l <- c("fit", "prot", "search", "tag", "param", "decon", "scan", "decon", "param", "prot", "tag", "search", "fit")
+		type <- sub("raw-","",select)
+
+		slot(x,type) <- tmp
+
 		for(n in l)
 			eval(parse(text=paste("x@",n,"<-",paste("filter",n,sep="."),"(x)",sep="")))
 		return(x)
@@ -101,8 +109,7 @@ filter.fit <- function(ib){
 }
 
 filter.prot <- function(ib){
-	# is this only called after fit filter?
-	#sid <- whichvec(get_unique_protid(ib@prot$peakid,ib@prot$protid),ib@search$searchid)
+	pid <- whichvec(ib@prot$peakid,ib@param$peakid)
 	fid <- whichvec(get_unique_prot_id(ib@prot$peakid,ib@prot$protid),get_unique_prot_id(ib@fit$peak.id,ib@fit$protid))
-	ib@prot[fid,]
+	ib@prot[fid&pid,]
 }
