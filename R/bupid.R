@@ -157,19 +157,25 @@ bupidpopulate <- function(data){
 		#return(df)
 
 		do.call("rbind",lapply(fl$results,FUN=function(fr,id,flp){
-			data.frame(protid=id,
+			ret <- data.frame(protid=id,
 				peak.id=flp$id,
 				peak.index=fr$peak+1,
-				peak.mass=flp$mass[fr$peak+1],
-				peak.intensity=flp$intensity[fr$peak+1],
-				peak.z=flp$z[fr$peak+1],
+				peak.count=fr$peakcount,
 				ion.start=fr$ion$start,
 				ion.len=fr$ion$len,
 				ion.mass=flp$mass[fr$peak+1]-fr$err,
 				frag=fr$frag,
 				mods=.modstr(fr$mods),
 				error=fr$err
-				)}
+				)
+			ret$peak.count[which(ret$peak.count<1)] <- 1 # support legacy files
+			inds <- (ret$peak.index):(ret$peak.index+ret$peak.count-1)
+			maxind <- inds[which(flp$intensity[inds] == max(flp$intensity[inds])[1])]
+			ret$peak.intensity <- flp$intensity[maxind]
+			ret$peak.mass <- flp$mass[maxind]
+			ret$peak.z <- flp$z[maxind]
+			ret
+			}
 		,fl$prot$id,fl$prot$param$peaks))
 	}))
 
