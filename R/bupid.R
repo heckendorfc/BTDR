@@ -53,7 +53,7 @@ setMethod("getview",signature="bupid", definition=function(object,type){
 			td <- td[order(td$top.rank,decreasing=T),]
 		td
 	} else if(type=="protein"){
-		td <- do.call("rbind",lapply(object@prot$peakid,FUN=function(id){
+		td <- do.call("rbind",lapply(unique(object@prot$peakid),FUN=function(id){
 			pdf <- subset(object@prot,peakid==id)
 			sdf <- subset(object@search,peakid==id)
 			data.frame(protein.name=pdf$name,
