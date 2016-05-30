@@ -8,7 +8,8 @@
 \usage{
 \method{plot}{spectrum}(data, massrange = c(0, Inf), color = "#000000")
 
-\method{plot}{label.spectrum}(data, massrange = c(0, Inf), unicode = TRUE)
+\method{plot}{label.spectrum}(data, massrange = c(0, Inf), unicode = TRUE,
+  unassigned = TRUE)
 
 \method{plot}{theme.simple}(base_size = 12)
 }
@@ -20,6 +21,8 @@
 \item{color}{the color to use for unlabeled peaks}
 
 \item{unicode}{allow unicode characters in labels}
+
+\item{unassigned}{display unassigned peaks behind the labelled spectrum}
 }
 \value{
 Returns the ggplot object

@@ -10,6 +10,8 @@
 #' the color to use for unlabeled peaks
 #' @param unicode
 #' allow unicode characters in labels
+#' @param unassigned
+#' display unassigned peaks behind the labelled spectrum
 #' 
 #' @return Returns the ggplot object
 #'
@@ -68,7 +70,7 @@ plot.spectrum <- function(data,massrange=c(0,Inf),color="#000000"){
 #' 
 #' @rdname plot.spectrum
 #' @export plot.label.spectrum
-plot.label.spectrum <- function(data,massrange=c(0,Inf),unicode=TRUE){
+plot.label.spectrum <- function(data,massrange=c(0,Inf),unicode=TRUE,unassigned=TRUE){
 	#labels <- sapply(data$peaks[[peaklistid]],FUN=function(i)c()
 	inds <- which(data@decon$mass>=massrange[1] & data@decon$mass<=massrange[2])
 	dp <- data@decon[inds,]
@@ -90,8 +92,12 @@ plot.label.spectrum <- function(data,massrange=c(0,Inf),unicode=TRUE){
 	#plotdata <- data.frame(mass=c(fp$peak.mass[nt],fp$peak.mass[ct]),
 						   #intensity=c(fp$peak.intensity[nt],fp$peak.intensity[ct]),
 						   #color=vcolor)
-	plot.spectrum(data,massrange,color="#888888")+
-	geom_segment(data=labels,aes(x=mass,xend=mass,y=intensity,yend=-Inf,colour=color))+
+	if(unassigned){
+		gp <- plot.spectrum(data,massrange,color="#888888")
+	} else {
+		gp <- ggplot()
+	}
+	gp + geom_segment(data=labels,aes(x=mass,xend=mass,y=intensity,yend=-Inf,colour=color))+
 	geom_text(data=labels,aes(x=mass,y=intensity,label=label,colour=color,hjust=0,vjust=0))+
 	scale_colour_manual(values=c("blue"="#0000FF", "red"="#FF0000", "black"="#444444"),labels=c("blue"="C-term","red"="N-term","black"="Other"),name="Fragment")+
 	theme(legend.justification=c(1,1), legend.position=c(1,1))
