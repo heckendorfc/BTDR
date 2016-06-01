@@ -170,7 +170,7 @@ bupidpopulate <- function(data){
 				)
 			ret$peak.count[which(ret$peak.count<1)] <- 1 # support legacy files
 			inds <- (ret$peak.index):(ret$peak.index+ret$peak.count-1)
-			maxind <- inds[which(flp$intensity[inds] == max(flp$intensity[inds])[1])]
+			maxind <- inds[order(flp$intensity[inds],decreasing=T)[1]]
 			ret$peak.intensity <- flp$intensity[maxind]
 			ret$peak.mass <- flp$mass[maxind]
 			ret$peak.z <- flp$z[maxind]
