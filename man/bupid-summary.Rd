@@ -11,14 +11,14 @@
 \usage{
 \S4method{summary}{bupid}(object, type = "overview")
 
-summary.overview(data, ...)
+summary.overview(object, ...)
 
-summary.protein(data, ...)
+summary.protein(object, ...)
 
-summary.fragment(data, ...)
+summary.fragment(object, ...)
 }
 \arguments{
-\item{data}{data returned from another function}
+\item{object}{object returned from another function}
 
 \item{...}{extra parameters}
 }

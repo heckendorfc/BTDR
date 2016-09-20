@@ -4,8 +4,8 @@
 #' 
 #' Each result from BTDR packages will provide differeny summaries
 #' 
-#' @param data
-#' data returned from another function
+#' @param object
+#' object returned from another function
 #' @param ...
 #' extra parameters
 #'
@@ -40,20 +40,20 @@ setMethod("summary",signature="bupid", definition=function(object,type="overview
 
 #' @rdname bupid-summary
 #' @export 
-summary.overview <- function(data, ...){
-	class(data) <- "data.frame"
-	list(num.prot=nrow(data),num.scan=sum(data$scan.count),scan.counts=summary(data$scan.count))
+summary.overview <- function(object, ...){
+	class(object) <- "object.frame"
+	list(num.prot=nrow(object),num.scan=sum(object$scan.count),scan.counts=summary(object$scan.count))
 }
 
 #' @rdname bupid-summary
 #' @export 
-summary.protein <- function(data, ...){
-	class(data) <- "data.frame"
-	list(num.prot=nrow(data),protein.score=summary(data$protein.score),tag.coverage=summary(data$tag.coverage),tag.score=summary(data$tag.score))
+summary.protein <- function(object, ...){
+	class(object) <- "object.frame"
+	list(num.prot=nrow(object),protein.score=summary(object$protein.score),tag.coverage=summary(object$tag.coverage),tag.score=summary(object$tag.score))
 }
 
 #' @rdname bupid-summary
 #' @export 
-summary.fragment <- function(data, ...){
-	length(data)
+summary.fragment <- function(object, ...){
+	length(object)
 }
