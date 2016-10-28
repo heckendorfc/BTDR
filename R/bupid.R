@@ -57,6 +57,8 @@ setMethod("getview",signature="bupid", definition=function(object,type){
 			pdf <- subset(object@prot,peakid==id)
 			sdf <- subset(object@search,peakid==id)
 			data.frame(protein.name=pdf$name,
+					   protein.start=pdf$start,
+					   protein.len=pdf$len,
 					   protein.score=sdf$score,
 					   tag.coverage=sdf$cov,
 					   tag.score=sdf$tagscore,
@@ -129,7 +131,25 @@ bupidpopulate <- function(data){
 													   pos=.get.mod.field(pl,"pos"),
 													   site=.get.mod.field(pl,"site"))
 										}}))
-	protres <- do.call("rbind",lapply(data$prot,FUN=function(pl)data.frame(protid=pl$id,peakid=pl$param$peaks$id,seq=pl$seq,name=pl$name)))
+	protres <- do.call("rbind",lapply(data$prot,FUN=function(pl){
+		ret <- data.frame(protid=pl$id,peakid=pl$param$peaks$id,seq=pl$seq,name=pl$name)
+		if(length(pl$start)==0){ # legact support :(
+			if(grepl("\\[[0-9-]*\\]$",pl$name)){
+				nn <- as.integer(sub(".*\\[([0-9]*)-[0-9]*\\]$","\\1",pl$name))
+				start <- nn[1]-1
+				ret$name <- sub("\\[[0-9-]*\\]$","",pl$name)
+			} else {
+				start <- 0
+			}
+			len <- nchar(pl$seq)
+		} else {
+			start <- pl$start
+			len <- pl$len
+		}
+		ret$start <- start
+		ret$len <- len
+		ret
+	}))
 	tagres <- do.call("rbind",lapply(data$search,FUN=function(sl)
 		do.call("rbind",lapply(sl$tags,FUN=function(ttl,id)
 			data.frame(searchid=id,start=ttl$start,length=ttl$len)
