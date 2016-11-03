@@ -68,6 +68,9 @@ int io_close(struct iobtd *iop){
 
 	fclose(iop->iod.infd);
 
+	yamldom_free_nodes(iop->root);
+	yamldom_free_anchors(iop->anchors.next);
+
 	return 0;
 }
 

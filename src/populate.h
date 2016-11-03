@@ -9,8 +9,6 @@
 #include "RNACI/RNACI.h"
 
 #define CHARPT(x,i)	((char*)CHAR(STRING_ELT(x,i)))
-#define NULLDF(df) PROTECT(df = make_dataframe(RNULL, RNULL, 0)); \
-		UNPROTECT(1);
 
 struct iobtd{
 	yamldom_data_t iod;

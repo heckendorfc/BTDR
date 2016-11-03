@@ -6,6 +6,54 @@
 #include "list.h"
 #include "common.h"
 
+#define freeif(x) if(x)free(x);
+
+void yamldom_free_nodes(yamldom_node_t *a){
+	yamldom_node_t *t, *n=NULL;
+
+	if(!a)
+		return;
+
+	if(a->anchor)
+		free(a->anchor);
+
+	switch(a->type){
+		case Y_SEQ:
+			n=YAMLDOM_SEQ_NODES(a);
+			break;
+		case Y_MAP:
+			n=YAMLDOM_MAP_NODES(a);
+			break;
+		case Y_SCALAR:
+			freeif(YAMLDOM_SCALAR_DATA(a)->val);
+			freeif(YAMLDOM_SCALAR_DATA(a)->tag);
+			break;
+		case Y_ALIAS:
+			freeif(YAMLDOM_ALIAS_DATA(a)->val);
+			break;
+	}
+
+	freeif(a->data);
+	free(a);
+
+	while(n){
+		yamldom_free_nodes(n);
+		t=n->next;
+		n=t;
+	}
+}
+
+void yamldom_free_anchors(yamldom_anchor_list_t *a){
+	yamldom_anchor_list_t *t;
+
+	while(a){
+		t=a->next;
+		free(a->val);
+		free(a);
+		a=t;
+	}
+}
+
 yamldom_node_t* yamldom_append_node(yamldom_node_t *a, yamldom_node_t *b){
 	yamldom_node_t *ret=a;
 
