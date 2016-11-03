@@ -133,7 +133,7 @@ bupidpopulate <- function(data){
 										}}))
 	protres <- do.call("rbind",lapply(data$prot,FUN=function(pl){
 		ret <- data.frame(protid=pl$id,peakid=pl$param$peaks$id,seq=pl$seq,name=pl$name)
-		if(length(pl$start)==0){ # legact support :(
+		if(length(pl$start)==0){ # legacy support :(
 			if(grepl("\\[[0-9-]*\\]$",pl$name)){
 				nn <- as.integer(sub(".*\\[([0-9]*)-[0-9]*\\]$","\\1",pl$name))
 				start <- nn[1]-1

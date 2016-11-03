@@ -22,6 +22,8 @@
 #' @import methods
 #' @importFrom stats lm
 #' 
+#' @useDynLib BTDR
+#'
 #' @docType package
 #' @author Christian Heckendorf
 #' 

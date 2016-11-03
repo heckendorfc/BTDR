@@ -42,7 +42,9 @@ read.bupid <- function(file=NULL,url=NULL){
 	else
 		res <- yaml.load_file(file)
 
-	cres <- bupidpopulate(res)
+	#cres <- bupidpopulate(res)
+	out <- .Call("bupidpopulate",file);
+	cres <- new("bupid",scan=out$scan,decon=out$decon,param=out$param,mod=out$mod,prot=out$prot,search=out$search,tag=out$tag,fit=out$fit)
 
 	cres
 }
