@@ -37,8 +37,8 @@ void yamldom_free_nodes(yamldom_node_t *a){
 	free(a);
 
 	while(n){
-		yamldom_free_nodes(n);
 		t=n->next;
+		yamldom_free_nodes(n);
 		n=t;
 	}
 }
