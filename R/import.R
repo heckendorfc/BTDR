@@ -37,10 +37,10 @@ read.bupid <- function(file=NULL,url=NULL){
 	if(is.null(file) && is.null(url))
 		stop("Either file or url must be provided.")
 
-	if(is.null(file))
-		res <- .geturldata(url)
-	else
-		res <- yaml.load_file(file)
+	#if(is.null(file))
+		#res <- .geturldata(url)
+	#else
+		#res <- yaml.load_file(file)
 
 	#cres <- bupidpopulate(res)
 	out <- .Call("bupidpopulate",file);
