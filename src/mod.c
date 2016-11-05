@@ -14,6 +14,8 @@ void addmod(yamldom_node_t *mod, int fixed, yamldom_node_t *param, SEXP idvec, S
 		push_elem(INTEGER(sitevec),*i,mod,"site",strtoint);
 		push_elem(REAL(massvec),*i,mod,"mass",strtodouble);
 
+		INTEGER(fixedvec)[*i]=fixed;
+
 		(*i)++;
 		mod=mod->next;
 	}
@@ -23,7 +25,7 @@ void addmod(yamldom_node_t *mod, int fixed, yamldom_node_t *param, SEXP idvec, S
 SEXP makedf_mod(struct iobtd *iop){
 	SEXP df, idvec, fixedvec, namevec, posvec, massvec, sitevec;
 	yamldom_node_t *paramseq, *tmp, *seq;
-	int i, istart, count, peakcount;
+	int i, count, peakcount;
 	int id;
 	const int ncols=6;
 
@@ -49,7 +51,7 @@ SEXP makedf_mod(struct iobtd *iop){
 	PROTECT(sitevec = allocVector(INTSXP,count));
 	PROTECT(massvec = allocVector(REALSXP,count));
 
-	istart=i=0;
+	i=0;
 	for(seq=YAMLDOM_SEQ_NODES(paramseq);seq;seq=seq->next){
 		if((tmp=yamldom_find_map_val(seq,"fmod")))
 			addmod(YAMLDOM_SEQ_NODES(tmp),1,seq,idvec,fixedvec,namevec,posvec,sitevec,massvec,&i);

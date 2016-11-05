@@ -17,16 +17,16 @@ void strtostr(char *str, void *t, int i){
 
 void push_elem(void *vec, int i, yamldom_node_t *root, char *name, void(*tonum)(char*,void*,int)){
 	yamldom_node_t *tmp;
-	if(!(tmp=yamldom_find_map_val(root,name)))
-		((int*)vec)[i]=0;
-	else
+	if(!(tmp=yamldom_find_map_val(root,name))){
+		tonum("0",vec,i);
+	} else
 		tonum(((yamldom_scalar_t*)tmp->data)->val,vec,i);
 }
 
 void push_elem_offset(void *vec, int i, int off, yamldom_node_t *root, char *name, void(*tonum)(char*,void*,int)){
 	yamldom_node_t *tmp;
 	if(!(tmp=yamldom_find_map_val(root,name))){
-		((int*)vec)[i]=0;
+		tonum("0",vec,i);
 	} else {
 		tmp = YAMLDOM_SEQ_NODES(tmp);
 		while(off>0 && tmp){
@@ -42,7 +42,8 @@ void push_seq(void *vec, yamldom_node_t *root, char *name, int num, void(*tonum)
 	yamldom_node_t *tmp;
 
 	if(!(tmp=yamldom_find_map_val(root,name))){
-		for(i=0;i<num;i++)((int*)vec)[i]=0;
+		for(i=0;i<num;i++)
+			tonum("0",vec,i);
 		return;
 	}
 

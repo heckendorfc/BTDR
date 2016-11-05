@@ -9,7 +9,7 @@ SEXP makedf_param(struct iobtd *iop){
 	const int ncols=6;
 
 	if(!(paramseq=yamldom_find_map_val(iop->root,"param"))){
-		return NULL;
+		return RNULL;
 	}
 
 	count = count_seq_elem(paramseq);
@@ -24,7 +24,7 @@ SEXP makedf_param(struct iobtd *iop){
 	istart=i=0;
 	for(seq=YAMLDOM_SEQ_NODES(paramseq);seq;seq=seq->next){
 		if(!(tmp=yamldom_find_map_val(seq,"peaks")))
-			return NULL;
+			return RNULL;
 		push_elem(INTEGER(idvec),i,((yamldom_alias_t*)tmp->data)->ref,"id",strtoint);
 
 		push_elem(fragvec,i,seq,"frag",strtostr);

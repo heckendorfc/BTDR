@@ -9,19 +9,17 @@ SEXP makedf_scan(struct iobtd *iop){
 	const int ncols=5;
 
 	if(!(scanseq=yamldom_find_map_val(iop->root,"scan"))){
-		return NULL;
+		return RNULL;
 	}
 
-	count = count_seq_elem(scanseq);
-
 	if(!(peakseq=yamldom_find_map_val(iop->root,"peaks"))){
-		return NULL;
+		return RNULL;
 	}
 
 	count=0;
 	for(seq=YAMLDOM_SEQ_NODES(peakseq);seq;seq=seq->next){
 		if(!(tmp=yamldom_find_map_val(seq,"scans")))
-			return NULL;
+			return RNULL;
 		count += count_seq_elem(tmp);
 	}
 
@@ -34,11 +32,11 @@ SEXP makedf_scan(struct iobtd *iop){
 	i=0;
 	for(seq=YAMLDOM_SEQ_NODES(peakseq);seq;seq=seq->next){
 		if(!(tmp=yamldom_find_map_val(seq,"id")))
-			return NULL;
+			return RNULL;
 		id=strtol(((yamldom_scalar_t*)tmp->data)->val,NULL,10);
 
 		if(!(scanseq=yamldom_find_map_val(seq,"scans")))
-			return NULL;
+			return RNULL;
 
 		for(tmp=YAMLDOM_SEQ_NODES(scanseq);tmp;tmp=tmp->next){
 			scan=((yamldom_alias_t*)tmp->data)->ref;

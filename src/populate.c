@@ -88,7 +88,8 @@ SEXP bupidpopulate(SEXP R_file){
 	SEXP scandf, peakdf, paramdf, moddf, protdf, searchdf, tagdf, fitdf;
 	SEXP ret, retnames;
 
-	fd = fopen(file,"r");
+	if(!(fd = fopen(file,"r")))
+		return RNULL;
 
 	io_init(&iop,fd);
 

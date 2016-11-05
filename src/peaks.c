@@ -9,13 +9,13 @@ SEXP makedf_peak(struct iobtd *iop){
 	const int ncols=4;
 
 	if(!(peakseq=yamldom_find_map_val(iop->root,"peaks"))){
-		return NULL;
+		return RNULL;
 	}
 
 	count=0;
 	for(seq=YAMLDOM_SEQ_NODES(peakseq);seq;seq=seq->next){
 		if(!(tmp=yamldom_find_map_val(seq,"num")))
-			return NULL;
+			return RNULL;
 		count += strtol(((yamldom_scalar_t*)tmp->data)->val,NULL,10);
 	}
 
@@ -27,11 +27,11 @@ SEXP makedf_peak(struct iobtd *iop){
 	istart=i=0;
 	for(seq=YAMLDOM_SEQ_NODES(peakseq);seq;seq=seq->next){
 		if(!(tmp=yamldom_find_map_val(seq,"num")))
-			return NULL;
+			return RNULL;
 		count = strtol(((yamldom_scalar_t*)tmp->data)->val,NULL,10);
 
 		if(!(tmp=yamldom_find_map_val(seq,"id")))
-			return NULL;
+			return RNULL;
 		id = strtol(((yamldom_scalar_t*)tmp->data)->val,NULL,10);
 		for(i=0;i<count;i++)
 			INTEGER(idvec)[istart+i] = id;
