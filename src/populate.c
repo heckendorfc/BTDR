@@ -102,32 +102,17 @@ SEXP bupidpopulate(SEXP R_file){
 	searchdf = safedf(makedf_search(&iop));
 	fitdf = safedf(makedf_fit(&iop));
 
-	PROTECT(ret = allocVector(VECSXP,8));
-	PROTECT(retnames = allocVector(STRSXP,8));
+	hidefromGC(ret = allocVector(VECSXP,8));
+	hidefromGC(retnames = allocVector(STRSXP,8));
 
-	SET_STRING_ELT(retnames, 0, mkChar("scan"));
-	SET_STRING_ELT(retnames, 1, mkChar("decon"));
-	SET_STRING_ELT(retnames, 2, mkChar("param"));
-	SET_STRING_ELT(retnames, 3, mkChar("mod"));
-	SET_STRING_ELT(retnames, 4, mkChar("prot"));
-	SET_STRING_ELT(retnames, 5, mkChar("tag"));
-	SET_STRING_ELT(retnames, 6, mkChar("search"));
-	SET_STRING_ELT(retnames, 7, mkChar("fit"));
-
-	SET_VECTOR_ELT(ret, 0, scandf);
-	SET_VECTOR_ELT(ret, 1, peakdf);
-	SET_VECTOR_ELT(ret, 2, paramdf);
-	SET_VECTOR_ELT(ret, 3, moddf);
-	SET_VECTOR_ELT(ret, 4, protdf);
-	SET_VECTOR_ELT(ret, 5, tagdf);
-	SET_VECTOR_ELT(ret, 6, searchdf);
-	SET_VECTOR_ELT(ret, 7, fitdf);
+	retnames = make_list_names(8, "scan", "decon", "param", "mod", "prot", "tag", "search", "fit");
+	ret = make_list(retnames, 8, scandf, peakdf, paramdf, moddf, protdf, tagdf, searchdf, fitdf);
 
 	setAttrib(ret, R_NamesSymbol, retnames);
 
 	io_close(&iop);
 
-	UNPROTECT(2);
+	unhideGC();
 
 	return ret;
 }

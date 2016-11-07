@@ -23,11 +23,11 @@ SEXP makedf_scan(struct iobtd *iop){
 		count += count_seq_elem(tmp);
 	}
 
-	PROTECT(sidvec = allocVector(INTSXP,count));
-	PROTECT(plidvec = allocVector(INTSXP,count));
-	PROTECT(mzvec = allocVector(REALSXP,count));
-	PROTECT(zvec = allocVector(INTSXP,count));
-	PROTECT(rtvec = allocVector(REALSXP,count));
+	hidefromGC(sidvec = allocVector(INTSXP,count));
+	hidefromGC(plidvec = allocVector(INTSXP,count));
+	hidefromGC(mzvec = allocVector(REALSXP,count));
+	hidefromGC(zvec = allocVector(INTSXP,count));
+	hidefromGC(rtvec = allocVector(REALSXP,count));
 
 	i=0;
 	for(seq=YAMLDOM_SEQ_NODES(peakseq);seq;seq=seq->next){
@@ -54,11 +54,9 @@ SEXP makedf_scan(struct iobtd *iop){
 		}
 	}
 
-	PROTECT(df = make_dataframe(RNULL,
+	hidefromGC(df = make_dataframe(RNULL,
 								make_list_names(ncols, "plid", "scanid", "mz", "z", "rt"),
 								ncols, plidvec, sidvec, mzvec, zvec, rtvec));
-
-	UNPROTECT(6);
 
 	return df;
 }

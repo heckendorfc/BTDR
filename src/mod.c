@@ -44,12 +44,12 @@ SEXP makedf_mod(struct iobtd *iop){
 	if(count==0)
 		return RNULL;
 
-	PROTECT(idvec = allocVector(INTSXP,count));
-	PROTECT(fixedvec = allocVector(INTSXP,count));
-	PROTECT(namevec = allocVector(STRSXP,count));
-	PROTECT(posvec = allocVector(INTSXP,count));
-	PROTECT(sitevec = allocVector(INTSXP,count));
-	PROTECT(massvec = allocVector(REALSXP,count));
+	hidefromGC(idvec = allocVector(INTSXP,count));
+	hidefromGC(fixedvec = allocVector(INTSXP,count));
+	hidefromGC(namevec = allocVector(STRSXP,count));
+	hidefromGC(posvec = allocVector(INTSXP,count));
+	hidefromGC(sitevec = allocVector(INTSXP,count));
+	hidefromGC(massvec = allocVector(REALSXP,count));
 
 	i=0;
 	for(seq=YAMLDOM_SEQ_NODES(paramseq);seq;seq=seq->next){
@@ -59,11 +59,9 @@ SEXP makedf_mod(struct iobtd *iop){
 			addmod(YAMLDOM_SEQ_NODES(tmp),0,seq,idvec,fixedvec,namevec,posvec,sitevec,massvec,&i);
 	}
 
-	PROTECT(df = make_dataframe(RNULL,
+	hidefromGC(df = make_dataframe(RNULL,
 								make_list_names(ncols, "paramid", "fixed", "name", "mass", "pos", "site"),
 								ncols, idvec, fixedvec, namevec, massvec, posvec, sitevec));
-
-	UNPROTECT(7);
 
 	return df;
 }

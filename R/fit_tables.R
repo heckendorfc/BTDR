@@ -41,6 +41,9 @@ NULL
 }
 
 .matched.row <- function(res,peaks){
+	if(nrow(res)<1){
+		return(NULL)
+	}
 	name <- .get.frag.name(res)
 	mod <- res$mods
 	pkmass <- res$peak.mass

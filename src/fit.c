@@ -58,19 +58,19 @@ SEXP makedf_fit(struct iobtd *iop){
 	if(count==0)
 		return RNULL;
 
-	PROTECT(protidv = allocVector(INTSXP,count));
-	PROTECT(pidv = allocVector(INTSXP,count));
-	PROTECT(pindv = allocVector(INTSXP,count));
-	PROTECT(pcountv = allocVector(INTSXP,count));
-	PROTECT(pmassv = allocVector(REALSXP,count));
-	PROTECT(pintv = allocVector(REALSXP,count));
-	PROTECT(pzv = allocVector(INTSXP,count));
-	PROTECT(istartv = allocVector(INTSXP,count));
-	PROTECT(ilenv = allocVector(INTSXP,count));
-	PROTECT(imassv = allocVector(REALSXP,count));
-	PROTECT(modsv = allocVector(STRSXP,count));
-	PROTECT(fragv = allocVector(STRSXP,count));
-	PROTECT(errv = allocVector(REALSXP,count));
+	hidefromGC(protidv = allocVector(INTSXP,count));
+	hidefromGC(pidv = allocVector(INTSXP,count));
+	hidefromGC(pindv = allocVector(INTSXP,count));
+	hidefromGC(pcountv = allocVector(INTSXP,count));
+	hidefromGC(pmassv = allocVector(REALSXP,count));
+	hidefromGC(pintv = allocVector(REALSXP,count));
+	hidefromGC(pzv = allocVector(INTSXP,count));
+	hidefromGC(istartv = allocVector(INTSXP,count));
+	hidefromGC(ilenv = allocVector(INTSXP,count));
+	hidefromGC(imassv = allocVector(REALSXP,count));
+	hidefromGC(modsv = allocVector(STRSXP,count));
+	hidefromGC(fragv = allocVector(STRSXP,count));
+	hidefromGC(errv = allocVector(REALSXP,count));
 
 	i=0;
 	for(fitseq=YAMLDOM_SEQ_NODES(fitseq);fitseq;fitseq=fitseq->next){
@@ -124,11 +124,9 @@ SEXP makedf_fit(struct iobtd *iop){
 		free(mods);
 	}
 
-	PROTECT(df = make_dataframe(RNULL,
+	hidefromGC(df = make_dataframe(RNULL,
 								make_list_names(ncols, "protid", "peak.id", "peak.index", "peak.count", "peak.intensity", "peak.mass", "peak.z", "ion.start", "ion.len", "ion.mass", "frag", "mods", "error"),
 								ncols, protidv, pidv, pindv, pcountv, pmassv, pintv, pzv, istartv, ilenv, imassv, fragv, modsv, errv));
-
-	UNPROTECT(14);
 
 	return df;
 }

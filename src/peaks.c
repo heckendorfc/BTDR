@@ -19,10 +19,10 @@ SEXP makedf_peak(struct iobtd *iop){
 		count += strtol(((yamldom_scalar_t*)tmp->data)->val,NULL,10);
 	}
 
-	PROTECT(idvec = allocVector(INTSXP,count));
-	PROTECT(massvec = allocVector(REALSXP,count));
-	PROTECT(intvec = allocVector(REALSXP,count));
-	PROTECT(zvec = allocVector(INTSXP,count));
+	hidefromGC(idvec = allocVector(INTSXP,count));
+	hidefromGC(massvec = allocVector(REALSXP,count));
+	hidefromGC(intvec = allocVector(REALSXP,count));
+	hidefromGC(zvec = allocVector(INTSXP,count));
 
 	istart=i=0;
 	for(seq=YAMLDOM_SEQ_NODES(peakseq);seq;seq=seq->next){
@@ -43,11 +43,9 @@ SEXP makedf_peak(struct iobtd *iop){
 		istart += count;
 	}
 
-	PROTECT(df = make_dataframe(RNULL,
+	hidefromGC(df = make_dataframe(RNULL,
 								make_list_names(ncols, "id", "mass", "intensity", "z"),
 								ncols, idvec, massvec, intvec, zvec));
-
-	UNPROTECT(5);
 
 	return df;
 }

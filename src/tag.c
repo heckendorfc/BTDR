@@ -19,9 +19,9 @@ SEXP makedf_tag(struct iobtd *iop){
 	if(count==0)
 		return RNULL;
 
-	PROTECT(idvec = allocVector(STRSXP,count));
-	PROTECT(startvec = allocVector(INTSXP,count));
-	PROTECT(lenvec = allocVector(INTSXP,count));
+	hidefromGC(idvec = allocVector(STRSXP,count));
+	hidefromGC(startvec = allocVector(INTSXP,count));
+	hidefromGC(lenvec = allocVector(INTSXP,count));
 
 	i=0;
 	for(seq=YAMLDOM_SEQ_NODES(searchseq);seq;seq=seq->next){
@@ -39,11 +39,9 @@ SEXP makedf_tag(struct iobtd *iop){
 		}
 	}
 
-	PROTECT(df = make_dataframe(RNULL,
+	hidefromGC(df = make_dataframe(RNULL,
 								make_list_names(ncols, "searchid", "start", "len"),
 								ncols, idvec, startvec, lenvec));
-
-	UNPROTECT(4);
 
 	return df;
 }

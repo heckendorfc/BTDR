@@ -26,6 +26,7 @@
 //   * Deprecate non-double float functions.
 //   * Create build system for non-header-only uses.
 //   * Fixed dataframe naming bug (Christian Heckendorf).
+//   * Fixed segfault when creating 0-len dataframes in make_dataframe().
 // 
 // Version 0.3.0:
 //   * Fixed warnings visible with -Wall -pedantic.
@@ -66,9 +67,9 @@ static inline SEXP __Rvecalloc(int n, char *type, int init)
   else if (strncmp(type, "str", 1) == 0 || strncmp(type, "char*", 1) == 0)
     PROTECT(RET = allocVector(STRSXP, n));
   else
-    return NULL;
+    error("unknown allocation type\n");
   
-  UNPROTECT(1);
+  __RNACI_SEXP_protect_counter++;
   return RET;
 }
 
@@ -95,10 +96,19 @@ static inline SEXP __Rmatalloc(int m, int n, char *type, int init)
   else if (strncmp(type, "str", 1) == 0 || strncmp(type, "char*", 1) == 0)
     PROTECT(RET = allocMatrix(STRSXP, m, n));
   else
-    return NULL;
+    error("unknown allocation type\n");
   
-  UNPROTECT(1);
+  __RNACI_SEXP_protect_counter++;
   return RET;
+}
+
+static inline SEXP __Rsetclass(SEXP x, char *name)
+{
+  SEXP class;
+  newRvec(class, 1, "str");
+  SET_STRING_ELT(class, 0, mkChar(name));
+  classgets(x, class);
+  return class;
 }
 
 
@@ -131,7 +141,6 @@ static inline SEXP __Rmatalloc(int m, int n, char *type, int init)
 // ..//src/misc.c
  int is_Rnull(SEXP x)
 {
-  R_INIT;
   SEXP basePackage;
   SEXP tmp;
   
@@ -139,13 +148,12 @@ static inline SEXP __Rmatalloc(int m, int n, char *type, int init)
   
   tmp = eval( lang2( install("is.null"), x), basePackage);
   
-  R_END;
-  return INT(tmp,0);
+  UNPROTECT(1);
+  return INT(tmp);
 }
 
  int is_Rnan(SEXP x)
 {
-  R_INIT;
   SEXP basePackage;
   SEXP tmp;
 
@@ -153,13 +161,12 @@ static inline SEXP __Rmatalloc(int m, int n, char *type, int init)
 
   tmp = eval( lang2( install("is.nan"), x), basePackage);
 
-  R_END;
-  return INT(tmp,0);
+  UNPROTECT(1);
+  return INT(tmp);
 }
 
  int is_Rna(SEXP x)
 {
-  R_INIT;
   SEXP basePackage;
   SEXP tmp;
   
@@ -167,13 +174,12 @@ static inline SEXP __Rmatalloc(int m, int n, char *type, int init)
   
   tmp = eval( lang2( install("is.na"), x), basePackage);
   
-  R_END;
-  return INT(tmp,0);
+  UNPROTECT(1);
+  return INT(tmp);
 }
 
  int is_double(SEXP x)
 {
-  R_INIT;
   SEXP basePackage;
   SEXP tmp;
   
@@ -181,13 +187,12 @@ static inline SEXP __Rmatalloc(int m, int n, char *type, int init)
   
   tmp = eval( lang2( install("is.double"), x), basePackage);
   
-  R_END;
-  return INT(tmp,0);
+  UNPROTECT(1);
+  return INT(tmp);
 }
 
  int is_integer(SEXP x)
 {
-  R_INIT;
   SEXP basePackage;
   SEXP tmp;
   
@@ -195,8 +200,8 @@ static inline SEXP __Rmatalloc(int m, int n, char *type, int init)
   
   tmp = eval( lang2( install("is.integer"), x), basePackage);
   
-  R_END;
-  return INT(tmp,0);
+  UNPROTECT(1);
+  return INT(tmp);
 }
 
 
@@ -204,14 +209,13 @@ static inline SEXP __Rmatalloc(int m, int n, char *type, int init)
 // ..//src/printing.c
  void PRINT(SEXP x)
 {
-  R_INIT;
   SEXP basePackage;
   
-  RNACI_PT( basePackage = eval( lang2( install("getNamespace"), ScalarString(mkChar("base")) ), R_GlobalEnv ) );
+  PROTECT( basePackage = eval( lang2( install("getNamespace"), ScalarString(mkChar("base")) ), R_GlobalEnv ) );
   
   eval( lang2( install("print"), x), basePackage);
   
-  R_END;
+  UNPROTECT(1);
 }
 
 
@@ -219,7 +223,6 @@ static inline SEXP __Rmatalloc(int m, int n, char *type, int init)
 // ..//src/structures_dataframes.c
 static inline SEXP make_dataframe_default_colnames(const int ncols)
 {
-  R_INIT;
   int buflen;
   SEXP ret;
   
@@ -240,28 +243,24 @@ static inline SEXP make_dataframe_default_colnames(const int ncols)
     SET_VECTOR_ELT(ret, i, mkCharLen(buf, buflen));
   }
   
-  R_END;
   return ret;
 }
 
 static inline SEXP make_dataframe_default_rownames(int nrows)
 {
-  R_INIT;
   int i;
   SEXP ret_names;
   
   newRvec(ret_names, nrows, "int");
   
-  for(i=0; i<nrows; i++)
+  for (i=0; i<nrows; i++)
     INT(ret_names, i) = i + 1;
   
-  R_END;
   return ret_names;
 }
 
  SEXP make_dataframe(SEXP R_rownames, SEXP R_colnames, int ncols, ...)
 {
-  R_INIT;
   int nrows = 0;
   SEXP R_df;
   SEXP R_default_rownames;
@@ -298,16 +297,19 @@ static inline SEXP make_dataframe_default_rownames(int nrows)
   else
     set_df_rownames(R_df, R_rownames);
   
-  if (is_Rnull(R_colnames))
+  if (R_colnames == RNULL)
   {
-    R_default_colnames = make_dataframe_default_colnames(ncols);
+    if (ncols == 0)
+      R_default_colnames = make_dataframe_default_rownames(0);
+    else
+      R_default_colnames = RNULL;
+    
     set_df_colnames(R_df, R_default_colnames);
   }
   else
     set_df_colnames(R_df, R_colnames);
   
   
-  R_END;
   return R_df;
 }
 
@@ -316,7 +318,6 @@ static inline SEXP make_dataframe_default_rownames(int nrows)
 // ..//src/structures_lists.c
  SEXP make_list_names(int n, ...)
 {
-  R_INIT;
   int i;
   char *tmp;
   SEXP R_list_names;
@@ -326,7 +327,7 @@ static inline SEXP make_dataframe_default_rownames(int nrows)
   
   va_start(listPointer, n);
   
-  for(i=0; i<n; i++)
+  for (i=0; i<n; i++)
   {
     tmp = va_arg(listPointer, char *);
   
@@ -335,15 +336,12 @@ static inline SEXP make_dataframe_default_rownames(int nrows)
   
   va_end(listPointer);
   
-  R_END;
   return R_list_names;
 }
 
  SEXP make_list(SEXP R_list_names, const int n, ...)
 {
-  R_INIT;
   int i;
-/*  const int n = LENGTH(R_list_names);*/
   SEXP tmp, R_list;
   va_list listPointer;
   
@@ -351,7 +349,7 @@ static inline SEXP make_dataframe_default_rownames(int nrows)
   
   va_start(listPointer, n);
   
-  for(i=0; i<n; i++)
+  for (i=0; i<n; i++)
   {
     tmp = va_arg(listPointer, SEXP);
   
@@ -360,11 +358,9 @@ static inline SEXP make_dataframe_default_rownames(int nrows)
   
   va_end(listPointer);
   
-/*  setAttrib(R_list, R_NamesSymbol, R_list_names);*/
-  if (!is_Rnull(R_list_names))
+  if (R_list_names != RNULL)
     set_list_names(R_list, R_list_names);
   
-  R_END;
   return R_list;
 }
 

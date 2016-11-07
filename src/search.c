@@ -17,12 +17,12 @@ SEXP makedf_search(struct iobtd *iop){
 	if(count==0)
 		return RNULL;
 
-	PROTECT(sidvec = allocVector(STRSXP,count));
-	PROTECT(pidvec = allocVector(INTSXP,count));
-	PROTECT(rankvec = allocVector(INTSXP,count));
-	PROTECT(scorevec = allocVector(REALSXP,count));
-	PROTECT(tscorevec = allocVector(REALSXP,count));
-	PROTECT(covvec = allocVector(REALSXP,count));
+	hidefromGC(sidvec = allocVector(STRSXP,count));
+	hidefromGC(pidvec = allocVector(INTSXP,count));
+	hidefromGC(rankvec = allocVector(INTSXP,count));
+	hidefromGC(scorevec = allocVector(REALSXP,count));
+	hidefromGC(tscorevec = allocVector(REALSXP,count));
+	hidefromGC(covvec = allocVector(REALSXP,count));
 
 	i=0;
 	for(seq=YAMLDOM_SEQ_NODES(searchseq);seq;seq=seq->next){
@@ -38,11 +38,9 @@ SEXP makedf_search(struct iobtd *iop){
 		i++;
 	}
 
-	PROTECT(df = make_dataframe(RNULL,
+	hidefromGC(df = make_dataframe(RNULL,
 								make_list_names(ncols, "searchid", "peakid", "rank", "score", "tagscore", "cov"),
 								ncols, sidvec, pidvec, rankvec, scorevec, tscorevec, covvec));
-
-	UNPROTECT(7);
 
 	return df;
 }

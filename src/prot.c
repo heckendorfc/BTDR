@@ -18,12 +18,12 @@ SEXP makedf_prot(struct iobtd *iop){
 	if(count==0)
 		return RNULL;
 
-	PROTECT(protidvec = allocVector(INTSXP,count));
-	PROTECT(peakidvec = allocVector(INTSXP,count));
-	PROTECT(seqvec = allocVector(STRSXP,count));
-	PROTECT(namevec = allocVector(STRSXP,count));
-	PROTECT(startvec = allocVector(INTSXP,count));
-	PROTECT(lenvec = allocVector(INTSXP,count));
+	hidefromGC(protidvec = allocVector(INTSXP,count));
+	hidefromGC(peakidvec = allocVector(INTSXP,count));
+	hidefromGC(seqvec = allocVector(STRSXP,count));
+	hidefromGC(namevec = allocVector(STRSXP,count));
+	hidefromGC(startvec = allocVector(INTSXP,count));
+	hidefromGC(lenvec = allocVector(INTSXP,count));
 
 	i=0;
 	for(seq=YAMLDOM_SEQ_NODES(protseq);seq;seq=seq->next){
@@ -55,11 +55,9 @@ SEXP makedf_prot(struct iobtd *iop){
 		i++;
 	}
 
-	PROTECT(df = make_dataframe(RNULL,
+	hidefromGC(df = make_dataframe(RNULL,
 								make_list_names(ncols, "protid", "peakid", "seq", "name", "start", "len"),
 								ncols, protidvec, peakidvec, seqvec, namevec, startvec, lenvec));
-
-	UNPROTECT(7);
 
 	return df;
 }
