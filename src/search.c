@@ -2,20 +2,20 @@
 #include "utils.h"
 
 SEXP makedf_search(struct iobtd *iop){
-	SEXP df, sidvec, pidvec, rankvec, scorevec, tscorevec, covvec;
+	SEXP df, sidvec, pidvec, rankvec, scorevec, tscorevec, covvec, fdrvec;
 	yamldom_node_t *searchseq, *tmp, *seq;
 	int i, count, peakid;
 	char id[10+10+1];
-	const int ncols=6;
+	const int ncols=7;
 
 	if(!(searchseq=yamldom_find_map_val(iop->root,"search"))){
-		return RNULL;
+		goto err;
 	}
 
 	count = count_seq_elem(searchseq);
 
 	if(count==0)
-		return RNULL;
+		goto err;
 
 	hidefromGC(sidvec = allocVector(STRSXP,count));
 	hidefromGC(pidvec = allocVector(INTSXP,count));
@@ -23,6 +23,7 @@ SEXP makedf_search(struct iobtd *iop){
 	hidefromGC(scorevec = allocVector(REALSXP,count));
 	hidefromGC(tscorevec = allocVector(REALSXP,count));
 	hidefromGC(covvec = allocVector(REALSXP,count));
+	hidefromGC(fdrvec = allocVector(REALSXP,count));
 
 	i=0;
 	for(seq=YAMLDOM_SEQ_NODES(searchseq);seq;seq=seq->next){
@@ -35,12 +36,19 @@ SEXP makedf_search(struct iobtd *iop){
 		push_elem(REAL(scorevec),i,seq,"score",strtodouble);
 		push_elem(REAL(tscorevec),i,seq,"tagscore",strtodouble);
 		push_elem(REAL(covvec),i,seq,"cov",strtodouble);
+		push_elem(REAL(fdrvec),i,seq,"fdr",strtodouble);
 		i++;
 	}
 
-	hidefromGC(df = make_dataframe(RNULL,
-								make_list_names(ncols, "searchid", "peakid", "rank", "score", "tagscore", "cov"),
-								ncols, sidvec, pidvec, rankvec, scorevec, tscorevec, covvec));
+	df = make_dataframe(RNULL,
+						make_list_names(ncols, "searchid", "peakid", "rank", "score", "tagscore", "cov", "fdr"),
+						ncols, sidvec, pidvec, rankvec, scorevec, tscorevec, covvec, fdrvec);
+
+	unhideGC();
 
 	return df;
+
+err:
+	unhideGC();
+	return RNULL;
 }

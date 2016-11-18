@@ -1,3 +1,49 @@
+// NOTE: file generated automatically from RNACI source; do not edit by hand
+
+// Copyright (c) 2014-2016, Drew Schmidt
+// All rights reserved.
+// 
+// Redistribution and use in source and binary forms, with or without
+// modification, are permitted provided that the following conditions are met:
+// 
+// 1. Redistributions of source code must retain the above copyright notice, this
+//   list of conditions and the following disclaimer.
+// 
+// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
+// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
+// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
+// DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
+// ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
+// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
+// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
+// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+// Changelog:
+// Version 0.4.0:
+//   * Clean up internals; better internal guarding.
+//   * Deprecate non-double float functions.
+//   * Create build system for non-header-only uses.
+//   * Fixed dataframe naming bug (Christian Heckendorf).
+//   * Fixed segfault when creating 0-len dataframes in make_dataframe().
+// 
+// Version 0.3.0:
+//   * Fixed warnings visible with -Wall -pedantic.
+//   * Use strnlen() over strlen(); shorten string checks in allocator.
+//   * Simplify initializer in allocator using memset().
+// 
+// Version 0.2.0:
+//   * Converted to header only.
+// 
+// Version 0.1.0:
+//   * Initial release.
+
+
+#ifndef __RNACI_H__
+#define __RNACI_H__
+
+
 #ifndef __RNACI_API_H_
 #define __RNACI_API_H_
 
@@ -19,7 +65,7 @@
 
 #define RNACI_IGNORED -1
 
-static unsigned int __RNACI_SEXP_protect_counter = 0;
+extern unsigned int __RNACI_SEXP_protect_counter;
 
 #define __RNACI_INT(x,y,...) INTEGER(x)[y]
 #define __RNACI_DBL(x,y,...) REAL(x)[y]
@@ -59,7 +105,7 @@ static unsigned int __RNACI_SEXP_protect_counter = 0;
 #define getRptr(ptr) R_ExternalPtrAddr(ptr);
 
 #define newRptrfreefun(FNAME,TYPE,FREEFUN) \
-static inline void FNAME(SEXP ptr) \
+void FNAME(SEXP ptr) \
 { \
   if (NULL == R_ExternalPtrAddr(ptr)) return; \
   TYPE *tmp = (TYPE *) R_ExternalPtrAddr(ptr); \
@@ -83,31 +129,33 @@ void __ignore_me_just_here_for_semicolons();
 
 
 // floats.c
- int fis_zero(double x);
- int fequals(double x, double y);
+int fis_zero(double x);
+int fequals(double x, double y);
 
 // misc.c
- int is_Rnull(SEXP x);
- int is_Rnan(SEXP x);
- int is_Rna(SEXP x);
- int is_double(SEXP x);
- int is_integer(SEXP x);
+int is_Rnull(SEXP x);
+int is_Rnan(SEXP x);
+int is_Rna(SEXP x);
+int is_double(SEXP x);
+int is_integer(SEXP x);
 
 // printinc.c
- void PRINT(SEXP x);
+void PRINT(SEXP x);
 
 // structures_dataframes.c
- SEXP make_dataframe(SEXP R_rownames, SEXP R_colnames, int n, ...);
+SEXP make_dataframe(SEXP R_rownames, SEXP R_colnames, int n, ...);
 
 // structures_lists.c
- SEXP make_list_names(int n, ...);
- SEXP make_list(SEXP R_list_names, const int n, ...);
+SEXP make_list_names(int n, ...);
+SEXP make_list(SEXP R_list_names, const int n, ...);
 
 // structures_misc.c
- void set_list_names(SEXP R_list, SEXP R_names);
- void set_df_rownames(SEXP R_df, SEXP R_rownames);
- void set_df_colnames(SEXP R_df, SEXP R_colnames);
- void set_list_as_df(SEXP R_list);
+void set_list_names(SEXP R_list, SEXP R_names);
+void set_df_rownames(SEXP R_df, SEXP R_rownames);
+void set_df_colnames(SEXP R_df, SEXP R_colnames);
+void set_list_as_df(SEXP R_list);
 
+
+#endif
 
 #endif

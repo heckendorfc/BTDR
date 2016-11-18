@@ -9,7 +9,7 @@ SEXP makedf_param(struct iobtd *iop){
 	const int ncols=6;
 
 	if(!(paramseq=yamldom_find_map_val(iop->root,"param"))){
-		return RNULL;
+		goto err;
 	}
 
 	count = count_seq_elem(paramseq);
@@ -24,7 +24,7 @@ SEXP makedf_param(struct iobtd *iop){
 	istart=i=0;
 	for(seq=YAMLDOM_SEQ_NODES(paramseq);seq;seq=seq->next){
 		if(!(tmp=yamldom_find_map_val(seq,"peaks")))
-			return RNULL;
+			goto err;
 		push_elem(INTEGER(idvec),i,((yamldom_alias_t*)tmp->data)->ref,"id",strtoint);
 
 		push_elem(fragvec,i,seq,"frag",strtostr);
@@ -36,9 +36,15 @@ SEXP makedf_param(struct iobtd *iop){
 		i++;
 	}
 
-	hidefromGC(df = make_dataframe(RNULL,
-								make_list_names(ncols, "peakid", "frag", "mstol", "msmstol", "msmass", "tax"),
-								ncols, idvec, fragvec, mstolvec, msmstolvec, msmassvec, taxvec));
+	df = make_dataframe(RNULL,
+						make_list_names(ncols, "peakid", "frag", "mstol", "msmstol", "msmass", "tax"),
+						ncols, idvec, fragvec, mstolvec, msmstolvec, msmassvec, taxvec);
+
+	unhideGC();
 
 	return df;
+
+err:
+	unhideGC();
+	return RNULL;
 }

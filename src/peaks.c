@@ -9,13 +9,13 @@ SEXP makedf_peak(struct iobtd *iop){
 	const int ncols=4;
 
 	if(!(peakseq=yamldom_find_map_val(iop->root,"peaks"))){
-		return RNULL;
+		goto err;
 	}
 
 	count=0;
 	for(seq=YAMLDOM_SEQ_NODES(peakseq);seq;seq=seq->next){
 		if(!(tmp=yamldom_find_map_val(seq,"num")))
-			return RNULL;
+			goto err;
 		count += strtol(((yamldom_scalar_t*)tmp->data)->val,NULL,10);
 	}
 
@@ -27,11 +27,11 @@ SEXP makedf_peak(struct iobtd *iop){
 	istart=i=0;
 	for(seq=YAMLDOM_SEQ_NODES(peakseq);seq;seq=seq->next){
 		if(!(tmp=yamldom_find_map_val(seq,"num")))
-			return RNULL;
+			goto err;
 		count = strtol(((yamldom_scalar_t*)tmp->data)->val,NULL,10);
 
 		if(!(tmp=yamldom_find_map_val(seq,"id")))
-			return RNULL;
+			goto err;
 		id = strtol(((yamldom_scalar_t*)tmp->data)->val,NULL,10);
 		for(i=0;i<count;i++)
 			INTEGER(idvec)[istart+i] = id;
@@ -43,9 +43,15 @@ SEXP makedf_peak(struct iobtd *iop){
 		istart += count;
 	}
 
-	hidefromGC(df = make_dataframe(RNULL,
-								make_list_names(ncols, "id", "mass", "intensity", "z"),
-								ncols, idvec, massvec, intvec, zvec));
+	df = make_dataframe(RNULL,
+						make_list_names(ncols, "id", "mass", "intensity", "z"),
+						ncols, idvec, massvec, intvec, zvec);
+
+	unhideGC();
 
 	return df;
+
+err:
+	unhideGC();
+	return RNULL;
 }

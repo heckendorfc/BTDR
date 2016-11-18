@@ -9,17 +9,17 @@ SEXP makedf_scan(struct iobtd *iop){
 	const int ncols=5;
 
 	if(!(scanseq=yamldom_find_map_val(iop->root,"scan"))){
-		return RNULL;
+		goto err;
 	}
 
 	if(!(peakseq=yamldom_find_map_val(iop->root,"peaks"))){
-		return RNULL;
+		goto err;
 	}
 
 	count=0;
 	for(seq=YAMLDOM_SEQ_NODES(peakseq);seq;seq=seq->next){
 		if(!(tmp=yamldom_find_map_val(seq,"scans")))
-			return RNULL;
+			goto err;
 		count += count_seq_elem(tmp);
 	}
 
@@ -32,11 +32,11 @@ SEXP makedf_scan(struct iobtd *iop){
 	i=0;
 	for(seq=YAMLDOM_SEQ_NODES(peakseq);seq;seq=seq->next){
 		if(!(tmp=yamldom_find_map_val(seq,"id")))
-			return RNULL;
+			goto err;
 		id=strtol(((yamldom_scalar_t*)tmp->data)->val,NULL,10);
 
 		if(!(scanseq=yamldom_find_map_val(seq,"scans")))
-			return RNULL;
+			goto err;
 
 		for(tmp=YAMLDOM_SEQ_NODES(scanseq);tmp;tmp=tmp->next){
 			scan=((yamldom_alias_t*)tmp->data)->ref;
@@ -54,9 +54,15 @@ SEXP makedf_scan(struct iobtd *iop){
 		}
 	}
 
-	hidefromGC(df = make_dataframe(RNULL,
-								make_list_names(ncols, "plid", "scanid", "mz", "z", "rt"),
-								ncols, plidvec, sidvec, mzvec, zvec, rtvec));
+	df = make_dataframe(RNULL,
+						make_list_names(ncols, "plid", "scanid", "mz", "z", "rt"),
+						ncols, plidvec, sidvec, mzvec, zvec, rtvec);
+
+	unhideGC();
 
 	return df;
+
+err:
+	unhideGC();
+	return RNULL;
 }

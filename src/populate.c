@@ -75,8 +75,10 @@ int io_close(struct iobtd *iop){
 }
 
 SEXP safedf(SEXP df){
-	if(df != RNULL)
+	if(df != RNULL){
+		hidefromGC(df);
 		return df;
+	}
 
 	return make_dataframe(RNULL,RNULL,0);
 }
@@ -102,13 +104,8 @@ SEXP bupidpopulate(SEXP R_file){
 	searchdf = safedf(makedf_search(&iop));
 	fitdf = safedf(makedf_fit(&iop));
 
-	hidefromGC(ret = allocVector(VECSXP,8));
-	hidefromGC(retnames = allocVector(STRSXP,8));
-
 	retnames = make_list_names(8, "scan", "decon", "param", "mod", "prot", "tag", "search", "fit");
 	ret = make_list(retnames, 8, scandf, peakdf, paramdf, moddf, protdf, tagdf, searchdf, fitdf);
-
-	setAttrib(ret, R_NamesSymbol, retnames);
 
 	io_close(&iop);
 

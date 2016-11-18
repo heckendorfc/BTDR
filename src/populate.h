@@ -8,13 +8,9 @@
 #include "libyaml-dom/yamldom.h"
 #include "RNACI/RNACI.h"
 
-#define CHARPT(x,i)	((char*)CHAR(STRING_ELT(x,i)))
+#include "types.h"
 
-struct iobtd{
-	yamldom_data_t iod;
-	yamldom_node_t *root;
-	yamldom_anchor_list_t anchors;
-};
+#define CHARPT(x,i)	((char*)CHAR(STRING_ELT(x,i)))
 
 SEXP makedf_scan(struct iobtd *iop);
 SEXP makedf_peak(struct iobtd *iop);

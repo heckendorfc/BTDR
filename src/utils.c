@@ -48,10 +48,12 @@ void push_seq(void *vec, yamldom_node_t *root, char *name, int num, void(*tonum)
 	}
 
 	tmp = YAMLDOM_SEQ_NODES(tmp);
-	for(i=0;i<num;i++){
+	for(i=0;i<num && tmp;i++){
 		tonum(((yamldom_scalar_t*)tmp->data)->val,vec,i);
 		tmp=tmp->next;
 	}
+	for(;i<num;i++)
+		tonum("0",vec,i);
 }
 
 int count_seq_elem(yamldom_node_t *seq){

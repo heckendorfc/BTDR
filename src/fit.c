@@ -48,7 +48,7 @@ SEXP makedf_fit(struct iobtd *iop){
 	char *mods;
 
 	if(!(fitseq=yamldom_find_map_val(iop->root,"fit"))){
-		return RNULL;
+		goto err;
 	}
 
 	count = 0;
@@ -56,7 +56,7 @@ SEXP makedf_fit(struct iobtd *iop){
 		count += count_seq_elem(yamldom_find_map_val(seq,"results"));
 
 	if(count==0)
-		return RNULL;
+		goto err;
 
 	hidefromGC(protidv = allocVector(INTSXP,count));
 	hidefromGC(pidv = allocVector(INTSXP,count));
@@ -75,21 +75,21 @@ SEXP makedf_fit(struct iobtd *iop){
 	i=0;
 	for(fitseq=YAMLDOM_SEQ_NODES(fitseq);fitseq;fitseq=fitseq->next){
 		if(!(tmp=yamldom_find_map_val(fitseq,"prot")))
-			return RNULL;
+			goto err;
 		tmp = ((yamldom_alias_t*)tmp->data)->ref;
 		push_elem(&protid,0,tmp,"id",strtoint);
 
 		if(!(tmp=yamldom_find_map_val(tmp,"param")))
-			return RNULL;
+			goto err;
 		tmp = ((yamldom_alias_t*)tmp->data)->ref;
 		modstrlen = getmodstrlen(yamldom_find_map_val(tmp,"vmod"));
 		if(!(tmp=yamldom_find_map_val(tmp,"peaks")))
-			return RNULL;
+			goto err;
 		pseq = ((yamldom_alias_t*)tmp->data)->ref;
 		push_elem(&peakid,0,pseq,"id",strtoint);
 
 		if(!(mods=malloc(modstrlen)))
-			return RNULL;
+			goto err;
 
 		for(seq=YAMLDOM_SEQ_NODES(yamldom_find_map_val(fitseq,"results"));seq;seq=seq->next){
 			rseq=seq;
@@ -112,7 +112,7 @@ SEXP makedf_fit(struct iobtd *iop){
 			push_elem_offset(INTEGER(pzv),i,INTEGER(pindv)[i],pseq,"z",strtoint);
 
 			if(!(tmp=yamldom_find_map_val(rseq,"ion")))
-				return RNULL;
+				goto err;
 			iseq = ((yamldom_alias_t*)tmp->data)->ref;
 			push_elem(INTEGER(istartv),i,iseq,"start",strtoint);
 			push_elem(INTEGER(ilenv),i,iseq,"len",strtoint);
@@ -124,9 +124,15 @@ SEXP makedf_fit(struct iobtd *iop){
 		free(mods);
 	}
 
-	hidefromGC(df = make_dataframe(RNULL,
-								make_list_names(ncols, "protid", "peak.id", "peak.index", "peak.count", "peak.intensity", "peak.mass", "peak.z", "ion.start", "ion.len", "ion.mass", "frag", "mods", "error"),
-								ncols, protidv, pidv, pindv, pcountv, pmassv, pintv, pzv, istartv, ilenv, imassv, fragv, modsv, errv));
+	df = make_dataframe(RNULL,
+						make_list_names(ncols, "protid", "peak.id", "peak.index", "peak.count", "peak.intensity", "peak.mass", "peak.z", "ion.start", "ion.len", "ion.mass", "frag", "mods", "error"),
+						ncols, protidv, pidv, pindv, pcountv, pmassv, pintv, pzv, istartv, ilenv, imassv, fragv, modsv, errv);
+
+	unhideGC();
 
 	return df;
+
+err:
+	unhideGC();
+	return RNULL;
 }

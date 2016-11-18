@@ -1,50 +1,13 @@
-// NOTE: file generated automatically from RNACI source; do not edit by hand
-
-// Copyright (c) 2014-2016, Drew Schmidt
-// All rights reserved.
-// 
-// Redistribution and use in source and binary forms, with or without
-// modification, are permitted provided that the following conditions are met:
-// 
-// 1. Redistributions of source code must retain the above copyright notice, this
-//   list of conditions and the following disclaimer.
-// 
-// THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND
-// ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED
-// WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
-// DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE LIABLE FOR
-// ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES
-// (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES;
-// LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
-// ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-// (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
-// SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-
-// Changelog:
-// Version 0.4.0:
-//   * Clean up internals; better internal guarding.
-//   * Deprecate non-double float functions.
-//   * Create build system for non-header-only uses.
-//   * Fixed dataframe naming bug (Christian Heckendorf).
-//   * Fixed segfault when creating 0-len dataframes in make_dataframe().
-// 
-// Version 0.3.0:
-//   * Fixed warnings visible with -Wall -pedantic.
-//   * Use strnlen() over strlen(); shorten string checks in allocator.
-//   * Simplify initializer in allocator using memset().
-// 
-// Version 0.2.0:
-//   * Converted to header only.
-// 
-// Version 0.1.0:
-//   * Initial release.
-
-
-
 #include "RNACI.h"
 
+unsigned int __RNACI_SEXP_protect_counter = 0;
+
+//----------------------------------------------------------------
+// Definitions
+//----------------------------------------------------------------
+
 // ..//src/alloc.c
-static inline SEXP __Rvecalloc(int n, char *type, int init)
+SEXP __Rvecalloc(int n, char *type, int init)
 {
   SEXP RET;
   
@@ -73,7 +36,7 @@ static inline SEXP __Rvecalloc(int n, char *type, int init)
   return RET;
 }
 
-static inline SEXP __Rmatalloc(int m, int n, char *type, int init)
+SEXP __Rmatalloc(int m, int n, char *type, int init)
 {
   SEXP RET;
   
@@ -102,7 +65,7 @@ static inline SEXP __Rmatalloc(int m, int n, char *type, int init)
   return RET;
 }
 
-static inline SEXP __Rsetclass(SEXP x, char *name)
+SEXP __Rsetclass(SEXP x, char *name)
 {
   SEXP class;
   newRvec(class, 1, "str");
@@ -114,7 +77,7 @@ static inline SEXP __Rsetclass(SEXP x, char *name)
 
 
 // ..//src/floats.c
- int fis_zero(double x)
+int fis_zero(double x)
 {
   const double abs_eps = 1.1 * DBL_EPSILON;
   if (fabs(x) < abs_eps*DBL_MIN)
@@ -123,7 +86,7 @@ static inline SEXP __Rsetclass(SEXP x, char *name)
     return false;
 }
 
- int fequals(double x, double y)
+int fequals(double x, double y)
 {
   const double abs_eps = 1.1 * DBL_EPSILON;
   const double diff = fabs(x - y);
@@ -139,12 +102,12 @@ static inline SEXP __Rsetclass(SEXP x, char *name)
 
 
 // ..//src/misc.c
- int is_Rnull(SEXP x)
+int is_Rnull(SEXP x)
 {
   SEXP basePackage;
   SEXP tmp;
   
-  RNACI_PT( basePackage = eval( lang2( install("getNamespace"), ScalarString(mkChar("base")) ), R_GlobalEnv ) );
+  PROTECT( basePackage = eval( lang2( install("getNamespace"), ScalarString(mkChar("base")) ), R_GlobalEnv ) );
   
   tmp = eval( lang2( install("is.null"), x), basePackage);
   
@@ -152,12 +115,12 @@ static inline SEXP __Rsetclass(SEXP x, char *name)
   return INT(tmp);
 }
 
- int is_Rnan(SEXP x)
+int is_Rnan(SEXP x)
 {
   SEXP basePackage;
   SEXP tmp;
 
-  RNACI_PT( basePackage = eval( lang2( install("getNamespace"), ScalarString(mkChar("base")) ), R_GlobalEnv ) );
+  PROTECT( basePackage = eval( lang2( install("getNamespace"), ScalarString(mkChar("base")) ), R_GlobalEnv ) );
 
   tmp = eval( lang2( install("is.nan"), x), basePackage);
 
@@ -165,12 +128,12 @@ static inline SEXP __Rsetclass(SEXP x, char *name)
   return INT(tmp);
 }
 
- int is_Rna(SEXP x)
+int is_Rna(SEXP x)
 {
   SEXP basePackage;
   SEXP tmp;
   
-  RNACI_PT( basePackage = eval( lang2( install("getNamespace"), ScalarString(mkChar("base")) ), R_GlobalEnv ) );
+  PROTECT( basePackage = eval( lang2( install("getNamespace"), ScalarString(mkChar("base")) ), R_GlobalEnv ) );
   
   tmp = eval( lang2( install("is.na"), x), basePackage);
   
@@ -178,12 +141,12 @@ static inline SEXP __Rsetclass(SEXP x, char *name)
   return INT(tmp);
 }
 
- int is_double(SEXP x)
+int is_double(SEXP x)
 {
   SEXP basePackage;
   SEXP tmp;
   
-  RNACI_PT( basePackage = eval( lang2( install("getNamespace"), ScalarString(mkChar("base")) ), R_GlobalEnv ) );
+  PROTECT( basePackage = eval( lang2( install("getNamespace"), ScalarString(mkChar("base")) ), R_GlobalEnv ) );
   
   tmp = eval( lang2( install("is.double"), x), basePackage);
   
@@ -191,12 +154,12 @@ static inline SEXP __Rsetclass(SEXP x, char *name)
   return INT(tmp);
 }
 
- int is_integer(SEXP x)
+int is_integer(SEXP x)
 {
   SEXP basePackage;
   SEXP tmp;
   
-  RNACI_PT( basePackage = eval( lang2( install("getNamespace"), ScalarString(mkChar("base")) ), R_GlobalEnv ) );
+  PROTECT( basePackage = eval( lang2( install("getNamespace"), ScalarString(mkChar("base")) ), R_GlobalEnv ) );
   
   tmp = eval( lang2( install("is.integer"), x), basePackage);
   
@@ -206,8 +169,9 @@ static inline SEXP __Rsetclass(SEXP x, char *name)
 
 
 
+
 // ..//src/printing.c
- void PRINT(SEXP x)
+void PRINT(SEXP x)
 {
   SEXP basePackage;
   
@@ -221,7 +185,7 @@ static inline SEXP __Rsetclass(SEXP x, char *name)
 
 
 // ..//src/structures_dataframes.c
-static inline SEXP make_dataframe_default_colnames(const int ncols)
+SEXP make_dataframe_default_colnames(const int ncols)
 {
   int buflen;
   SEXP ret;
@@ -246,7 +210,7 @@ static inline SEXP make_dataframe_default_colnames(const int ncols)
   return ret;
 }
 
-static inline SEXP make_dataframe_default_rownames(int nrows)
+SEXP make_dataframe_default_rownames(int nrows)
 {
   int i;
   SEXP ret_names;
@@ -259,7 +223,7 @@ static inline SEXP make_dataframe_default_rownames(int nrows)
   return ret_names;
 }
 
- SEXP make_dataframe(SEXP R_rownames, SEXP R_colnames, int ncols, ...)
+SEXP make_dataframe(SEXP R_rownames, SEXP R_colnames, int ncols, ...)
 {
   int nrows = 0;
   SEXP R_df;
@@ -316,7 +280,7 @@ static inline SEXP make_dataframe_default_rownames(int nrows)
 
 
 // ..//src/structures_lists.c
- SEXP make_list_names(int n, ...)
+SEXP make_list_names(int n, ...)
 {
   int i;
   char *tmp;
@@ -339,7 +303,7 @@ static inline SEXP make_dataframe_default_rownames(int nrows)
   return R_list_names;
 }
 
- SEXP make_list(SEXP R_list_names, const int n, ...)
+SEXP make_list(SEXP R_list_names, const int n, ...)
 {
   int i;
   SEXP tmp, R_list;
@@ -367,25 +331,22 @@ static inline SEXP make_dataframe_default_rownames(int nrows)
 
 
 // ..//src/structures_misc.c
- void set_list_names(SEXP R_list, SEXP R_names)
+void set_list_names(SEXP R_list, SEXP R_names)
 {
   setAttrib(R_list, R_NamesSymbol, R_names);
 }
 
- void set_df_rownames(SEXP R_df, SEXP R_rownames)
+void set_df_rownames(SEXP R_df, SEXP R_rownames)
 {
   setAttrib(R_df, R_RowNamesSymbol, R_rownames);
 }
 
- void set_df_colnames(SEXP R_df, SEXP R_colnames)
+void set_df_colnames(SEXP R_df, SEXP R_colnames)
 {
   setAttrib(R_df, R_NamesSymbol, R_colnames);
 }
 
- void set_list_as_df(SEXP R_list)
+void set_list_as_df(SEXP R_list)
 {
   setAttrib(R_list, R_ClassSymbol, mkString("data.frame"));
 }
-
-
-

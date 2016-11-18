@@ -30,7 +30,7 @@ SEXP makedf_mod(struct iobtd *iop){
 	const int ncols=6;
 
 	if(!(paramseq=yamldom_find_map_val(iop->root,"param"))){
-		return RNULL;
+		goto err;
 	}
 
 	count=0;
@@ -42,7 +42,7 @@ SEXP makedf_mod(struct iobtd *iop){
 	}
 
 	if(count==0)
-		return RNULL;
+		goto err;
 
 	hidefromGC(idvec = allocVector(INTSXP,count));
 	hidefromGC(fixedvec = allocVector(INTSXP,count));
@@ -59,9 +59,15 @@ SEXP makedf_mod(struct iobtd *iop){
 			addmod(YAMLDOM_SEQ_NODES(tmp),0,seq,idvec,fixedvec,namevec,posvec,sitevec,massvec,&i);
 	}
 
-	hidefromGC(df = make_dataframe(RNULL,
-								make_list_names(ncols, "paramid", "fixed", "name", "mass", "pos", "site"),
-								ncols, idvec, fixedvec, namevec, massvec, posvec, sitevec));
+	df = make_dataframe(RNULL,
+						make_list_names(ncols, "paramid", "fixed", "name", "mass", "pos", "site"),
+						ncols, idvec, fixedvec, namevec, massvec, posvec, sitevec);
+
+	unhideGC();
 
 	return df;
+
+err:
+	unhideGC();
+	return RNULL;
 }
