@@ -16,7 +16,9 @@ int getmodstrlen(yamldom_node_t *mods){
 void modstr(yamldom_node_t *mods, char *str){
 	yamldom_node_t *tmp;
 	char *tmod;
+	char *p;
 	int num;
+	int len;
 
 	str[0]=0;
 
@@ -31,7 +33,10 @@ void modstr(yamldom_node_t *mods, char *str){
 		if(!(tmp=yamldom_find_map_val(mods,"name")))
 		tmp = ((yamldom_alias_t*)tmp->data)->ref;
 
-		asprintf(&tmod,"%dx %s",num,((yamldom_scalar_t*)tmp->data)->val);
+		p=((yamldom_scalar_t*)tmp->data)->val;
+		len=10+2+strlen(p)+1;
+		tmod = malloc(len);
+		sprintf(tmod,"%dx %s",num,p);
 
 		if(*str)
 			strcat(str,", ");
