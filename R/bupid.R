@@ -22,10 +22,14 @@
 #' Sequence tags identified
 #' @slot fit
 #' Fragment ions identified
+#' @slot xlink
+#' Peak lists with crosslinked ions identified
+#' @slot xlpep
+#' Crosslinked ions identified
 #'
 #' @keywords Class
 #' @name bupid-class
-setClass("bupid",representation(scan="data.frame",decon="data.frame",param="data.frame",mod="data.frame",prot="data.frame",search="data.frame",tag="data.frame",fit="data.frame"))
+setClass("bupid",representation(scan="data.frame",decon="data.frame",param="data.frame",mod="data.frame",prot="data.frame",search="data.frame",tag="data.frame",fit="data.frame",xlink="data.frame",xlpep="data.frame"))
 
 setGeneric("getview",def=function(object,type){})
 setMethod("getview",signature="bupid", definition=function(object,type){
@@ -212,7 +216,7 @@ bupidpopulate <- function(data){
 	if(is.null(modres))
 		modres <- data.frame()
 
-	object <- new("bupid",scan=scanres,decon=deconres,param=paramres,mod=modres,prot=protres,search=searchres,tag=tagres,fit=fitres)
+	object <- new("bupid",scan=scanres,decon=deconres,param=paramres,mod=modres,prot=protres,search=searchres,tag=tagres,fit=fitres,xlink=data.frame(),xlpep=data.frame())
 
 	object
 }

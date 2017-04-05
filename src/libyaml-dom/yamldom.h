@@ -15,6 +15,7 @@ enum y_types{
 #define YAMLDOM_SEQ_NODES(x) (((yamldom_seq_t*)x->data)->nodes)
 #define YAMLDOM_SCALAR_DATA(x) ((yamldom_scalar_t*)x->data)
 #define YAMLDOM_ALIAS_DATA(x) ((yamldom_alias_t*)x->data)
+#define YAMLDOM_DEREF(x) (((yamldom_alias_t*)x->data)->ref)
 
 typedef struct yamldom_node_s{
 	struct yamldom_node_s *next;

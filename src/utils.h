@@ -11,4 +11,7 @@ int count_seq_elem(yamldom_node_t *seq);
 
 void set_searchid(yamldom_node_t *searchseq, char *id, int *peakidp, int *protidp);
 
+int getmodstrlen(yamldom_node_t *mods);
+void modstr(yamldom_node_t *mods, char *str);
+
 #endif

@@ -87,7 +87,7 @@ SEXP bupidpopulate(SEXP R_file){
 	struct iobtd iop;
 	char *file = CHARPT(R_file,0);
 	FILE *fd;
-	SEXP scandf, peakdf, paramdf, moddf, protdf, searchdf, tagdf, fitdf;
+	SEXP scandf, peakdf, paramdf, moddf, protdf, searchdf, tagdf, fitdf, xlinkdf, xlpdf;
 	SEXP ret, retnames;
 
 	if(!(fd = fopen(file,"r")))
@@ -103,9 +103,11 @@ SEXP bupidpopulate(SEXP R_file){
 	tagdf = safedf(makedf_tag(&iop));
 	searchdf = safedf(makedf_search(&iop));
 	fitdf = safedf(makedf_fit(&iop));
+	xlinkdf = safedf(makedf_xlink(&iop));
+	xlpdf = safedf(makedf_xlpep(&iop));
 
-	retnames = make_list_names(8, "scan", "decon", "param", "mod", "prot", "tag", "search", "fit");
-	ret = make_list(retnames, 8, scandf, peakdf, paramdf, moddf, protdf, tagdf, searchdf, fitdf);
+	retnames = make_list_names(10, "scan", "decon", "param", "mod", "prot", "tag", "search", "fit", "xlink", "xlpep");
+	ret = make_list(retnames, 10, scandf, peakdf, paramdf, moddf, protdf, tagdf, searchdf, fitdf, xlinkdf, xlpdf);
 
 	io_close(&iop);
 

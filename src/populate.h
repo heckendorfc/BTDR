@@ -20,5 +20,7 @@ SEXP makedf_prot(struct iobtd *iop);
 SEXP makedf_tag(struct iobtd *iop);
 SEXP makedf_search(struct iobtd *iop);
 SEXP makedf_fit(struct iobtd *iop);
+SEXP makedf_xlink(struct iobtd *iop);
+SEXP makedf_xlpep(struct iobtd *iop);
 
 #endif

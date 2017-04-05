@@ -1,49 +1,6 @@
 #include "populate.h"
 #include "utils.h"
 
-int getmodstrlen(yamldom_node_t *mods){
-	int ret=0;
-	yamldom_node_t *tmp;
-
-	for(mods=YAMLDOM_SEQ_NODES(mods);mods;mods=mods->next){
-		if((tmp=yamldom_find_map_val(mods,"name")))
-			ret += strlen(((yamldom_alias_t*)tmp->data)->val);
-	}
-
-	return ret;
-}
-
-void modstr(yamldom_node_t *mods, char *str){
-	yamldom_node_t *tmp;
-	char *tmod;
-	char *p;
-	int num;
-	int len;
-
-	str[0]=0;
-
-	for(mods=YAMLDOM_SEQ_NODES(mods);mods;mods=mods->next){
-		if(!(tmp=yamldom_find_map_val(mods,"num")))
-			return;
-		push_elem(&num,0,tmp,"num",strtoint);
-
-		if(!(tmp=yamldom_find_map_val(mods,"mod")))
-			return;
-		tmp = ((yamldom_alias_t*)tmp->data)->ref;
-		if(!(tmp=yamldom_find_map_val(mods,"name")))
-		tmp = ((yamldom_alias_t*)tmp->data)->ref;
-
-		p=((yamldom_scalar_t*)tmp->data)->val;
-		len=10+2+strlen(p)+1;
-		tmod = malloc(len);
-		sprintf(tmod,"%dx %s",num,p);
-
-		if(*str)
-			strcat(str,", ");
-		strcat(str,tmod);
-	}
-}
-
 SEXP makedf_fit(struct iobtd *iop){
 	SEXP df, protidv, pidv, pindv, pcountv, pmassv, pintv, pzv, istartv, ilenv, imassv, fragv, modsv, errv;
 	yamldom_node_t *fitseq, *pseq, *rseq, *iseq, *tmp, *seq;

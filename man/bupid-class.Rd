@@ -28,6 +28,10 @@ of a BUPID Top-Down run and post-processing utilities.
 \item{\code{tag}}{Sequence tags identified}
 
 \item{\code{fit}}{Fragment ions identified}
+
+\item{\code{xlink}}{Peak lists with crosslinked ions identified}
+
+\item{\code{xlpep}}{Crosslinked ions identified}
 }}
 \keyword{Class}
 
