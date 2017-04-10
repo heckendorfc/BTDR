@@ -4,12 +4,14 @@
 #' 
 #' Each result from BTDR packages will provide differeny outputs
 #' 
-#' @param data
+#' @param x
 #' A bupid object
 #' @param type
 #' The type of output to display. One of the strings returned by
 #' c("overview","protein","fragment") or
 #' paste("raw",slotNames(data),sep="-")
+#' @param n
+#' The number of items to display
 #'
 #' @return Returns the information
 #'
@@ -19,6 +21,8 @@
 #' infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
 #' data <- read.bupid(url=paste(server,infile,sep="?"))
 #' print(data,"overview")
+#' head(data,"overview",10)
+#' tail(data,"overview",2)
 #' }
 #' 
 #' @name bupid-print

@@ -6,6 +6,8 @@
 #' 
 #' @param object
 #' object returned from another function
+#' @param type
+#' the type of view to summarize
 #' @param ...
 #' extra parameters
 #'
@@ -22,38 +24,30 @@
 #' @name bupid-summary
 NULL
 
-#setGeneric("summary",def=function(object){})
-
 #' @rdname bupid-summary
 #' @export 
 setMethod("summary",signature="bupid", definition=function(object,type="overview"){
-	#tmp <- object@view
 	tmp <- getview(object,type)
 
 	if(is.null(tmp))
 		return(NULL)
 
-	class(tmp) <- type
-	#class(tmp) <- object@type
-	summary(tmp)
+	if(type == "fragment")
+		.summary.overview(tmp)
+	else if(type == "protein")
+		.summary.protein(tmp)
+	else
+		.summary.overview(tmp)
 })
 
-#' @rdname bupid-summary
-#' @export 
-summary.overview <- function(object, ...){
-	class(object) <- "object.frame"
+.summary.overview <- function(object, ...){
 	list(num.prot=nrow(object),num.scan=sum(object$scan.count),scan.counts=summary(object$scan.count))
 }
 
-#' @rdname bupid-summary
-#' @export 
-summary.protein <- function(object, ...){
-	class(object) <- "object.frame"
+.summary.protein <- function(object, ...){
 	list(num.prot=nrow(object),protein.score=summary(object$protein.score),tag.coverage=summary(object$tag.coverage),tag.score=summary(object$tag.score))
 }
 
-#' @rdname bupid-summary
-#' @export 
-summary.fragment <- function(object, ...){
+.summary.fragment <- function(object, ...){
 	length(object)
 }

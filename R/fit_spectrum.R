@@ -12,6 +12,8 @@
 #' allow unicode characters in labels
 #' @param unassigned
 #' display unassigned peaks behind the labelled spectrum
+#' @param base_size
+#' base text size for axis labels
 #' 
 #' @return Returns the ggplot object
 #'
@@ -22,25 +24,25 @@
 #' data <- read.bupid(url=paste(server,infile,sep="?"))
 #' 
 #' # plot the entire spectrum
-#' plot.spectrum(data)
+#' spectrum.plot(data)
 #' 
 #' # plot peaks between 500 Da and 600 Da with labeled assignments
-#' plot.label.spectrum(data,c(500,600))
+#' spectrum.label.plot(data,c(500,600))
 #' 
 #' # again with a simple theme
-#' plot.label.spectrum(data,c(500,600)) + plot.theme.simple()
+#' spectrum.label.plot(data,c(500,600)) + spectrum.theme.simple()
 #' }
 #' 
-#' @name plot.spectrum
+#' @name spectrum.plot
 NULL
 
-#' plot.spectrum plots the deconvoluted peak list as a mass spectrum
+#' spectrum.plot plots the deconvoluted peak list as a mass spectrum
 #' 
 #' @return Returns the ggplot object
 #' 
-#' @rdname plot.spectrum
-#' @export plot.spectrum
-plot.spectrum <- function(data,massrange=c(0,Inf),color="#000000"){
+#' @rdname spectrum.plot
+#' @export spectrum.plot
+spectrum.plot <- function(data,massrange=c(0,Inf),color="#000000"){
 	inds <- which(data@decon$mass>=massrange[1] & data@decon$mass<=massrange[2])
 	plx <- data@decon$mass[inds]
 	ply <- data@decon$intensity[inds]
@@ -64,13 +66,13 @@ plot.spectrum <- function(data,massrange=c(0,Inf),color="#000000"){
 	vcolor
 }
 
-#' plot.label.spectrum adds fragment assignment labels to plot.spectrum
+#' spectrum.label.plot adds fragment assignment labels to spectrum.plot
 #' 
 #' @return Returns the ggplot object
 #' 
-#' @rdname plot.spectrum
-#' @export plot.label.spectrum
-plot.label.spectrum <- function(data,massrange=c(0,Inf),unicode=TRUE,unassigned=TRUE){
+#' @rdname spectrum.plot
+#' @export spectrum.label.plot
+spectrum.label.plot <- function(data,massrange=c(0,Inf),unicode=TRUE,unassigned=TRUE){
 	#labels <- sapply(data$peaks[[peaklistid]],FUN=function(i)c()
 	inds <- which(data@decon$mass>=massrange[1] & data@decon$mass<=massrange[2])
 	dp <- data@decon[inds,]
@@ -93,7 +95,7 @@ plot.label.spectrum <- function(data,massrange=c(0,Inf),unicode=TRUE,unassigned=
 						   #intensity=c(fp$peak.intensity[nt],fp$peak.intensity[ct]),
 						   #color=vcolor)
 	if(unassigned){
-		gp <- plot.spectrum(data,massrange,color="#888888")
+		gp <- spectrum.plot(data,massrange,color="#888888")
 	} else {
 		gp <- ggplot()
 	}
@@ -103,13 +105,13 @@ plot.label.spectrum <- function(data,massrange=c(0,Inf),unicode=TRUE,unassigned=
 	theme(legend.justification=c(1,1), legend.position=c(1,1))
 }
 
-#' plot.theme.simple modifies the spectrum plot to use black axis labels and no background
+#' spectrum.theme.simple modifies the spectrum plot to use black axis labels and no background
 #' 
 #' @return Returns the ggplot theme
 #' 
-#' @rdname plot.spectrum
-#' @export plot.theme.simple
-plot.theme.simple <- function(base_size = 12) {
+#' @rdname spectrum.plot
+#' @export spectrum.theme.simple
+spectrum.theme.simple <- function(base_size = 12) {
 	theme(panel.background =  element_rect(fill = NA, colour = "black", size = 0.25),
 	axis.text.x = element_text(colour = "black",size = base_size * 0.8 , lineheight = 0.9, vjust = 1),
 	axis.text.y = element_text(colour = "black",size = base_size * 0.8, lineheight = 0.9, hjust = 1),

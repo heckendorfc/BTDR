@@ -15,6 +15,8 @@
 found with names(head(x,select))}
 
 \item{select}{expression, indicating the return type}
+
+\item{drop}{drop unnecessary dimensions}
 }
 \value{
 Returns the subset

@@ -29,4 +29,4 @@ $(OBJECTS): $(OBEXTRA)
 
 
 clean:
-	rm -rf ./libs ./*.so ./*.o
+	rm -rf ./libs ./*.so ./*.o ./libyaml-dom/*.o ./RNACI/*.o

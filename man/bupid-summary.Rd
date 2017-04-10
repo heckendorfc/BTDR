@@ -4,21 +4,14 @@
 \name{bupid-summary}
 \alias{bupid-summary}
 \alias{summary,bupid-method}
-\alias{summary.fragment}
-\alias{summary.overview}
-\alias{summary.protein}
 \title{Summarize BUPID results.}
 \usage{
 \S4method{summary}{bupid}(object, type = "overview")
-
-summary.overview(object, ...)
-
-summary.protein(object, ...)
-
-summary.fragment(object, ...)
 }
 \arguments{
 \item{object}{object returned from another function}
+
+\item{type}{the type of view to summarize}
 
 \item{...}{extra parameters}
 }

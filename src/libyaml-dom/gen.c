@@ -147,15 +147,22 @@ yamldom_node_t* yamldom_make_alias(yamldom_anchor_list_t *anchors, char *alias){
 	return tmpnode;
 }
 
-static yamldom_node_t* io_gen_rec(yamldom_data_t *ydd, yamldom_anchor_list_t *anchors, int end_type){
+static yamldom_node_t* io_gen_rec(yamldom_data_t *ydd, yamldom_anchor_list_t *anchors, int end_type, int *err){
 	yaml_event_t  event;
-	yamldom_node_t *curnode=NULL,*nodes=NULL;
+	yamldom_node_t *curnode=NULL,*nodes=NULL,*tmpnode;
 	yamldom_anchor_list_t *tmp,*anchor_tail=anchors;
+
+	*err = 0;
 
 	do {
 		if (!yaml_parser_parse(&ydd->parser, &event)) {
+#ifdef FAIL_LOUD
 			printf("Parser error %d\n", ydd->parser.error);
 			exit(EXIT_FAILURE);
+#else
+			*err = 1;
+			return NULL;
+#endif
 		}
 
 		if(event.type==end_type)
@@ -163,45 +170,43 @@ static yamldom_node_t* io_gen_rec(yamldom_data_t *ydd, yamldom_anchor_list_t *an
 
 		switch(event.type)
 		{
-			case YAML_NO_EVENT: puts("No event!"); break;
-
-			case YAML_STREAM_START_EVENT:
-			case YAML_STREAM_END_EVENT:
-
-			case YAML_DOCUMENT_START_EVENT:
-			case YAML_DOCUMENT_END_EVENT:
-				break;
-
 			case YAML_SEQUENCE_START_EVENT:
-				curnode=yamldom_make_seq(event.data.sequence_start.anchor);
+				curnode=yamldom_make_seq((char*)event.data.sequence_start.anchor);
 				if(event.data.sequence_start.anchor){
 					FINDTAILNODE(anchor_tail);
 					ADDNODEAFTER(anchor_tail,tmp);
 					anchor_tail->next->ref=curnode;
-					anchor_tail->next->val=strdup(event.data.sequence_start.anchor);
+					anchor_tail->next->val=strdup((char*)event.data.sequence_start.anchor);
 				}
 				nodes=yamldom_append_node(nodes,curnode);
-				((yamldom_seq_t*)curnode->data)->nodes=io_gen_rec(ydd,anchors,YAML_SEQUENCE_END_EVENT);
+				((yamldom_seq_t*)curnode->data)->nodes=tmpnode=io_gen_rec(ydd,anchors,YAML_SEQUENCE_END_EVENT,err);
+				if(tmpnode==NULL && *err)
+					return NULL;
 				break;
 			case YAML_MAPPING_START_EVENT:
-				curnode=yamldom_make_map(event.data.mapping_start.anchor);
+				curnode=yamldom_make_map((char*)event.data.mapping_start.anchor);
 				if(event.data.mapping_start.anchor){
 					FINDTAILNODE(anchor_tail);
 					ADDNODEAFTER(anchor_tail,tmp);
 					anchor_tail->next->ref=curnode;
-					anchor_tail->next->val=strdup(event.data.mapping_start.anchor);
+					anchor_tail->next->val=strdup((char*)event.data.mapping_start.anchor);
 				}
 				nodes=yamldom_append_node(nodes,curnode);
-				((yamldom_map_t*)curnode->data)->nodes=io_gen_rec(ydd,anchors,YAML_MAPPING_END_EVENT);
+				((yamldom_map_t*)curnode->data)->nodes=tmpnode=io_gen_rec(ydd,anchors,YAML_MAPPING_END_EVENT,err);
+				if(tmpnode==NULL && *err)
+					return NULL;
 				break;
 
 			case YAML_ALIAS_EVENT:
-				curnode=yamldom_make_alias(anchors,event.data.alias.anchor);
+				curnode=yamldom_make_alias(anchors,(char*)event.data.alias.anchor);
 				nodes=yamldom_append_node(nodes,curnode);
 				break;
 			case YAML_SCALAR_EVENT:
-				curnode=yamldom_make_scalar(event.data.scalar.tag,event.data.scalar.value,event.data.scalar.length);
+				curnode=yamldom_make_scalar((char*)event.data.scalar.tag,(char*)event.data.scalar.value,event.data.scalar.length);
 				nodes=yamldom_append_node(nodes,curnode);
+				break;
+
+			default:
 				break;
 		}
 		if(event.type != YAML_STREAM_END_EVENT)
@@ -215,12 +220,13 @@ static yamldom_node_t* io_gen_rec(yamldom_data_t *ydd, yamldom_anchor_list_t *an
 yamldom_node_t* yamldom_gen(yamldom_data_t *ydd, yamldom_anchor_list_t *anchor_ret){
 	yamldom_node_t *node_ret;
 	yamldom_anchor_list_t anchors;
+	int err = 0;
 
 	anchors.val=NULL;
 	anchors.ref=NULL;
 	anchors.next=NULL;
 
-	node_ret=io_gen_rec(ydd,&anchors,YAML_STREAM_END_EVENT);
+	node_ret=io_gen_rec(ydd,&anchors,YAML_STREAM_END_EVENT,&err);
 
 	if(anchor_ret){
 		anchor_ret->next=anchors.next;

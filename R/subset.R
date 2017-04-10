@@ -11,6 +11,8 @@
 #' found with names(head(x,select))
 #' @param select
 #' expression, indicating the return type
+#' @param drop
+#' drop unnecessary dimensions
 #'
 #' @return Returns the subset
 #'

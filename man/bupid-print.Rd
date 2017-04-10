@@ -15,11 +15,13 @@
 \S4method{tail}{bupid}(x, type = "overview", n = 6)
 }
 \arguments{
+\item{x}{A bupid object}
+
 \item{type}{The type of output to display. One of the strings returned by
 c("overview","protein","fragment") or
 paste("raw",slotNames(data),sep="-")}
 
-\item{data}{A bupid object}
+\item{n}{The number of items to display}
 }
 \value{
 Returns the information
@@ -36,6 +38,8 @@ server <- "http://bupid.bumc.bu.edu/cgi-bin/get_results.cgi"
 infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
 data <- read.bupid(url=paste(server,infile,sep="?"))
 print(data,"overview")
+head(data,"overview",10)
+tail(data,"overview",2)
 }
 
 }
