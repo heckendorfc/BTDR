@@ -9,12 +9,13 @@
 #'    Type: \tab Package\cr
 #'    Version: \tab 1.0\cr
 #'    Date: \tab 2014-08-18\cr
-#'    License: \tab What license is it under?\cr
+#'    License: \tab BSD 2-clause License\cr
 #' }
 #' 
 #' @aliases BTDR-package BTDR
 #' 
-#' @import XML
+#' @import xml2
+#' @import magrittr
 #' @import RCurl
 #' @import ggplot2
 #' @import plyr

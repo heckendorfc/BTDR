@@ -16,7 +16,7 @@ and common visualizations.
    Type: \tab Package\cr
    Version: \tab 1.0\cr
    Date: \tab 2014-08-18\cr
-   License: \tab What license is it under?\cr
+   License: \tab BSD 2-clause License\cr
 }
 }
 \author{

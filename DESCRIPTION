@@ -13,12 +13,13 @@ Depends:
 Imports:
     stats,
     yaml,
-    XML,
+    xml2,
+    magrittr,
     RCurl,
     ggplot2,
     plyr
 License: BSD 2-clause License + file LICENSE
 NeedsCompilation: no
 ByteCompile: yes
-LazyData: true
+LazyData: no
 RoxygenNote: 5.0.1
