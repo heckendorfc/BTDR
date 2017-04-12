@@ -145,17 +145,15 @@ fragment.coverage.generic <- function(data,sequence,file="cov.svg",columns=25L,s
 	tx <- max(cx)+params$startx+params$xsp
 	ty <- max(cy)+params$starty
 
-	xml <- xmlTree("svg",attrs=c(viewbox=paste0(c(0,0,tx,ty),collapse=" "),width=tx,height=ty), namespaces=c("http://www.w3.org/2000/svg",xsi="http://www.w3.org/2001/XMLSchema-instance"), dtd=c("svg","-//W3C//DTD SVG 1.1//EN","http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"))
-	xml$addNode("text","",attrs=c(),close=F)
-	#xml$addNode("text","",attrs=c(x=paste0(cx,collapse=" "),y=paste0(cy,collapse=" "),"font-family"="sans-serif","font-size"=paste(10*params$scale,"px",sep=""),fill="#000"),close=F)
-		xml$addNode("tspan",sequence,attrs=c(x=paste0(cx,collapse=" "),y=paste0(cy,collapse=" "),"font-family"="sans-serif","font-size"=paste(10*params$scale,"px",sep=""),fill="#000",dy=paste(rep(params$scale*3,nchar(sequence)),collapse=" ")))
-	xml$closeTag() #text
-	#xml$addNode("text",sequence,attrs=c(x=paste0(cx,collapse=" "),y=paste0(cy,collapse=" "),"text-anchor"="middle","font-family"="sans-serif","font-size"=paste(10*params$scale,"px",sep=""),fill="#000","dominant-baseline"="middle"))
+	root <- xml_new_root(xml_dtd("svg","-//W3C//DTD SVG 1.1//EN","http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd"))
+	xml <- xml_add_child(root,"svg",viewbox=paste0(c(0,0,tx,ty),collapse=" "),width=tx,height=ty, xmlns="http://www.w3.org/2000/svg","xmlns:xsi"="http://www.w3.org/2001/XMLSchema-instance")
+	xml_add_child(xml,"text") %>%
+		xml_add_child("tspan",sequence,x=paste0(cx,collapse=" "),y=paste0(cy,collapse=" "),"font-family"="sans-serif","font-size"=paste(10*params$scale,"px",sep=""),fill="#000",dy=paste(rep(params$scale*3,nchar(sequence)),collapse=" "))
 
 	for(i in 1:(nrow(data))){
 		fcolor <- .get.frag.color(data[i,"term"],color=color)
-		xml$addNode("path",attrs=c(d=.get.frag.path(data[i,],params,nchar(sequence)),stroke=fcolor,fill=fcolor))
+		xml_add_child(xml,"path",d=.get.frag.path(data[i,],params,nchar(sequence)),stroke=fcolor,fill=fcolor)
 	}
 
-	saveXML(xml,file,indent=T)
+	write_xml(root,file,options="as_xml")
 }
