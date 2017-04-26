@@ -87,7 +87,7 @@ SEXP makedf_fit(struct iobtd *iop){
 	}
 
 	df = make_dataframe(RNULL,
-						make_list_names(ncols, "protid", "peak.id", "peak.index", "peak.count", "peak.intensity", "peak.mass", "peak.z", "ion.start", "ion.len", "ion.mass", "frag", "mods", "error"),
+						make_list_names(ncols, "protid", "peak.id", "peak.index", "peak.count", "peak.mass", "peak.intensity", "peak.z", "ion.start", "ion.len", "ion.mass", "frag", "mods", "error"),
 						ncols, protidv, pidv, pindv, pcountv, pmassv, pintv, pzv, istartv, ilenv, imassv, fragv, modsv, errv);
 
 	unhideGC();
