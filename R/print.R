@@ -2,7 +2,7 @@
 #' 
 #' BUPID results
 #' 
-#' Each result from BTDR packages will provide differeny outputs
+#' Each result from BTDR packages will provide different outputs
 #' 
 #' @param x
 #' A bupid object

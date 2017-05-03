@@ -28,11 +28,9 @@ SEXP makedf_prot(struct iobtd *iop){
 
 	i=0;
 	for(seq=YAMLDOM_SEQ_NODES(protseq);seq;seq=seq->next){
-		if(!(tmp=yamldom_find_map_val(seq,"param")))
+		if(!(tmp=yamldom_find_map_val(seq,"peaks")))
 			goto err;
-		if(!(tmp=yamldom_find_map_val(((yamldom_alias_t*)tmp->data)->ref,"peaks")))
-			goto err;
-		push_elem(INTEGER(peakidvec),i,((yamldom_alias_t*)tmp->data)->ref,"id",strtoint);
+		push_elem(INTEGER(peakidvec),i,YAMLDOM_DEREF(tmp),"id",strtoint);
 
 		push_elem(INTEGER(protidvec),i,seq,"id",strtoint);
 		push_elem(seqvec,i,seq,"seq",strtostr);

@@ -2,11 +2,11 @@
 #include "utils.h"
 
 SEXP makedf_scan(struct iobtd *iop){
-	SEXP df, plidvec, sidvec, mzvec, zvec, intvec, rtvec;
+	SEXP df, plidvec, paridvec, sidvec, mzvec, zvec, intvec, rtvec;
 	yamldom_node_t *peakseq, *scanseq, *tmp, *seq, *scan;
 	int i, count, peakcount;
-	int id;
-	const int ncols=6;
+	int parid, id;
+	const int ncols=7;
 
 	if(!(scanseq=yamldom_find_map_val(iop->root,"scan"))){
 		goto err;
@@ -25,6 +25,7 @@ SEXP makedf_scan(struct iobtd *iop){
 
 	hidefromGC(sidvec = allocVector(INTSXP,count));
 	hidefromGC(plidvec = allocVector(INTSXP,count));
+	hidefromGC(paridvec = allocVector(INTSXP,count));
 	hidefromGC(mzvec = allocVector(REALSXP,count));
 	hidefromGC(zvec = allocVector(INTSXP,count));
 	hidefromGC(rtvec = allocVector(REALSXP,count));
@@ -36,13 +37,21 @@ SEXP makedf_scan(struct iobtd *iop){
 			goto err;
 		id=strtol(((yamldom_scalar_t*)tmp->data)->val,NULL,10);
 
+		if(!(tmp=yamldom_find_map_val(seq,"param")))
+			goto err;
+		tmp = YAMLDOM_DEREF(tmp);
+		if(!(tmp=yamldom_find_map_val(tmp,"id")))
+			goto err;
+		parid = strtol(((yamldom_scalar_t*)tmp->data)->val,NULL,10);
+
 		if(!(scanseq=yamldom_find_map_val(seq,"scans")))
 			goto err;
 
 		for(tmp=YAMLDOM_SEQ_NODES(scanseq);tmp;tmp=tmp->next){
-			scan=((yamldom_alias_t*)tmp->data)->ref;
+			scan=YAMLDOM_DEREF(tmp);
 
 			INTEGER(plidvec)[i]=id;
+			INTEGER(paridvec)[i]=parid;
 			push_elem(INTEGER(sidvec),i,scan,"id",strtoint);
 			push_elem(INTEGER(zvec),i,scan,"z",strtoint);
 			push_elem(REAL(mzvec),i,scan,"mz",strtodouble);
@@ -57,8 +66,8 @@ SEXP makedf_scan(struct iobtd *iop){
 	}
 
 	df = make_dataframe(RNULL,
-						make_list_names(ncols, "plid", "scanid", "mz", "z", "rt", "pre.int"),
-						ncols, plidvec, sidvec, mzvec, zvec, rtvec, intvec);
+						make_list_names(ncols, "plid", "parid", "scanid", "mz", "z", "rt", "pre.int"),
+						ncols, plidvec, paridvec, sidvec, mzvec, zvec, rtvec, intvec);
 
 	unhideGC();
 

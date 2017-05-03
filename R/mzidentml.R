@@ -73,14 +73,14 @@
 }
 
 .gen_data_results_xml <- function(xml, data){
-	plids <- unique(data@decon$id)
+	plids <- unique(data@scan$plid)
 	for(plid in plids){
+		scanid <- which(data@scan$plid == plid)[1]
 		sids <- which(data@prot$peakid==plid)
 		sirxml <- xml_add_child(xml,.where=0L,"SpectrumIdentificationResult",id=paste("SIR",plid,sep="_"),spectrumID=paste("index",plid,sep="="),spectraData_ref=.get_sid(plid))
 		for(dsi in sids){
 			protind <- which(get_unique_prot_id(data@prot$peakid,data@prot$protid)==data@search[dsi,"searchid"])
-			paramind <- which(data@param$peakid==data@search[dsi,"peakid"])
-			siixml <- xml_add_child(sirxml,.where=0L,"SpectrumIdentificationItem",peptide_ref=.get_protid(data@prot[protind,]),chargeState=0,experimentalMassToCharge=data@param$msmass[paramind],id=paste("SII",paste(plid,dsi,sep="_"),sep="_"),passThreshold=1,rank=dsi)
+			siixml <- xml_add_child(sirxml,.where=0L,"SpectrumIdentificationItem",peptide_ref=.get_protid(data@prot[protind,]),chargeState=data@scan[scanid,"z"],experimentalMassToCharge=data@scan[scanid,"mz"],id=paste("SII",paste(plid,dsi,sep="_"),sep="_"),passThreshold=1,rank=dsi)
 				xml_add_child(siixml,"PeptideEvidenceRef",peptideEvidence_ref=.get_pep_evidenceid(data@prot[protind,]))
 				if(length(data@fit) > 0){
 					dsfi <- subset(data@fit,peak.id==plid & protid==data@prot[protind,"protid"])

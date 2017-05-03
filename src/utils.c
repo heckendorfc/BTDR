@@ -75,14 +75,12 @@ void set_searchid(yamldom_node_t *searchseq, char *id, int *peakidp, int *protid
 
 	if(!(protseq=yamldom_find_map_val(searchseq,"prot")))
 		return;
-	tmp = ((yamldom_alias_t*)protseq->data)->ref;
+	tmp = YAMLDOM_DEREF(protseq);
 	push_elem(&protid,0,tmp,"id",strtoint);
 
-	if(!(tmp=yamldom_find_map_val(tmp,"param")))
+	if(!(tmp=yamldom_find_map_val(tmp,"peaks")))
 		return;
-	if(!(tmp=yamldom_find_map_val(((yamldom_alias_t*)tmp->data)->ref,"peaks")))
-		return;
-	push_elem(&peakid,0,((yamldom_alias_t*)tmp->data)->ref,"id",strtoint);
+	push_elem(&peakid,0,YAMLDOM_DEREF(tmp),"id",strtoint);
 
 	if(id)
 		sprintf(id,"%d-%d",peakid,protid);

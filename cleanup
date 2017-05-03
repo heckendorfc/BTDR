@@ -1,0 +1,3 @@
+#!/bin/sh
+rm -rf src/libs src/*.so src/*.o src/libyaml-dom/*.o src/RNACI/*.o
+rm -f src/Makevars

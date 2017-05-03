@@ -35,7 +35,7 @@ setMethod("subset",signature="bupid", definition=function(x,subset,select,drop=F
 	tmp <- tmp[rows,,drop=drop]
 
 	if(select=="overview" || select=="protein"){
-		l <- c("fit","search","tag","param","decon","scan")
+		l <- c("fit","search","tag","decon","scan","param")
 
 		if(select=="overview")
 			pidsb <- whichvec(x@prot$name,tmp$protein.name)
@@ -47,7 +47,7 @@ setMethod("subset",signature="bupid", definition=function(x,subset,select,drop=F
 			eval(parse(text=paste("x@",n,"<-",paste("filter",n,sep="."),"(x)",sep="")))
 		return(x)
 	} else if(select=="fragment"){
-		l <- c("prot", "search","tag","param","decon","scan")
+		l <- c("prot", "search","tag","decon","scan","param")
 
 		#fidsb <- rep(FALSE,nrow(x@fit))
 		#fidsb[as.integer(row.names(tmp))] <- TRUE
@@ -58,7 +58,8 @@ setMethod("subset",signature="bupid", definition=function(x,subset,select,drop=F
 			eval(parse(text=paste("x@",n,"<-",paste("filter",n,sep="."),"(x)",sep="")))
 		return(x)
 	} else if(grepl("raw-",select)){
-		l <- c("fit", "prot", "search", "tag", "param", "decon", "scan", "decon", "param", "prot", "tag", "search", "fit")
+		l <- c("fit", "prot", "search", "tag", "param", "decon", "scan", "param",
+			   "scan", "decon", "param", "prot", "tag", "search", "fit")
 		type <- sub("raw-","",select)
 
 		slot(x,type) <- tmp
@@ -74,21 +75,27 @@ whichvec <- function(tx,te){
 	tx %in% te
 }
 
+filter.param <- function(ib){
+	idb <- whichvec(ib@param$id,ib@scan$parid)
+	ib@param[idb,]
+}
+
 filter.scan <- function(ib){
+	paramidb <- whichvec(ib@scan$parid,ib@param$id)
 	scanidb <- whichvec(ib@scan$plid,ib@decon$id)
-	ib@scan[scanidb,]
+	ib@scan[scanidb&paramidb,]
 }
 
 filter.decon <- function(ib){
-	paramidb <- whichvec(ib@decon$id,ib@param$peakid)
 	scanidb <- whichvec(ib@decon$id,ib@scan$plid)
-	ib@decon[paramidb&scanidb,]
+	protidb <- whichvec(ib@decon$id,ib@prot$peakid)
+	ib@decon[protidb&scanidb,]
 }
 
-filter.param <- function(ib){
-	peakidb <- whichvec(ib@param$peakid,ib@decon$id)
-	protidb <- whichvec(ib@param$peakid,ib@prot$peakid)
-	ib@param[peakidb&protidb,]
+filter.prot <- function(ib){
+	pid <- whichvec(ib@prot$peakid,ib@decon$peakid)
+	fid <- whichvec(get_unique_prot_id(ib@prot$peakid,ib@prot$protid),get_unique_prot_id(ib@fit$peak.id,ib@fit$protid))
+	ib@prot[fid&pid,]
 }
 
 filter.tag <- function(ib){
@@ -97,10 +104,7 @@ filter.tag <- function(ib){
 }
 
 filter.search <- function(ib){
-	#peakidb <- whichvec(ib@search$peakid,ib@prot$peakid)
-	#rankidb <- whichvec(ib@search$rank,ib@prot$protid)
 	protidb <- whichvec(ib@search$searchid,get_unique_prot_id(ib@prot$peakid,ib@prot$protid))
-	#ib@search[rankidb&peakidb,]
 	ib@search[protidb,]
 }
 
@@ -108,10 +112,4 @@ filter.fit <- function(ib){
 	#protidb <- whichvec(ib@fit$peak.id,ib@prot$peakid)
 	protidb <- whichvec(get_unique_prot_id(ib@fit$peak.id,ib@fit$protid),get_unique_prot_id(ib@prot$peakid,ib@prot$protid))
 	ib@fit[protidb,]
-}
-
-filter.prot <- function(ib){
-	pid <- whichvec(ib@prot$peakid,ib@param$peakid)
-	fid <- whichvec(get_unique_prot_id(ib@prot$peakid,ib@prot$protid),get_unique_prot_id(ib@fit$peak.id,ib@fit$protid))
-	ib@prot[fid&pid,]
 }

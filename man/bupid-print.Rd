@@ -30,7 +30,7 @@ Returns the information
 BUPID results
 }
 \details{
-Each result from BTDR packages will provide differeny outputs
+Each result from BTDR packages will provide different outputs
 }
 \examples{
 \dontrun{
