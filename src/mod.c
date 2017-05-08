@@ -3,11 +3,12 @@
 
 void addmod(yamldom_node_t *mod, int fixed, yamldom_node_t *param, SEXP idvec, SEXP fixedvec, SEXP namevec, SEXP posvec, SEXP sitevec, SEXP massvec, int *i){
 	yamldom_node_t *tmp;
+	int id;
+
+	push_elem(&id,0,param,"id",strtoint);
 
 	while(mod){
-		if(!(tmp=yamldom_find_map_val(param,"peaks")))
-			return;
-		push_elem(INTEGER(idvec),*i,((yamldom_alias_t*)tmp->data)->ref,"id",strtoint);
+		INTEGER(idvec)[*i] = id;
 
 		push_elem(namevec,*i,mod,"name",strtostr);
 		push_elem(INTEGER(posvec),*i,mod,"pos",strtoint);

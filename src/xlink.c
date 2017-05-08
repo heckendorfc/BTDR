@@ -36,13 +36,14 @@ SEXP makedf_xlink(struct iobtd *iop){
 		if(!(prottmp=yamldom_find_map_val(peptmp,"prot")))
 			goto err;
 		tmp = YAMLDOM_DEREF(prottmp);
+		if(!(tmp=yamldom_find_map_val(tmp,"peaks")))
+			goto err;
+		tmp = YAMLDOM_DEREF(tmp);
+		push_elem(INTEGER(peakidvec),i,tmp,"id",strtoint);
 		if(!(tmp=yamldom_find_map_val(tmp,"param")))
 			goto err;
 		tmp = YAMLDOM_DEREF(tmp);
 		modstrlen = getmodstrlen(yamldom_find_map_val(tmp,"vmod"));
-		if(!(tmp=yamldom_find_map_val(tmp,"peaks")))
-			goto err;
-		push_elem(INTEGER(peakidvec),i,YAMLDOM_DEREF(tmp),"id",strtoint);
 
 		if(!(mods=malloc(modstrlen)))
 			goto err;
