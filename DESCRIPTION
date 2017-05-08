@@ -8,9 +8,9 @@ Description: A collection of functions to analyze 'BUPID' Top-Down results.
     This includes conversion to standard formats and creation of figures and tables
     ready for publication.
 Depends:
-    R (>= 3.1.0),
-    methods
+    R (>= 3.1.0)
 Imports:
+    methods,
     stats,
     yaml,
     xml2,
