@@ -38,17 +38,17 @@ SEXP makedf_fit(struct iobtd *iop){
 	for(fitseq=YAMLDOM_SEQ_NODES(fitseq);fitseq;fitseq=fitseq->next){
 		if(!(tmp=yamldom_find_map_val(fitseq,"prot")))
 			goto err;
-		tmp = ((yamldom_alias_t*)tmp->data)->ref;
+		tmp = YAMLDOM_DEREF(tmp);
 		push_elem(&protid,0,tmp,"id",strtoint);
 
-		if(!(tmp=yamldom_find_map_val(tmp,"param")))
-			goto err;
-		tmp = ((yamldom_alias_t*)tmp->data)->ref;
-		modstrlen = getmodstrlen(yamldom_find_map_val(tmp,"vmod"));
 		if(!(tmp=yamldom_find_map_val(tmp,"peaks")))
 			goto err;
-		pseq = ((yamldom_alias_t*)tmp->data)->ref;
+		pseq = YAMLDOM_DEREF(tmp);
 		push_elem(&peakid,0,pseq,"id",strtoint);
+		if(!(tmp=yamldom_find_map_val(pseq,"param")))
+			goto err;
+		tmp = YAMLDOM_DEREF(tmp);
+		modstrlen = getmodstrlen(yamldom_find_map_val(tmp,"vmod"));
 
 		if(!(mods=malloc(modstrlen)))
 			goto err;
