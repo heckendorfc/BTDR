@@ -65,7 +65,6 @@ SEXP makedf_fit(struct iobtd *iop){
 			modstr(yamldom_find_map_val(rseq,"mods"),mods);
 			if(mods && *mods){
 				SET_STRING_ELT(modsv, i, mkChar(mods));
-				free(mods);
 			} else
 				SET_STRING_ELT(modsv, i, mkChar(""));
 
