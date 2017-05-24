@@ -35,7 +35,7 @@ setMethod("subset",signature="bupid", definition=function(x,subset,select,drop=F
 	tmp <- tmp[rows,,drop=drop]
 
 	if(select=="overview" || select=="protein"){
-		l <- c("fit","search","tag","decon","scan","param")
+		l <- c("fit","search","tag","decon","scan","param","xlink","xlpep")
 
 		if(select=="overview")
 			pidsb <- whichvec(x@prot$name,tmp$protein.name)
@@ -47,7 +47,7 @@ setMethod("subset",signature="bupid", definition=function(x,subset,select,drop=F
 			eval(parse(text=paste("x@",n,"<-",paste("filter",n,sep="."),"(x)",sep="")))
 		return(x)
 	} else if(select=="fragment"){
-		l <- c("prot", "search","tag","decon","scan","param")
+		l <- c("prot", "search","tag","decon","scan","param","xlink","xlpep")
 
 		#fidsb <- rep(FALSE,nrow(x@fit))
 		#fidsb[as.integer(row.names(tmp))] <- TRUE
@@ -58,8 +58,8 @@ setMethod("subset",signature="bupid", definition=function(x,subset,select,drop=F
 			eval(parse(text=paste("x@",n,"<-",paste("filter",n,sep="."),"(x)",sep="")))
 		return(x)
 	} else if(grepl("raw-",select)){
-		l <- c("fit", "prot", "search", "tag", "param", "decon", "scan", "param",
-			   "scan", "decon", "param", "prot", "tag", "search", "fit")
+		l <- c("fit", "prot", "search", "tag", "decon", "scan", "param",
+			   "scan", "decon", "prot", "tag", "search", "fit","xlink","xlpep")
 		type <- sub("raw-","",select)
 
 		slot(x,type) <- tmp
@@ -108,7 +108,16 @@ filter.search <- function(ib){
 }
 
 filter.fit <- function(ib){
-	#protidb <- whichvec(ib@fit$peak.id,ib@prot$peakid)
 	protidb <- whichvec(get_unique_prot_id(ib@fit$peak.id,ib@fit$protid),get_unique_prot_id(ib@prot$peakid,ib@prot$protid))
 	ib@fit[protidb,]
+}
+
+filter.xlink <- function(ib){
+	protidb <- whichvec(ib@xlink$peakid,ib@fit$peak.id)
+	ib@xlink[protidb,]
+}
+
+filter.xlpep <- function(ib){
+	xlidb <- whichvec(ib@xlpep$xlid,ib@xlink$xlid)
+	ib@xlpep[xlidb,]
 }
