@@ -93,9 +93,8 @@ filter.decon <- function(ib){
 }
 
 filter.prot <- function(ib){
-	pid <- whichvec(ib@prot$peakid,ib@decon$peakid)
-	fid <- whichvec(get_unique_prot_id(ib@prot$peakid,ib@prot$protid),get_unique_prot_id(ib@fit$peak.id,ib@fit$protid))
-	ib@prot[fid&pid,]
+	pid <- whichvec(ib@prot$peakid,ib@decon$id)
+	ib@prot[pid,]
 }
 
 filter.tag <- function(ib){
