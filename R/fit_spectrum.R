@@ -81,6 +81,9 @@ spectrum.label.plot <- function(data,massrange=c(0,Inf),unicode=TRUE,unassigned=
 	#labels <- data.frame(mass=c(dp$mass[1],dp$mass[50]),intensity=c(dp$intensity[1],dp$intensity[50]),label=c("as","df"),color=c("red","blue"))
 	vcolor <- .fragment.color(fp)
 	labels <- data.frame(mass=fp$peak.mass,intensity=fp$peak.intensity,label=.get.frag.name(fp),color=vcolor)
+	if(length(unique(fp$protid))>1 && length(unique(fp$peak.id))==1){ #assume xlink?
+		labels$label <- paste0(labels$label,paste0("^",fp$protid+1))
+	}
 	if(unicode){
 		labels$label <- sub("[+]1","'",labels$label)
 		labels$label <- sub("-1","\\u2022",labels$label)
@@ -100,7 +103,7 @@ spectrum.label.plot <- function(data,massrange=c(0,Inf),unicode=TRUE,unassigned=
 		gp <- ggplot()
 	}
 	gp + geom_segment(data=labels,aes(x=mass,xend=mass,y=intensity,yend=-Inf,colour=color))+
-	geom_text(data=labels,aes(x=mass,y=intensity,label=label,colour=color,hjust=0,vjust=0))+
+	geom_text(data=labels,parse=T,aes(x=mass,y=intensity,label=label,colour=color,hjust=0,vjust=0))+
 	scale_colour_manual(values=c("blue"="#0000FF", "red"="#FF0000", "black"="#444444"),labels=c("blue"="C-term","red"="N-term","black"="Other"),name="Fragment")+
 	theme(legend.justification=c(1,1), legend.position=c(1,1))
 }

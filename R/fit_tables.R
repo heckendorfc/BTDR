@@ -29,7 +29,7 @@ NULL
 	t1 <- which(term %in% c("N","C"))
 	name[t1] <- res$ion.len[t1]
 	t2 <- which(term=="")
-	name[t2] <- paste(res$ion.start[t2]+1,res$ion.len[t2],sep=",")
+	name[t2] <- paste(res$ion.start[t2]+1,res$ion.len[t2],sep="...")
 
 	paste0(res$frag,"[",name,"]")
 }
