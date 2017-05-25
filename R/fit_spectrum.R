@@ -14,6 +14,8 @@
 #' display unassigned peaks behind the labelled spectrum
 #' @param base_size
 #' base text size for axis labels
+#' @param mz
+#' TRUE to plot in m/z, otherwise mass
 #' 
 #' @return Returns the ggplot object
 #'
@@ -36,6 +38,21 @@
 #' @name spectrum.plot
 NULL
 
+#' spectrum.plot.generic plots the deconvoluted peak list as a mass spectrum
+#' 
+#' @return Returns the ggplot object
+#' 
+#' @rdname spectrum.plot
+#' @export spectrum.plot.generic
+spectrum.plot.generic <- function(mass,intensity,massrange=c(0,Inf),color="#000000"){
+	inds <- which(mass>=massrange[1] & mass<=massrange[2])
+	plx <- mass[inds]
+	ply <- intensity[inds]
+	df <- data.frame(mass=plx,intensity=ply,stringsAsFactors=F)
+	ggplot(df,aes(x=mass,y=intensity)) +
+	geom_segment(aes(xend=mass,yend=-Inf),colour=color)
+}
+
 #' spectrum.plot plots the deconvoluted peak list as a mass spectrum
 #' 
 #' @return Returns the ggplot object
@@ -43,15 +60,7 @@ NULL
 #' @rdname spectrum.plot
 #' @export spectrum.plot
 spectrum.plot <- function(data,massrange=c(0,Inf),color="#000000"){
-	inds <- which(data@decon$mass>=massrange[1] & data@decon$mass<=massrange[2])
-	plx <- data@decon$mass[inds]
-	ply <- data@decon$intensity[inds]
-	#pln <- .peak.name(data,peaklistid)
-	#plc <- sapply(pln,.get.frag.color);
-	df <- data.frame(mass=plx,intensity=ply,stringsAsFactors=F)
-	ggplot(df,aes(x=mass,y=intensity)) +
-	geom_segment(aes(xend=mass,yend=-Inf),colour=color)
-	#geom_segment(aes(xend=mass,yend=intensity))
+	spectrum.plot.generic(data@decon$mass,data@decon$intensity,massrange,color)
 }
 
 .fragment.color <- function(fit){
@@ -72,15 +81,15 @@ spectrum.plot <- function(data,massrange=c(0,Inf),color="#000000"){
 #' 
 #' @rdname spectrum.plot
 #' @export spectrum.label.plot
-spectrum.label.plot <- function(data,massrange=c(0,Inf),unicode=TRUE,unassigned=TRUE){
-	#labels <- sapply(data$peaks[[peaklistid]],FUN=function(i)c()
-	inds <- which(data@decon$mass>=massrange[1] & data@decon$mass<=massrange[2])
-	dp <- data@decon[inds,]
-	inds <- which(data@fit$peak.mass>=massrange[1] & data@fit$peak.mass<=massrange[2])
-	fp <- data@fit[inds,]
-	#labels <- data.frame(mass=c(dp$mass[1],dp$mass[50]),intensity=c(dp$intensity[1],dp$intensity[50]),label=c("as","df"),color=c("red","blue"))
+spectrum.label.plot <- function(data,massrange=c(0,Inf),unicode=TRUE,unassigned=TRUE,mz=FALSE){
+	fp <- .expand.fit.counts(data)
+	fp <- fp[which(fp$peak.mass>=massrange[1] & fp$peak.mass<=massrange[2]),]
 	vcolor <- .fragment.color(fp)
-	labels <- data.frame(mass=fp$peak.mass,intensity=fp$peak.intensity,label=.get.frag.name(fp),color=vcolor)
+	if(mz){
+		labels <- data.frame(mass=.mass.to.mz(fp$peak.mass,fp$peak.z),intensity=fp$peak.intensity,label=.get.frag.name(fp),color=vcolor)
+	} else {
+		labels <- data.frame(mass=fp$peak.mass,intensity=fp$peak.intensity,label=.get.frag.name(fp),color=vcolor)
+	}
 	if(length(unique(fp$protid))>1 && length(unique(fp$peak.id))==1){ #assume xlink?
 		labels$label <- paste0(labels$label,paste0("^",fp$protid+1))
 	}
@@ -98,7 +107,12 @@ spectrum.label.plot <- function(data,massrange=c(0,Inf),unicode=TRUE,unassigned=
 						   #intensity=c(fp$peak.intensity[nt],fp$peak.intensity[ct]),
 						   #color=vcolor)
 	if(unassigned){
-		gp <- spectrum.plot(data,massrange,color="#888888")
+		if(mz){
+			mass <- .mass.to.mz(data@decon$mass,data@decon$z)
+		} else {
+			mass <- data@decon$mass
+		}
+		gp <- spectrum.plot.generic(mass,data@decon$intensity,massrange,color="#888888")
 	} else {
 		gp <- ggplot()
 	}

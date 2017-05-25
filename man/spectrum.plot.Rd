@@ -3,26 +3,32 @@
 \name{spectrum.plot}
 \alias{spectrum.label.plot}
 \alias{spectrum.plot}
+\alias{spectrum.plot.generic}
 \alias{spectrum.theme.simple}
 \title{Plot spectra}
 \usage{
+spectrum.plot.generic(mass, intensity, massrange = c(0, Inf),
+  color = "#000000")
+
 spectrum.plot(data, massrange = c(0, Inf), color = "#000000")
 
 spectrum.label.plot(data, massrange = c(0, Inf), unicode = TRUE,
-  unassigned = TRUE)
+  unassigned = TRUE, mz = FALSE)
 
 spectrum.theme.simple(base_size = 12)
 }
 \arguments{
-\item{data}{output from read.bupid}
-
 \item{massrange}{a vector describing the lower and upper bounds of the mass range to plot}
 
 \item{color}{the color to use for unlabeled peaks}
 
+\item{data}{output from read.bupid}
+
 \item{unicode}{allow unicode characters in labels}
 
 \item{unassigned}{display unassigned peaks behind the labelled spectrum}
+
+\item{mz}{TRUE to plot in m/z, otherwise mass}
 
 \item{base_size}{base text size for axis labels}
 }
@@ -33,10 +39,14 @@ Returns the ggplot object
 
 Returns the ggplot object
 
+Returns the ggplot object
+
 Returns the ggplot theme
 }
 \description{
 These functions plot the deconvoluted spectra and fragment assignments
+
+spectrum.plot.generic plots the deconvoluted peak list as a mass spectrum
 
 spectrum.plot plots the deconvoluted peak list as a mass spectrum
 

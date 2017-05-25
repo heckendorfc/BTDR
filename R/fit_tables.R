@@ -116,16 +116,44 @@ fragment.matched.peaks <- function(data,format="list"){
 	}
 }
 
+.expand.fit.counts <- function(res){
+	fit <- res@fit
+	repinds <- which(fit$peak.count>1)
+	if(length(repinds)>0){
+		repfit <- do.call("rbind",lapply(repinds,FUN=function(ri){
+			decind <- which(res@decon$id==fit$peak.id[ri])[fit$peak.index[ri]]
+			do.call("rbind",lapply(2:fit$peak.count[ri],FUN=function(rci){
+				row <- fit[ri,]
+				row$peak.mass <- res@decon$mass[decind+rci]
+				row$peak.intensity <- res@decon$intensity[decind+rci]
+				row$peak.z <- res@decon$z[decind+rci]
+				row$peak.index <- decind+rci
+				row
+			}))
+		}))
+		repfit$peak.count <- 1;
+		fit <- rbind(fit,repfit)
+	}
+	fit
+}
+
+.mass.to.mz <- function(mass,z){
+	(mass+z*(1.007825035-0.000549))/z
+}
+
 .matched.cluster.row <- function(res){
-	scans <- sapply(res@fit$peak.id,FUN=function(x){
+	tfit <- .expand.fit.counts(res)
+
+	scans <- sapply(tfit$peak.id,FUN=function(x){
 		paste(res@scan$scanid[which(res@scan$plid==x)],collapse=" ")
 	})
-	name <- .get.frag.name(res@fit)
-	pkmass <- res@fit$peak.mass
-	pkz <- res@fit$peak.z
-	pkint <- res@fit$peak.intensity#[res$peak+1]/max(peaks$intensity)
-	err <- .ppm.error(res@fit)
-	mz <- (pkmass+pkz*(1.007825035-0.000549))/pkz
+	name <- .get.frag.name(tfit)
+	pkmass <- tfit$peak.mass
+	pkz <- tfit$peak.z
+	pkint <- tfit$peak.intensity#[res$peak+1]/max(peaks$intensity)
+	err <- .ppm.error(tfit)
+	mz <- .mass.to.mz(pkmass,pkz)
+
 
 	data.frame(scanIDs=scans,name=name,intensity=pkint,ppmMassError=err,monoisotopicMZ=mz,z=pkz,stringsAsFactors=F)
 }
