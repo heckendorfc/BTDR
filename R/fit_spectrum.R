@@ -116,10 +116,13 @@ spectrum.label.plot <- function(data,massrange=c(0,Inf),unicode=TRUE,unassigned=
 	} else {
 		gp <- ggplot()
 	}
-	gp + geom_segment(data=labels,aes(x=mass,xend=mass,y=intensity,yend=-Inf,colour=color))+
+	gp <- gp + geom_segment(data=labels,aes(x=mass,xend=mass,y=intensity,yend=-Inf,colour=color))+
 	geom_text(data=labels,parse=T,aes(x=mass,y=intensity,label=label,colour=color,hjust=0,vjust=0))+
 	scale_colour_manual(values=c("blue"="#0000FF", "red"="#FF0000", "black"="#444444"),labels=c("blue"="C-term","red"="N-term","black"="Other"),name="Fragment")+
 	theme(legend.justification=c(1,1), legend.position=c(1,1))
+	if(mz)
+		gp <- gp + labs(x="m/z")
+	gp
 }
 
 #' spectrum.theme.simple modifies the spectrum plot to use black axis labels and no background
