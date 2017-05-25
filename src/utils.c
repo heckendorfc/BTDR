@@ -97,7 +97,7 @@ int getmodstrlen(yamldom_node_t *mods){
 
 	for(mods=YAMLDOM_SEQ_NODES(mods);mods;mods=mods->next){
 		if((tmp=yamldom_find_map_val(mods,"name")))
-			ret += strlen(((yamldom_alias_t*)tmp->data)->val);
+			ret += 10+2+strlen(((yamldom_alias_t*)tmp->data)->val);
 	}
 
 	return ret;

@@ -50,7 +50,7 @@ SEXP makedf_fit(struct iobtd *iop){
 		tmp = YAMLDOM_DEREF(tmp);
 		modstrlen = getmodstrlen(yamldom_find_map_val(tmp,"vmod"));
 
-		if(!(mods=malloc(modstrlen)))
+		if(!(mods=malloc(modstrlen+1)))
 			goto err;
 
 		for(seq=YAMLDOM_SEQ_NODES(yamldom_find_map_val(fitseq,"results"));seq;seq=seq->next){
