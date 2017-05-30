@@ -91,7 +91,8 @@ spectrum.label.plot <- function(data,massrange=c(0,Inf),unicode=TRUE,unassigned=
 		labels <- data.frame(mass=fp$peak.mass,intensity=fp$peak.intensity,label=.get.frag.name(fp),color=vcolor)
 	}
 	if(length(unique(fp$protid))>1 && length(unique(fp$peak.id))==1){ #assume xlink?
-		labels$label <- paste0(labels$label,paste0("^",fp$protid+1))
+		labels$label <- paste0(labels$label,paste0("^",c("alpha","beta")[fp$protid+1]))
+		labels$label <- sub("\\d*\\.\\.\\.\\d*","",labels$label)
 	}
 	if(unicode){
 		labels$label <- sub("[+]1","'",labels$label)
@@ -136,5 +137,6 @@ spectrum.theme.simple <- function(base_size = 12) {
 	axis.text.x = element_text(colour = "black",size = base_size * 0.8 , lineheight = 0.9, vjust = 1),
 	axis.text.y = element_text(colour = "black",size = base_size * 0.8, lineheight = 0.9, hjust = 1),
 	panel.grid.major = element_blank(),
-	panel.grid.minor=element_blank())
+	panel.grid.minor=element_blank(),
+	legend.position = c(0.99,0.99), legend.justification = c("right","top"))
 }
