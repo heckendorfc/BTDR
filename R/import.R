@@ -44,7 +44,7 @@ read.bupid <- function(file=NULL,url=NULL){
 
 	#cres <- bupidpopulate(res)
 	out <- .Call("bupidpopulate",file);
-	cres <- new("bupid",scan=out$scan,decon=out$decon,param=out$param,mod=out$mod,prot=out$prot,search=out$search,tag=out$tag,fit=out$fit,xlink=out$xlink,xlpep=out$xlpep)
+	cres <- new(Class="bupid",scan=out$scan,decon=out$decon,param=out$param,mod=out$mod,prot=out$prot,search=out$search,tag=out$tag,fit=out$fit,xlink=out$xlink,xlpep=out$xlpep)
 
 	cres
 }

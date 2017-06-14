@@ -1,11 +1,45 @@
 .peprow <- function(n,x,prot){
 	pprot <- prot[which(prot$protid==x$protid[n]),]
-	pr <- data.frame(pep.start=pprot$start+1,
+	pr <- data.frame(pep.protid=pprot$protid,
+					 pep.start=pprot$start+1,
 					 pep.end=pprot$start+pprot$len,
 					 pep.mass=x$pep.mass[n],
 					 pep.seq=pprot$seq)
+	names(pr) <- sub("pep",paste0("pep",n),names(pr))
 	pr
 }
+
+#' Crosslink peptide subset
+#'
+#' Subset the bupid object by peptide number
+#' 
+#' @param object
+#' bupid object returned from another function
+#' @param pepnum
+#' peptide number
+#'
+#' @return Returns a bupid object with results for one peptide
+#' 
+#' @examples
+#' \dontrun{
+#' server <- "http://bupid.bumc.bu.edu/cgi-bin/get_results.cgi"
+#' infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
+#' data <- read.bupid(url=paste(server,infile,sep="?"))
+#' sdata <- subset(data,scan.num=234,"protein")
+#' fragment.matched.ions(xlinkpep(sdata,1))
+#' }
+#' @export xlinkpep
+xlinkpep <- function(object,pepnum){
+	prot <- pepnum-1
+	subset(object,tag.rank==prot,"protein")
+}
+
+.xlfragcov <- function(object,xldf){
+	pid <- object@scan$plid[which(object@scan$scanid==xldf$scan.num)]
+	lens <- (xldf$pep1.end-xldf$pep1.start+1)+(xldf$pep2.end-xldf$pep2.start+1)
+	length(which(object@fit$peak.id==pid))/(lens*2-2)
+}
+
 
 #' Crosslink results table
 #'
@@ -23,7 +57,7 @@
 #' server <- "http://bupid.bumc.bu.edu/cgi-bin/get_results.cgi"
 #' infile <- "key=WBNqTswT5DPg3aDO&ID=320&date=20150309"
 #' data <- read.bupid(url=paste(server,infile,sep="?"))
-#' xlink.table(data,2)
+#' xlinks(data,2)
 #' }
 #' @export xlinks
 xlinks <- function(object,n=2){
@@ -38,11 +72,13 @@ xlinks <- function(object,n=2){
 							pre.int=scans$pre.int[1],
 							pre.mass=scans$mz[1]*scans$z[1]-scans$z[1]*(1.007825035-0.000549),
 							pre.error=object@xlink$error[xid[1]],
-							frag.cov=0, #TODO
+							frag.cov=0, # fill later
 							mods=object@xlink$mods[xid[1]])
 		xlprot <- subset(object@prot,peakid==id)
 		peps <- do.call("cbind",lapply(1:length(xpid),FUN=.peprow,object@xlpep[xpid,],xlprot))
-		cbind(pre,peps)
+		xldf <- cbind(pre,peps)
+		xldf$frag.cov <- .xlfragcov(object,xldf) # TODO: vectorize
+		xldf
 	}))
 	td
 }
