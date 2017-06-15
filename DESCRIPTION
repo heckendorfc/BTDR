@@ -16,10 +16,8 @@ Imports:
     xml2,
     magrittr,
     RCurl,
-    ggplot2,
-    plyr
+    ggplot2
 License: BSD 2-clause License + file LICENSE
-NeedsCompilation: no
 ByteCompile: yes
 LazyData: no
 RoxygenNote: 5.0.1
