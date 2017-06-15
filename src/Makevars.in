@@ -17,7 +17,8 @@ ROBJ = libyaml-dom/gen.o \
 	tag.o \
 	search.o \
 	fit.o \
-	xlink.o
+	xlink.o \
+	native.o
 
 OBJECTS = $(ROBJ)
 
