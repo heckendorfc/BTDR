@@ -14,13 +14,11 @@
 #' 
 #' @aliases BTDR-package BTDR
 #' 
-#' @import xml2
-#' @import magrittr
-#' @import RCurl
-#' @import ggplot2
-#' @import plyr
-#' @import yaml
 #' @import methods
+#' @import ggplot2
+#' @importFrom xml2 xml_add_child xml_dtd xml_new_root write_xml
+#' @importFrom magrittr %>%
+#' @importFrom yaml yaml.load
 #' @importFrom stats lm
 #' 
 #' @useDynLib BTDR
