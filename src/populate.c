@@ -74,13 +74,14 @@ int io_close(struct iobtd *iop){
 	return 0;
 }
 
-SEXP safedf(SEXP df){
-	if(df != RNULL){
-		hidefromGC(df);
-		return df;
-	}
-
-	return make_dataframe(RNULL,RNULL,0);
+#define safedf(dst,df){ \
+	tmp = df; \
+	if(tmp != RNULL){ \
+		hidefromGC(tmp); \
+		dst = tmp; \
+	} else { \
+		dst = make_dataframe(RNULL,RNULL,0); \
+	} \
 }
 
 SEXP bupidpopulate(SEXP R_file){
@@ -88,23 +89,23 @@ SEXP bupidpopulate(SEXP R_file){
 	char *file = CHARPT(R_file,0);
 	FILE *fd;
 	SEXP scandf, peakdf, paramdf, moddf, protdf, searchdf, tagdf, fitdf, xlinkdf, xlpdf;
-	SEXP ret, retnames;
+	SEXP tmp, ret, retnames;
 
 	if(!(fd = fopen(file,"r")))
 		return RNULL;
 
 	io_init(&iop,fd);
 
-	scandf = safedf(makedf_scan(&iop));
-	peakdf = safedf(makedf_peak(&iop));
-	paramdf = safedf(makedf_param(&iop));
-	moddf = safedf(makedf_mod(&iop));
-	protdf = safedf(makedf_prot(&iop));
-	tagdf = safedf(makedf_tag(&iop));
-	searchdf = safedf(makedf_search(&iop));
-	fitdf = safedf(makedf_fit(&iop));
-	xlinkdf = safedf(makedf_xlink(&iop));
-	xlpdf = safedf(makedf_xlpep(&iop));
+	safedf(scandf, makedf_scan(&iop));
+	safedf(peakdf, makedf_peak(&iop));
+	safedf(paramdf, makedf_param(&iop));
+	safedf(moddf, makedf_mod(&iop));
+	safedf(protdf, makedf_prot(&iop));
+	safedf(tagdf, makedf_tag(&iop));
+	safedf(searchdf, makedf_search(&iop));
+	safedf(fitdf, makedf_fit(&iop));
+	safedf(xlinkdf, makedf_xlink(&iop));
+	safedf(xlpdf, makedf_xlpep(&iop));
 
 	retnames = make_list_names(10, "scan", "decon", "param", "mod", "prot", "tag", "search", "fit", "xlink", "xlpep");
 	ret = make_list(retnames, 10, scandf, peakdf, paramdf, moddf, protdf, tagdf, searchdf, fitdf, xlinkdf, xlpdf);
