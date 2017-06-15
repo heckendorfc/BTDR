@@ -16,6 +16,10 @@
 #' base text size for axis labels
 #' @param mz
 #' TRUE to plot in m/z, otherwise mass
+#' @param mass
+#' mass vector for generic plotting
+#' @param intensity
+#' intensity vector for generic plotting
 #' 
 #' @return Returns the ggplot object
 #'

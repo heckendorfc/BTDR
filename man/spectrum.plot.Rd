@@ -18,6 +18,10 @@ spectrum.label.plot(data, massrange = c(0, Inf), unicode = TRUE,
 spectrum.theme.simple(base_size = 12)
 }
 \arguments{
+\item{mass}{mass vector for generic plotting}
+
+\item{intensity}{intensity vector for generic plotting}
+
 \item{massrange}{a vector describing the lower and upper bounds of the mass range to plot}
 
 \item{color}{the color to use for unlabeled peaks}
