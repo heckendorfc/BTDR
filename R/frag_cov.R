@@ -150,9 +150,11 @@ fragment.coverage.generic <- function(data,sequence,file="cov.svg",columns=25L,s
 	xml_add_child(xml,"text") %>%
 		xml_add_child("tspan",sequence,x=paste0(cx,collapse=" "),y=paste0(cy,collapse=" "),"font-family"="sans-serif","font-size"=paste(10*params$scale,"px",sep=""),fill="#000",dy=paste(rep(params$scale*3,nchar(sequence)),collapse=" "))
 
-	for(i in 1:(nrow(data))){
-		fcolor <- .get.frag.color(data[i,"term"],color=color)
-		xml_add_child(xml,"path",d=.get.frag.path(data[i,],params,nchar(sequence)),stroke=fcolor,fill=fcolor)
+	if(nrow(data)>0){
+		for(i in 1:(nrow(data))){
+			fcolor <- .get.frag.color(data[i,"term"],color=color)
+			xml_add_child(xml,"path",d=.get.frag.path(data[i,],params,nchar(sequence)),stroke=fcolor,fill=fcolor)
+		}
 	}
 
 	write_xml(root,file,options="as_xml")
