@@ -72,14 +72,21 @@ fragment.term <- function(fragname){
 	"Z"),collapse="")
 }
 
+.param.coord <- function(params,si){
+	sx <- params$scale*3+params$startx+0.5*params$xsp+((si%%params$numperline)*params$xsp);
+	sy <- params$starty+(floor(si/params$numperline)*params$ysp);
+	data.frame(sx=sx,sy=sy)
+}
+
 .get.frag.path <- function(res,params,seqlen){
 	si <- as.integer(res["num"])
 	ns <- which(res["term"] == "N")
 	cs <- which(res["term"] == "C")
 	si <- c(si[ns]-1,seqlen-si[cs]-1)
 
-	sx <- params$scale*3+params$startx+0.5*params$xsp+((si%%params$numperline)*params$xsp);
-	sy <- params$starty+(floor(si/params$numperline)*params$ysp);
+	coord <- .param.coord(params,si)
+	sx <- coord$sx
+	sy <- coord$sy
 
 	if(res["term"]=="N"){
 		ldown1 <- sy-params$height
@@ -159,6 +166,21 @@ fragment.coverage.generic <- function(data,sequence,file="cov.svg",columns=25L,s
 			fcolor <- .get.frag.color(data[i,"term"],color=color)
 			xml_add_child(xml,"path",d=.get.frag.path(data[i,],params,nchar(sequence)),stroke=fcolor,fill=fcolor)
 		}
+	}
+
+	if(length(marksite)>0){
+		coord <- .param.coord(params,marksite)
+		coord$sx <- coord$sx - params$xsp/2
+		coord$sy <- coord$sy - params$height*1.25
+
+		#xml_add_child(xml,"text") %>%
+			#xml_add_child("tspan",rep("*",length(marksite)),x=paste0(coord$sx,collapse=" "),y=paste0(coord$sy,collapse=" "),"font-family"="sans-serif","font-size"=paste(5*params$scale,"px",sep=""),fill="#F00",dy=paste(rep(params$scale*3,length(marksite)),collapse=" ")) # x-coord is slightly off
+
+		xml_add_child(xml,"circle",
+					  cx=paste0(coord$sx,collapse=" "),
+					  cy=paste0(coord$sy,collapse=" "),
+					  fill="#F00",
+					  r=params$height*0.25)
 	}
 
 	write_xml(root,file,options="as_xml")
