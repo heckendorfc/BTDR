@@ -73,12 +73,12 @@ err:
 
 
 SEXP makedf_xlpep(struct iobtd *iop){
-	SEXP df, idvec, protidvec, pepflagvec, pepmassvec;
+	SEXP df, idvec, protidvec, pepflagvec, pepmassvec, pepsitevec;
 	yamldom_node_t *xlseq, *tmp, *seq, *prottmp, *peptmp;
 	int i, istart, count, peakcount, modstrlen;
 	int id;
 	double pre_err, frag_cov;
-	const int ncols=4;
+	const int ncols=5;
 
 	if(!(xlseq=yamldom_find_map_val(iop->root,"xlink"))){
 		goto err;
@@ -92,6 +92,7 @@ SEXP makedf_xlpep(struct iobtd *iop){
 	hidefromGC(protidvec = allocVector(INTSXP,count));
 	hidefromGC(pepflagvec = allocVector(INTSXP,count));
 	hidefromGC(pepmassvec = allocVector(REALSXP,count));
+	hidefromGC(pepsitevec = allocVector(INTSXP,count));
 
 	istart=i=0;
 	for(seq=YAMLDOM_SEQ_NODES(xlseq);seq;seq=seq->next){
@@ -112,6 +113,7 @@ SEXP makedf_xlpep(struct iobtd *iop){
 
 			push_elem(INTEGER(pepflagvec),i,peptmp,"flags",strtoint);
 			push_elem(REAL(pepmassvec),i,peptmp,"mass",strtodouble);
+			push_elem(INTEGER(pepsitevec),i,peptmp,"linksite",strtoint);
 
 			i++;
 			peptmp = peptmp->next;
@@ -119,8 +121,8 @@ SEXP makedf_xlpep(struct iobtd *iop){
 	}
 
 	df = make_dataframe(RNULL,
-						make_list_names(ncols, "xlid", "protid", "pep.flag", "pep.mass"),
-						ncols, idvec, protidvec, pepflagvec, pepmassvec);
+						make_list_names(ncols, "xlid", "protid", "pep.flag", "pep.mass", "pep.xlsite"),
+						ncols, idvec, protidvec, pepflagvec, pepmassvec, pepsitevec);
 
 	unhideGC();
 

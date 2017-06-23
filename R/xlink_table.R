@@ -4,6 +4,7 @@
 					 pep.start=pprot$start+1,
 					 pep.end=pprot$start+pprot$len,
 					 pep.mass=x$pep.mass[n],
+					 pep.xlsite=x$pep.xlsite[n],
 					 pep.seq=pprot$seq)
 	names(pr) <- sub("pep",paste0("pep",n),names(pr))
 	pr
