@@ -12,9 +12,11 @@
 #' @param scale
 #' magnification factor for the image
 #' @param color
-#' boolean value with true indicating the fragments should be coloured red/blue
-#' and false making them all black.
-#'
+#' a length 3 character vector indicating the color C-term, N-term, and other
+#' fragments should be colored respectively. Also valid are NULL to make them
+#' all black or a length 1 character vector to make them all that color.
+#' @param marksite
+#' site numbers to place a marker at
 #' 
 #' @return Returns the name of the file created.
 #' @examples
@@ -41,11 +43,13 @@ fragment.term <- function(fragname){
 	ret
 }
 
-.get.frag.color <- function(frag,color=T){
-	if(!color)
+.get.frag.color <- function(frag,color){
+	if(length(color)==0)
 		return("#000")
+	if(length(color)==1)
+		return(color)
 
-	termpair <- data.frame(term=c("C","N",""),color=c("#00f","#f00","#000"),stringsAsFactors=F)
+	termpair <- data.frame(term=c("C","N",""),color=color,stringsAsFactors=F)
 	termpair$color[which(termpair$term==frag)]
 }
 
@@ -102,7 +106,7 @@ fragment.term <- function(fragname){
 #'
 #' @rdname fragment.coverage
 #' @export fragment.coverage
-fragment.coverage <- function(data,file="cov.svg",columns=25L,scale=2,color=T){
+fragment.coverage <- function(data,file="cov.svg",columns=25L,scale=2,color=c("#00f","#f00","#000"),marksite=NULL){
 	pn <- unique(data@prot$name)
 	if(length(pn)>1){
 		sapply(pn,FUN=function(n){
@@ -111,11 +115,11 @@ fragment.coverage <- function(data,file="cov.svg",columns=25L,scale=2,color=T){
 										  get_unique_prot_id(data@prot$peakid[pids],data@prot$protid[pids])
 
 			gdata <- .fragment.coverage.convert.input(data@fit[fids,])
-			fragment.coverage.generic(gdata,as.character(data@prot$seq[1]),paste(strsplit(as.character(n),"[|]")[[1]][1],file,sep="."),columns,scale,color)
+			fragment.coverage.generic(gdata,as.character(data@prot$seq[1]),paste(strsplit(as.character(n),"[|]")[[1]][1],file,sep="."),columns,scale,color,marksite)
 		})
 	} else{
 		gdata <- .fragment.coverage.convert.input(data@fit)
-		fragment.coverage.generic(gdata,as.character(data@prot$seq[1]),file,columns,scale,color)
+		fragment.coverage.generic(gdata,as.character(data@prot$seq[1]),file,columns,scale,color,marksite)
 	}
 }
 
@@ -130,7 +134,7 @@ fragment.coverage <- function(data,file="cov.svg",columns=25L,scale=2,color=T){
 #'
 #' @rdname fragment.coverage
 #' @export fragment.coverage.generic
-fragment.coverage.generic <- function(data,sequence,file="cov.svg",columns=25L,scale=2,color=T){
+fragment.coverage.generic <- function(data,sequence,file="cov.svg",columns=25L,scale=2,color=c("#00f","#f00","#000"),marksite=NULL){
 	params <- data.frame(scale=scale,numperline=columns)
 	params$xsp <- 15*params$scale
 	params$ysp <- 15*params$scale

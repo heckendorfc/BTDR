@@ -6,10 +6,10 @@
 \title{Plot fragment coverage}
 \usage{
 fragment.coverage(data, file = "cov.svg", columns = 25L, scale = 2,
-  color = T)
+  color = c("#00f", "#f00", "#000"), marksite = NULL)
 
 fragment.coverage.generic(data, sequence, file = "cov.svg", columns = 25L,
-  scale = 2, color = T)
+  scale = 2, color = c("#00f", "#f00", "#000"), marksite = NULL)
 }
 \arguments{
 \item{data}{a bupid object; output from read.bupid}
@@ -20,8 +20,11 @@ fragment.coverage.generic(data, sequence, file = "cov.svg", columns = 25L,
 
 \item{scale}{magnification factor for the image}
 
-\item{color}{boolean value with true indicating the fragments should be coloured red/blue
-and false making them all black.}
+\item{color}{a length 3 character vector indicating the color C-term, N-term, and other
+fragments should be colored respectively. Also valid are NULL to make them
+all black or a length 1 character vector to make them all that color.}
+
+\item{marksite}{site numbers to place a marker at}
 
 \item{sequence}{protein sequence used in assignments}
 }
