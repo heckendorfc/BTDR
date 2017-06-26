@@ -86,18 +86,38 @@ spectrum.plot <- function(data,massrange=c(0,Inf),color="#000000"){
 #' @rdname spectrum.plot
 #' @export spectrum.label.plot
 spectrum.label.plot <- function(data,massrange=c(0,Inf),unicode=TRUE,unassigned=TRUE,mz=FALSE){
+	xl <- FALSE
 	fp <- .expand.fit.counts(data)
 	fp <- fp[which(fp$peak.mass>=massrange[1] & fp$peak.mass<=massrange[2]),]
+
+	if(length(unique(fp$protid))>1 && length(unique(fp$peak.id))==1){ #assume xlink?
+		xl <- TRUE
+	}
+
 	vcolor <- .fragment.color(fp)
+
 	if(mz){
 		labels <- data.frame(mass=.mass.to.mz(fp$peak.mass,fp$peak.z),intensity=fp$peak.intensity,label=.get.frag.name(fp),color=vcolor)
 	} else {
 		labels <- data.frame(mass=fp$peak.mass,intensity=fp$peak.intensity,label=.get.frag.name(fp),color=vcolor)
 	}
-	if(length(unique(fp$protid))>1 && length(unique(fp$peak.id))==1){ #assume xlink?
-		labels$label <- paste0(labels$label,paste0("^",c("alpha","beta")[fp$protid+1]))
+
+	if(xl){
 		labels$label <- sub("\\d*\\.\\.\\.\\d*","",labels$label)
+
+		#protinds <- sapply(fp$protid,FUN=function(pind) which(data@xlpep$protid==pind) )
+		#ul <- which(fp$ion.len >= data@xlpep[protinds,"pep.xlsite"])
+		#labels$label[ul] <- paste0("underline(",labels$label[ul],")")
+
+		#pnum <- order(data@prot$start[order(data@prot$protid)]) # N-term=1, C-term=2
+		pnum <- c(1,2) # default order
+
+		labels$label <- paste0(labels$label,paste0("^",c("alpha","beta")[pnum[fp$protid+1]]))
+
+		labels$pepnum <- pnum[fp$protid+1]
+		labels$color <- c("blue","grey")[labels$pepnum]
 	}
+
 	if(unicode){
 		labels$label <- sub("[+]1","'",labels$label)
 		labels$label <- sub("-1","\\u2022",labels$label)
@@ -117,14 +137,19 @@ spectrum.label.plot <- function(data,massrange=c(0,Inf),unicode=TRUE,unassigned=
 		} else {
 			mass <- data@decon$mass
 		}
-		gp <- spectrum.plot.generic(mass,data@decon$intensity,massrange,color="#888888")
+		gp <- spectrum.plot.generic(mass,data@decon$intensity,massrange,color="#AAAAAA")
 	} else {
 		gp <- ggplot()
 	}
-	gp <- gp + geom_segment(data=labels,aes(x=mass,xend=mass,y=intensity,yend=-Inf,colour=color))+
-	geom_text(data=labels,parse=T,aes(x=mass,y=intensity,label=label,colour=color,hjust=0,vjust=0))+
-	scale_colour_manual(values=c("blue"="#0000FF", "red"="#FF0000", "black"="#444444"),labels=c("blue"="C-term","red"="N-term","black"="Other"),name="Fragment")+
-	theme(legend.justification=c(1,1), legend.position=c(1,1))
+	gp <- gp + geom_segment(data=labels,aes(x=mass,xend=mass,y=intensity,yend=-Inf,colour=color))
+	gp <- gp + geom_text(data=labels,parse=T,show.legend=F,aes(x=mass,y=intensity,label=label,colour=color,hjust=0,vjust=0))
+	if(xl){
+		gp <- gp + scale_colour_manual(values=c("blue"="#0000FF", "grey"="#222222"),labels=c("blue"=bquote(alpha (1)),"grey"=bquote(beta (2))),name="Peptide")
+	} else {
+		gp <- gp + scale_colour_manual(values=c("blue"="#0000FF", "red"="#FF0000", "black"="#444444"),labels=c("blue"="C-term","red"="N-term","black"="Other"),name="Fragment")
+	}
+	gp <- gp + theme(legend.justification=c(1,1), legend.position=c(1,1)) +
+		guides(colour = guide_legend(override.aes = list(shape=1)))
 	if(mz)
 		gp <- gp + labs(x="m/z")
 	gp
