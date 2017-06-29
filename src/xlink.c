@@ -4,7 +4,7 @@
 SEXP makedf_xlink(struct iobtd *iop){
 	SEXP df, idvec, peakidvec, errvec, covvec, modsv;
 	yamldom_node_t *xlseq, *tmp, *seq, *prottmp, *peptmp;
-	int i, istart, count, modstrlen;
+	int i, count, modstrlen;
 	const int ncols=5;
 	char *mods;
 
@@ -20,7 +20,7 @@ SEXP makedf_xlink(struct iobtd *iop){
 	hidefromGC(covvec = allocVector(REALSXP,count));
 	hidefromGC(modsv = allocVector(STRSXP,count));
 
-	istart=i=0;
+	i=0;
 	for(seq=YAMLDOM_SEQ_NODES(xlseq);seq;seq=seq->next){
 		if(!(peptmp=yamldom_find_map_val(seq,"peps")))
 			goto err;
@@ -73,7 +73,7 @@ err:
 SEXP makedf_xlpep(struct iobtd *iop){
 	SEXP df, idvec, protidvec, pepflagvec, pepmassvec, pepsitevec;
 	yamldom_node_t *xlseq, *tmp, *seq, *prottmp, *peptmp;
-	int i, istart, count;
+	int i, count;
 	int id;
 	const int ncols=5;
 
@@ -91,7 +91,7 @@ SEXP makedf_xlpep(struct iobtd *iop){
 	hidefromGC(pepmassvec = allocVector(REALSXP,count));
 	hidefromGC(pepsitevec = allocVector(INTSXP,count));
 
-	istart=i=0;
+	i=0;
 	for(seq=YAMLDOM_SEQ_NODES(xlseq);seq;seq=seq->next){
 		if(!(peptmp=yamldom_find_map_val(seq,"peps")))
 			goto err;

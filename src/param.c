@@ -4,7 +4,7 @@
 SEXP makedf_param(struct iobtd *iop){
 	SEXP df, idvec, fragvec, mstolvec, msmstolvec, msmassvec, taxvec;
 	yamldom_node_t *paramseq, *seq;
-	int i, istart, count;
+	int i, count;
 	const int ncols=6;
 
 	if(!(paramseq=yamldom_find_map_val(iop->root,"param"))){
@@ -20,7 +20,7 @@ SEXP makedf_param(struct iobtd *iop){
 	hidefromGC(msmassvec = allocVector(REALSXP,count));
 	hidefromGC(taxvec = allocVector(STRSXP,count));
 
-	istart=i=0;
+	i=0;
 	for(seq=YAMLDOM_SEQ_NODES(paramseq);seq;seq=seq->next){
 		push_elem(INTEGER(idvec),i,seq,"id",strtoint);
 		push_elem(fragvec,i,seq,"frag",strtostr);
