@@ -1,0 +1,40 @@
+#######################################################
+
+PKG_CPPFLAGS = -Ilibyaml/include
+#PKG_LIBS = @BTDR_LIBS@
+
+LIBYAML_OBJ = libyaml/src/api.o \
+libyaml/src/dumper.o \
+libyaml/src/emitter.o \
+libyaml/src/loader.o \
+libyaml/src/parser.o \
+libyaml/src/reader.o \
+libyaml/src/scanner.o \
+libyaml/src/writer.o
+
+ROBJ = libyaml-dom/gen.o \
+	RNACI/RNACI.o \
+	populate.o \
+	scan.o \
+	utils.o \
+	peaks.o \
+	param.o \
+	mod.o \
+	prot.o \
+	tag.o \
+	search.o \
+	fit.o \
+	xlink.o \
+	native.o
+
+OBJECTS = $(LIBYAML_OBJ) $(ROBJ)
+
+all: $(SHLIB)
+
+
+$(SHLIB): $(OBJECTS)
+$(OBJECTS): $(OBEXTRA)
+
+
+clean:
+	rm -rf ./libs ./*.so ./*.o ./libyaml-dom/*.o ./RNACI/*.o libyaml/src/*.o

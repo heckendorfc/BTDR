@@ -28,12 +28,14 @@ AC_INIT(DESCRIPTION)
 AC_PROG_CC_C99
 
 YAML_HOME="/usr/local"
+YAML_HOME="src/libyaml"
 
 AC_ARG_WITH(yaml-home,
 	AC_HELP_STRING([--with-yaml-home], [Path to YAML installation.]),
 	[YAML_HOME=$withval])
 
 BTDR_LIBS="-L${YAML_HOME}/lib -lyaml"
+BTDR_LIBS=""
 
 AC_SUBST(YAML_HOME)
 AC_SUBST(BTDR_LIBS)
