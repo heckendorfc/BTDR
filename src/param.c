@@ -3,9 +3,8 @@
 
 SEXP makedf_param(struct iobtd *iop){
 	SEXP df, idvec, fragvec, mstolvec, msmstolvec, msmassvec, taxvec;
-	yamldom_node_t *paramseq, *tmp, *seq;
-	int i, istart, count, peakcount;
-	int id;
+	yamldom_node_t *paramseq, *seq;
+	int i, istart, count;
 	const int ncols=6;
 
 	if(!(paramseq=yamldom_find_map_val(iop->root,"param"))){

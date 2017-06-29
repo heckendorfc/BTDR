@@ -41,8 +41,8 @@ int io_general_close(yamldom_data_t *iod){
 }
 
 int find_anchor_id(yaml_document_t *doc, const char *name, int index){
-	int m,r;
-	yaml_node_t *par,*node;
+	int r;
+	yaml_node_t *node;
 
 	for(r=1;(node=yaml_document_get_node(doc,r));r++){
 		if(node->type!=YAML_SCALAR_NODE)

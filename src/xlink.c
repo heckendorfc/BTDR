@@ -4,9 +4,7 @@
 SEXP makedf_xlink(struct iobtd *iop){
 	SEXP df, idvec, peakidvec, errvec, covvec, modsv;
 	yamldom_node_t *xlseq, *tmp, *seq, *prottmp, *peptmp;
-	int i, istart, count, peakcount, modstrlen;
-	int id;
-	double pre_err, frag_cov;
+	int i, istart, count, modstrlen;
 	const int ncols=5;
 	char *mods;
 
@@ -75,9 +73,8 @@ err:
 SEXP makedf_xlpep(struct iobtd *iop){
 	SEXP df, idvec, protidvec, pepflagvec, pepmassvec, pepsitevec;
 	yamldom_node_t *xlseq, *tmp, *seq, *prottmp, *peptmp;
-	int i, istart, count, peakcount, modstrlen;
+	int i, istart, count;
 	int id;
-	double pre_err, frag_cov;
 	const int ncols=5;
 
 	if(!(xlseq=yamldom_find_map_val(iop->root,"xlink"))){

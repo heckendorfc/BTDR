@@ -2,7 +2,6 @@
 #include "utils.h"
 
 void addmod(yamldom_node_t *mod, int fixed, yamldom_node_t *param, SEXP idvec, SEXP fixedvec, SEXP namevec, SEXP posvec, SEXP sitevec, SEXP massvec, int *i){
-	yamldom_node_t *tmp;
 	int id;
 
 	push_elem(&id,0,param,"id",strtoint);
@@ -26,8 +25,7 @@ void addmod(yamldom_node_t *mod, int fixed, yamldom_node_t *param, SEXP idvec, S
 SEXP makedf_mod(struct iobtd *iop){
 	SEXP df, idvec, fixedvec, namevec, posvec, massvec, sitevec;
 	yamldom_node_t *paramseq, *tmp, *seq;
-	int i, count, peakcount;
-	int id;
+	int i, count;
 	const int ncols=6;
 
 	if(!(paramseq=yamldom_find_map_val(iop->root,"param"))){

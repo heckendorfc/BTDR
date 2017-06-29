@@ -3,7 +3,7 @@
 
 SEXP makedf_search(struct iobtd *iop){
 	SEXP df, sidvec, pidvec, rankvec, scorevec, tscorevec, covvec, fdrvec;
-	yamldom_node_t *searchseq, *tmp, *seq;
+	yamldom_node_t *searchseq, *seq;
 	int i, count, peakid;
 	char id[10+10+1];
 	const int ncols=7;

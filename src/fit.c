@@ -5,7 +5,6 @@ SEXP makedf_fit(struct iobtd *iop){
 	SEXP df, protidv, pidv, pindv, pcountv, pmassv, pintv, pzv, istartv, ilenv, imassv, fragv, modsv, errv;
 	yamldom_node_t *fitseq, *pseq, *rseq, *iseq, *tmp, *seq;
 	int i, count, peakid, protid, modstrlen;
-	char id[10+10+1];
 	const int ncols=13;
 	char *mods;
 

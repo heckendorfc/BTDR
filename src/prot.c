@@ -4,8 +4,7 @@
 SEXP makedf_prot(struct iobtd *iop){
 	SEXP df, protidvec, peakidvec, seqvec, namevec, startvec, lenvec, tmodvec;
 	yamldom_node_t *protseq, *tmp, *seq;
-	int i, len, count, peakcount;
-	int id;
+	int i, len, count;
 	char *name;
 	const int ncols=7;
 

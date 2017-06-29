@@ -4,7 +4,7 @@
 SEXP makedf_peak(struct iobtd *iop){
 	SEXP df, idvec, massvec, intvec, zvec;
 	yamldom_node_t *peakseq, *tmp, *seq;
-	int i, istart, count, peakcount;
+	int i, istart, count;
 	int id;
 	const int ncols=4;
 

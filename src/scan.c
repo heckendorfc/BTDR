@@ -4,7 +4,7 @@
 SEXP makedf_scan(struct iobtd *iop){
 	SEXP df, plidvec, paridvec, sidvec, mzvec, zvec, intvec, rtvec;
 	yamldom_node_t *peakseq, *scanseq, *tmp, *seq, *scan;
-	int i, count, peakcount;
+	int i, count;
 	int parid, id;
 	const int ncols=7;
 
