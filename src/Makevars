@@ -1,6 +1,6 @@
 #######################################################
 
-PKG_CPPFLAGS = -Ilibyaml/include
+PKG_CPPFLAGS = -Ilibyaml/include -DYAML_DECLARE_STATIC=1
 #PKG_LIBS = @BTDR_LIBS@
 
 LIBYAML_OBJ = libyaml/src/api.o \
