@@ -5,10 +5,6 @@
 
 int io_general_init(yamldom_data_t *iod){
 	memset(&iod->parser,0,sizeof(iod->event));
-	memset(&iod->emitter,0,sizeof(iod->emitter));
-
-	if(!yaml_emitter_initialize(&iod->emitter))
-		goto error;
 
 	if(iod->infd){
 		if(!yaml_parser_initialize(&iod->parser))
@@ -16,12 +12,6 @@ int io_general_init(yamldom_data_t *iod){
 
 		yaml_parser_set_input_file(&iod->parser, iod->infd);
 		yaml_parser_set_encoding(&iod->parser,YAML_UTF8_ENCODING);
-	}
-
-	if(iod->outfd){
-		yaml_emitter_set_output_file(&iod->emitter, iod->outfd);
-		yaml_emitter_set_canonical(&iod->emitter,1);
-		yaml_emitter_set_unicode(&iod->emitter,0);
 	}
 
 	return 0;
@@ -33,9 +23,6 @@ error:
 int io_general_close(yamldom_data_t *iod){
 	if(iod->infd)
 		yaml_parser_delete(&iod->parser);
-
-	if(iod->outfd)
-		yaml_emitter_delete(&iod->emitter);
 
 	return 0;
 }

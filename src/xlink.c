@@ -47,11 +47,12 @@ SEXP makedf_xlink(struct iobtd *iop){
 			goto err;
 
 		modstr(yamldom_find_map_val(seq,"mods"),mods);
-		if(mods && *mods){
+		if(mods && *mods)
 			SET_STRING_ELT(modsv, i, mkChar(mods));
-			free(mods);
-		} else
+		else
 			SET_STRING_ELT(modsv, i, mkChar(""));
+
+		free(mods);
 
 		i++;
 	}
