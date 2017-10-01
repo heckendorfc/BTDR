@@ -97,9 +97,9 @@ spectrum.label.plot <- function(data,massrange=c(0,Inf),unicode=TRUE,unassigned=
 	vcolor <- .fragment.color(fp)
 
 	if(mz){
-		labels <- data.frame(mass=.mass.to.mz(fp$peak.mass,fp$peak.z),intensity=fp$peak.intensity,label=.get.frag.name(fp),color=vcolor)
+		labels <- data.frame(mass=.mass.to.mz(fp$peak.mass,fp$peak.z),z=fp$peak.z,intensity=fp$peak.intensity,label=.get.frag.name(fp),color=vcolor)
 	} else {
-		labels <- data.frame(mass=fp$peak.mass,intensity=fp$peak.intensity,label=.get.frag.name(fp),color=vcolor)
+		labels <- data.frame(mass=fp$peak.mass,z=fp$peak.z,intensity=fp$peak.intensity,label=.get.frag.name(fp),color=vcolor)
 	}
 
 	if(xl){
@@ -131,6 +131,9 @@ spectrum.label.plot <- function(data,massrange=c(0,Inf),unicode=TRUE,unassigned=
 	#plotdata <- data.frame(mass=c(fp$peak.mass[nt],fp$peak.mass[ct]),
 						   #intensity=c(fp$peak.intensity[nt],fp$peak.intensity[ct]),
 						   #color=vcolor)
+	if(mz)
+		labels$label = paste(labels$label,"~~",round(labels$mass,4),"^{phantom(0)+",labels$z,"}",sep="")
+
 	if(unassigned){
 		if(mz){
 			mass <- .mass.to.mz(data@decon$mass,data@decon$z)
