@@ -71,7 +71,8 @@ xlinks <- function(object,n=2){
 		scans <- object@scan[which(object@scan$plid == id),]
 		pre <- data.frame(scan.num=paste(scans$scanid,collapse=" "),
 							pre.int=scans$pre.int[1],
-							pre.mass=scans$mz[1]*scans$z[1]-scans$z[1]*(1.007825035-0.000549),
+							pre.mz=scans$mz[1],
+							pre.z=scans$z[1],
 							pre.error=object@xlink$error[xid[1]],
 							frag.cov=0, # fill later
 							mods=object@xlink$mods[xid[1]])
