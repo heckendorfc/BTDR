@@ -2,7 +2,7 @@
 #include "utils.h"
 
 SEXP makedf_param(struct iobtd *iop){
-	SEXP df, idvec, fragvec, mstolvec, msmstolvec, msmassvec, taxvec;
+	SEXP df, df_names, idvec, fragvec, mstolvec, msmstolvec, msmassvec, taxvec;
 	yamldom_node_t *paramseq, *seq;
 	int i, count;
 	const int ncols=6;
@@ -32,9 +32,8 @@ SEXP makedf_param(struct iobtd *iop){
 		i++;
 	}
 
-	df = make_dataframe(RNULL,
-						make_list_names(ncols, "id", "frag", "mstol", "msmstol", "msmass", "tax"),
-						ncols, idvec, fragvec, mstolvec, msmstolvec, msmassvec, taxvec);
+	make_list_names(df_names, ncols, "id", "frag", "mstol", "msmstol", "msmass", "tax");
+	make_dataframe(df, RNULL, df_names, ncols, idvec, fragvec, mstolvec, msmstolvec, msmassvec, taxvec);
 
 	unhideGC();
 

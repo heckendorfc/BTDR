@@ -2,7 +2,7 @@
 #include "utils.h"
 
 SEXP makedf_peak(struct iobtd *iop){
-	SEXP df, idvec, massvec, intvec, zvec;
+	SEXP df, df_names, idvec, massvec, intvec, zvec;
 	yamldom_node_t *peakseq, *tmp, *seq;
 	int i, istart, count;
 	int id;
@@ -43,9 +43,8 @@ SEXP makedf_peak(struct iobtd *iop){
 		istart += count;
 	}
 
-	df = make_dataframe(RNULL,
-						make_list_names(ncols, "id", "mass", "intensity", "z"),
-						ncols, idvec, massvec, intvec, zvec);
+	make_list_names(df_names, ncols, "id", "mass", "intensity", "z");
+	make_dataframe(df, RNULL, df_names, ncols, idvec, massvec, intvec, zvec);
 
 	unhideGC();
 

@@ -2,7 +2,7 @@
 #include "utils.h"
 
 SEXP makedf_fit(struct iobtd *iop){
-	SEXP df, protidv, pidv, pindv, pcountv, pmassv, pintv, pzv, istartv, ilenv, imassv, fragv, modsv, errv;
+	SEXP df, df_names, protidv, pidv, pindv, pcountv, pmassv, pintv, pzv, istartv, ilenv, imassv, fragv, modsv, errv;
 	yamldom_node_t *fitseq, *pseq, *rseq, *iseq, *tmp, *seq;
 	int i, count, peakid, protid, modstrlen;
 	const int ncols=13;
@@ -84,9 +84,8 @@ SEXP makedf_fit(struct iobtd *iop){
 		free(mods);
 	}
 
-	df = make_dataframe(RNULL,
-						make_list_names(ncols, "protid", "peak.id", "peak.index", "peak.count", "peak.mass", "peak.intensity", "peak.z", "ion.start", "ion.len", "ion.mass", "frag", "mods", "error"),
-						ncols, protidv, pidv, pindv, pcountv, pmassv, pintv, pzv, istartv, ilenv, imassv, fragv, modsv, errv);
+	make_list_names(df_names, ncols, "protid", "peak.id", "peak.index", "peak.count", "peak.mass", "peak.intensity", "peak.z", "ion.start", "ion.len", "ion.mass", "frag", "mods", "error");
+	make_dataframe(df, RNULL, df_names, ncols, protidv, pidv, pindv, pcountv, pmassv, pintv, pzv, istartv, ilenv, imassv, fragv, modsv, errv);
 
 	unhideGC();
 

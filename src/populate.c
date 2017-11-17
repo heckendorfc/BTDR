@@ -67,7 +67,7 @@ int io_close(struct iobtd *iop){
 		hidefromGC(tmp); \
 		dst = tmp; \
 	} else { \
-		dst = make_dataframe(RNULL,RNULL,0); \
+		make_dataframe(dst,RNULL,RNULL,0,0); \
 	} \
 }
 
@@ -94,8 +94,8 @@ SEXP bupidpopulate(SEXP R_file){
 	safedf(xlinkdf, makedf_xlink(&iop));
 	safedf(xlpdf, makedf_xlpep(&iop));
 
-	retnames = make_list_names(10, "scan", "decon", "param", "mod", "prot", "tag", "search", "fit", "xlink", "xlpep");
-	ret = make_list(retnames, 10, scandf, peakdf, paramdf, moddf, protdf, tagdf, searchdf, fitdf, xlinkdf, xlpdf);
+	make_list_names(retnames, 10, "scan", "decon", "param", "mod", "prot", "tag", "search", "fit", "xlink", "xlpep");
+	make_list(ret, retnames, 10, scandf, peakdf, paramdf, moddf, protdf, tagdf, searchdf, fitdf, xlinkdf, xlpdf);
 
 	io_close(&iop);
 

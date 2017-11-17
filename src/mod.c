@@ -23,7 +23,7 @@ void addmod(yamldom_node_t *mod, int fixed, yamldom_node_t *param, SEXP idvec, S
 
 
 SEXP makedf_mod(struct iobtd *iop){
-	SEXP df, idvec, fixedvec, namevec, posvec, massvec, sitevec;
+	SEXP df, df_names, idvec, fixedvec, namevec, posvec, massvec, sitevec;
 	yamldom_node_t *paramseq, *tmp, *seq;
 	int i, count;
 	const int ncols=6;
@@ -58,9 +58,8 @@ SEXP makedf_mod(struct iobtd *iop){
 			addmod(YAMLDOM_SEQ_NODES(tmp),0,seq,idvec,fixedvec,namevec,posvec,sitevec,massvec,&i);
 	}
 
-	df = make_dataframe(RNULL,
-						make_list_names(ncols, "paramid", "fixed", "name", "mass", "pos", "site"),
-						ncols, idvec, fixedvec, namevec, massvec, posvec, sitevec);
+	make_list_names(df_names, ncols, "paramid", "fixed", "name", "mass", "pos", "site");
+	make_dataframe(df, RNULL, df_names, ncols, idvec, fixedvec, namevec, massvec, posvec, sitevec);
 
 	unhideGC();
 

@@ -2,7 +2,7 @@
 #include "utils.h"
 
 SEXP makedf_search(struct iobtd *iop){
-	SEXP df, sidvec, pidvec, rankvec, scorevec, tscorevec, covvec, fdrvec;
+	SEXP df, df_names, sidvec, pidvec, rankvec, scorevec, tscorevec, covvec, fdrvec;
 	yamldom_node_t *searchseq, *seq;
 	int i, count, peakid;
 	char id[10+10+1];
@@ -40,9 +40,8 @@ SEXP makedf_search(struct iobtd *iop){
 		i++;
 	}
 
-	df = make_dataframe(RNULL,
-						make_list_names(ncols, "searchid", "peakid", "rank", "score", "tagscore", "cov", "fdr"),
-						ncols, sidvec, pidvec, rankvec, scorevec, tscorevec, covvec, fdrvec);
+	make_list_names(df_names, ncols, "searchid", "peakid", "rank", "score", "tagscore", "cov", "fdr");
+	make_dataframe(df, RNULL, df_names, ncols, sidvec, pidvec, rankvec, scorevec, tscorevec, covvec, fdrvec);
 
 	unhideGC();
 

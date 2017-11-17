@@ -13,7 +13,6 @@ libyaml/src/scanner.o \
 libyaml/src/writer.o
 
 ROBJ = libyaml-dom/gen.o \
-	RNACI/RNACI.o \
 	populate.o \
 	scan.o \
 	utils.o \

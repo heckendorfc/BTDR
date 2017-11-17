@@ -2,7 +2,7 @@
 #include "utils.h"
 
 SEXP makedf_tag(struct iobtd *iop){
-	SEXP df, idvec, startvec, lenvec;
+	SEXP df, df_names, idvec, startvec, lenvec;
 	yamldom_node_t *searchseq, *tmp, *seq;
 	int i, count;
 	char id[10+10+1];
@@ -39,9 +39,8 @@ SEXP makedf_tag(struct iobtd *iop){
 		}
 	}
 
-	df = make_dataframe(RNULL,
-						make_list_names(ncols, "searchid", "start", "len"),
-						ncols, idvec, startvec, lenvec);
+	make_list_names(df_names, ncols, "searchid", "start", "len");
+	make_dataframe(df, RNULL, df_names, ncols, idvec, startvec, lenvec);
 
 	unhideGC();
 

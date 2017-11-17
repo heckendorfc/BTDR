@@ -2,7 +2,7 @@
 #include "utils.h"
 
 SEXP makedf_xlink(struct iobtd *iop){
-	SEXP df, idvec, peakidvec, errvec, covvec, modsv;
+	SEXP df, df_names, idvec, peakidvec, errvec, covvec, modsv;
 	yamldom_node_t *xlseq, *tmp, *seq, *prottmp, *peptmp;
 	int i, count, modstrlen;
 	const int ncols=5;
@@ -57,9 +57,8 @@ SEXP makedf_xlink(struct iobtd *iop){
 		i++;
 	}
 
-	df = make_dataframe(RNULL,
-						make_list_names(ncols, "xlid", "peakid", "error", "frag.cov", "mods"),
-						ncols, idvec, peakidvec, errvec, covvec, modsv);
+	make_list_names(df_names, ncols, "xlid", "peakid", "error", "frag.cov", "mods");
+	make_dataframe(df, RNULL, df_names, ncols, idvec, peakidvec, errvec, covvec, modsv);
 
 	unhideGC();
 
@@ -72,7 +71,7 @@ err:
 
 
 SEXP makedf_xlpep(struct iobtd *iop){
-	SEXP df, idvec, protidvec, pepflagvec, pepmassvec, pepsitevec;
+	SEXP df, df_names, idvec, protidvec, pepflagvec, pepmassvec, pepsitevec;
 	yamldom_node_t *xlseq, *tmp, *seq, *prottmp, *peptmp;
 	int i, count;
 	int id;
@@ -118,9 +117,8 @@ SEXP makedf_xlpep(struct iobtd *iop){
 		}
 	}
 
-	df = make_dataframe(RNULL,
-						make_list_names(ncols, "xlid", "protid", "pep.flag", "pep.mass", "pep.xlsite"),
-						ncols, idvec, protidvec, pepflagvec, pepmassvec, pepsitevec);
+	make_list_names(df_names, ncols, "xlid", "protid", "pep.flag", "pep.mass", "pep.xlsite");
+	make_dataframe(df, RNULL, df_names, ncols, idvec, protidvec, pepflagvec, pepmassvec, pepsitevec);
 
 	unhideGC();
 

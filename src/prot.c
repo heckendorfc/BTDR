@@ -2,7 +2,7 @@
 #include "utils.h"
 
 SEXP makedf_prot(struct iobtd *iop){
-	SEXP df, protidvec, peakidvec, seqvec, namevec, startvec, lenvec, tmodvec;
+	SEXP df, df_names, protidvec, peakidvec, seqvec, namevec, startvec, lenvec, tmodvec;
 	yamldom_node_t *protseq, *tmp, *seq;
 	int i, len, count;
 	char *name;
@@ -56,9 +56,8 @@ SEXP makedf_prot(struct iobtd *iop){
 		i++;
 	}
 
-	df = make_dataframe(RNULL,
-						make_list_names(ncols, "protid", "peakid", "seq", "name", "start", "len", "termmod"),
-						ncols, protidvec, peakidvec, seqvec, namevec, startvec, lenvec, tmodvec);
+	make_list_names(df_names, ncols, "protid", "peakid", "seq", "name", "start", "len", "termmod");
+	make_dataframe(df, RNULL, df_names, ncols, protidvec, peakidvec, seqvec, namevec, startvec, lenvec, tmodvec);
 
 	unhideGC();
 

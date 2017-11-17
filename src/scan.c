@@ -2,7 +2,7 @@
 #include "utils.h"
 
 SEXP makedf_scan(struct iobtd *iop){
-	SEXP df, plidvec, paridvec, sidvec, mzvec, zvec, intvec, rtvec;
+	SEXP df, df_names, plidvec, paridvec, sidvec, mzvec, zvec, intvec, rtvec;
 	yamldom_node_t *peakseq, *scanseq, *tmp, *seq, *scan;
 	int i, count;
 	int parid, id;
@@ -65,9 +65,8 @@ SEXP makedf_scan(struct iobtd *iop){
 		}
 	}
 
-	df = make_dataframe(RNULL,
-						make_list_names(ncols, "plid", "parid", "scanid", "mz", "z", "rt", "pre.int"),
-						ncols, plidvec, paridvec, sidvec, mzvec, zvec, rtvec, intvec);
+	make_list_names(df_names, ncols, "plid", "parid", "scanid", "mz", "z", "rt", "pre.int");
+	make_dataframe(df, RNULL, df_names, ncols, plidvec, paridvec, sidvec, mzvec, zvec, rtvec, intvec);
 
 	unhideGC();
 
