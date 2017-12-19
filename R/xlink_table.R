@@ -38,7 +38,8 @@ xlinkpep <- function(object,pepnum){
 .xlfragcov <- function(object,xldf){
 	pid <- object@scan$plid[which(object@scan$scanid==xldf$scan.num)]
 	lens <- (xldf$pep1.end-xldf$pep1.start+1)+(xldf$pep2.end-xldf$pep2.start+1)
-	length(which(object@fit$peak.id==pid))/(lens*2-2)
+	fr=object@fit[which(object@fit$peak.id==pid),c("ion.start","ion.len")]
+	nrow(unique(fr))/(lens*2-2)
 }
 
 
