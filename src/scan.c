@@ -60,7 +60,6 @@ SEXP makedf_scan(struct iobtd *iop){
 			if(REAL(rtvec)[i]<0.)
 				REAL(rtvec)[i]=0.;
 
-			scanseq = scanseq->next;
 			i++;
 		}
 	}
